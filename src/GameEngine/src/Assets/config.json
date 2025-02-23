@@ -1,0 +1,6 @@
+{
+    "bulletSize": 0.75,
+    "playerSize": 2.75,
+    "bulletColor": "rgb(109, 107, 103)",
+    "playerColor": "rgb(81, 127, 50)"
+}
