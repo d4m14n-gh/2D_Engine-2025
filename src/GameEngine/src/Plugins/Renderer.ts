@@ -1,16 +1,13 @@
-import { CircleRendererC } from "../Components/Renderers/CircleRenderer";
 import { ColliderRendererC } from "../Components/Renderers/ColliderRenderer";
-import { RendererC } from "../Components/Renderer";
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
+import { RendererC } from "../Components/Renderers/Renderer";
 import { BarRendererC } from "../Components/Renderers/BarRenderer";
 import { TextRendererC } from "../Components/Renderers/TextRenderer";
-import { TriangleRendererC } from "../Components/Renderers/TriangleRenderer";
 import { Color } from "../Helpers/Color";
 import { WorldComponent } from "../WorldComponent";
 import { CameraPlugin } from "./Camera";
-import { ConfigPlugin } from "./Config";
 import { ImageRendererC } from "../Components/Renderers/ImageRenderer";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
+import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
 
 export class RendererPlugin extends WorldComponent {
     private readonly context: CanvasRenderingContext2D;
@@ -71,14 +68,12 @@ export class RendererPlugin extends WorldComponent {
         this.drawDotGrid(this.context, 10, 0.175, "rgb(43,43,44)");
         
         this.gameWorld
-        .getComponents(SquareRendererC.name)
-        .concat(this.gameWorld.getComponents(CircleRendererC.name))
-        .concat(this.gameWorld.getComponents(TextRendererC.name))
+        .getComponents(TextRendererC.name)
         .concat(this.gameWorld.getComponents(ColliderRendererC.name))
-        .concat(this.gameWorld.getComponents(TriangleRendererC.name))
         .concat(this.gameWorld.getComponents(BarRendererC.name))
         .concat(this.gameWorld.getComponents(ImageRendererC.name))
         .concat(this.gameWorld.getComponents(PolygonRendererC.name))
+        .concat(this.gameWorld.getComponents(CanonRendererC.name))
         // .getAllComponents()
         .filter(component => component instanceof RendererC)
         .map(renderer => renderer as RendererC)

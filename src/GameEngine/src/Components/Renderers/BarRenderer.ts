@@ -4,7 +4,7 @@ import { RendererPlugin } from "../../Plugins/Renderer";
 import { GameObject } from "../../GameObject";
 import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
-import { RendererC } from "../Renderer";
+import { RendererC } from "./Renderer";
 import { HealthC } from "../Health";
 
 export class BarRendererC extends RendererC {

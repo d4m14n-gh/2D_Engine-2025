@@ -1,4 +1,3 @@
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
 import { WorldComponent } from "../WorldComponent";
 import { CameraPlugin } from "./Camera";
 

@@ -1,5 +1,4 @@
 import { RigidBodyC } from "../Components/RigidBody";
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
 import { WorldComponent } from "../WorldComponent";
 
 export class PhysicsPlugin extends WorldComponent {

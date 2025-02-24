@@ -2,7 +2,7 @@ import { Component } from "../Component";
 import { GameObject } from "../GameObject";
 import { Vector } from "../Helpers/Vector";
 import { BarRendererC } from "./Renderers/BarRenderer";
-import { RendererC } from "./Renderer";
+import { RendererC } from "./Renderers/Renderer";
 import { StandaloneComponent } from "./StandaloneComponent";
 
 export class AnimationC extends StandaloneComponent {

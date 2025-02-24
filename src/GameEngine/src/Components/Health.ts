@@ -6,8 +6,9 @@ import { ICollision } from "../Plugins/CollisionDetection";
 import { AnimationC } from "./Animation";
 import { BarRendererC } from "./Renderers/BarRenderer";
 import { ColliderC } from "./Collider";
-import { RendererC } from "./Renderer";
+import { RendererC } from "./Renderers/Renderer";
 import { RigidBodyC } from "./RigidBody";
+import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 
 export interface IDamage{
     onDamage(other: GameObject): void;
@@ -33,12 +34,11 @@ export class HealthC extends Component implements ICollision{
         otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(1/20));
        
         otherRigidbody.angularVelocity -= this.gameObject.transform.position.sub(otherGO.transform.position).vectorProduct(thisRigidbody.velocity)/20;
+        let otherColor = other.gameObject.getComponent<PolygonRendererC>(PolygonRendererC.name).color;
+        this.gameObject.getComponent<PolygonRendererC>(PolygonRendererC.name).color = otherColor.toRgb();
+
     }
     onCollisionExit(other: ColliderC): void {
-        let otherColor = (other.gameObject.getAllComponents().filter(c => c instanceof RendererC&&!(c instanceof BarRendererC))[0] as RendererC).color;
-        this.gameObject.getAllComponents().filter(c => c instanceof RendererC).forEach(
-          c => (c as RendererC).color = otherColor.clone()
-        );
     }
 
     public getHealth(): number {
@@ -79,14 +79,14 @@ export class HealthC extends Component implements ICollision{
 
             if(this.health==0){
                 this.gameObject.getComponent<ColliderC>(ColliderC.name).enabled=false;
-                this.gameObject.getRigidBody().drag=0.5;
+                this.gameObject.getRigidBody().drag=0.05;
                 try{
                     this.gameObject.getComponent<AnimationC>(AnimationC.name).startShrink();
                 }catch {}
             }
             if(other.health==0){
                 other.gameObject.getComponent<ColliderC>(ColliderC.name).enabled=false;
-                other.gameObject.getRigidBody().drag=0.5;
+                other.gameObject.getRigidBody().drag=0.05;
                 try{
                     other.gameObject.getComponent<AnimationC>(AnimationC.name).startShrink();
                 }catch {}

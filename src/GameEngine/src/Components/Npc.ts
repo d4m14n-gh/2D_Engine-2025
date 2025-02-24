@@ -3,7 +3,7 @@ import { GameObject } from "../GameObject";
 import { Vector } from "../Helpers/Vector";
 import { PlayerPlugin } from "../Plugins/Player";
 import { FollowerC } from "./Follower";
-import { GunC } from "./Gun";
+import { CanonC } from "./Canon";
 import { HealthC, IDamage } from "./Health";
 import { StandaloneComponent } from "./StandaloneComponent";
 
@@ -40,7 +40,7 @@ export class NpcC extends StandaloneComponent implements IDamage {
 
     override update(delta: number, totalDelta: number): void {
         let follower = this.gameObject.getComponent<FollowerC>(FollowerC.name);
-        let turret = this.gameObject.getComponent<GunC>(GunC.name);
+        let turret = this.gameObject.getComponent<CanonC>(CanonC.name);
         let health = this.gameObject.getComponent<HealthC>(HealthC.name);
         if(this.target&&this.target.deref()&&this.isAttacing){
             let target = this.target.deref()!;

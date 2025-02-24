@@ -1,10 +1,6 @@
 import { Color } from "../../Helpers/Color";
-import { Component } from "../../Component";
-import { RendererPlugin } from "../../Plugins/Renderer";
-import { GameObject } from "../../GameObject";
-import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
-import { RendererC } from "../Renderer";
+import { RendererC } from "./Renderer";
 
 export class TextRendererC extends RendererC {
     public color: Color = new Color(42, 42, 55);

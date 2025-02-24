@@ -1,18 +1,11 @@
-import { CircleRendererC } from "../Components/Renderers/CircleRenderer";
 import { ColliderC } from "../Components/Collider";
-import { FollowerC } from "../Components/Follower";
-import { GunC } from "../Components/Gun";
-import { HealthC } from "../Components/Health";
+import { CanonC } from "../Components/Canon";
 import { RigidBodyC } from "../Components/RigidBody";
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
-import { TextRendererC } from "../Components/Renderers/TextRenderer";
 import { GameObject } from "../GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
-import { Color } from "../Helpers/Color";
 import { Vector } from "../Helpers/Vector";
 import { WorldComponent } from "../WorldComponent";
 import { CollisionDetectionPlugin } from "./CollisionDetection";
-import { ConfigPlugin } from "./Config";
 import { KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
 
@@ -36,8 +29,6 @@ export class PlayerPlugin extends WorldComponent {
       let collider = this.player.getComponent<ColliderC>(ColliderC.name);
       
 
-      this.player.name = "player: "+this.gameWorld.getPlugin<CollisionDetectionPlugin>(CollisionDetectionPlugin.name)
-      .getCellKey(collider.getCenter()).toString();
       
     }
     
@@ -73,10 +64,10 @@ export class PlayerPlugin extends WorldComponent {
           this.player = GameObjectFactory.playerGO();
           this.player.spawn(this.gameWorld);
         }
+        let gun = this.player.getComponent<CanonC>(CanonC.name);
+        gun.direction = mouse.getWorldPosition().sub(this.player.transform.position);
+        this.player.transform.rotation=-gun.direction.toRad();
         if (keyboard.isKeyDown("e")||mouse.isKeyDown(0)) {
-          let gun = this.player.getComponent<GunC>(GunC.name);
-          gun.direction = mouse.getWorldPosition().sub(this.player.transform.position);
-          this.player.transform.rotation=-gun.direction.toRad();
           gun.shoot();
         }
 

@@ -1,17 +1,14 @@
-import { Color } from "../../Helpers/Color";
 import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
-import { ConfigPlugin } from "../../Plugins/Config";
-import { RendererC } from "../Renderer";
+import { RendererC } from "./Renderer";
 
 export class ImageRendererC extends RendererC {
     private image = new Image();
     public side: number;
     public offset: Vector;
 
-    constructor(side: number=1, offset: Vector=Vector.zero(),  src: string="GameEngine/src/Assets/tank.png", zindex=0, color=Color.randomColor2()){
+    constructor(side: number=1, offset: Vector=Vector.zero(),  src: string="GameEngine/src/Assets/tank.png", zindex=0){
         super();
-        this.color = color;
         this.zindex = zindex;
         this.side = side;
         this.offset=offset;
@@ -29,7 +26,7 @@ export class ImageRendererC extends RendererC {
 
         const cmx = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.x;
         const cmy = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.y;
-        const color = this.color.toString();
+        // const color = this.color.toString();
 
         const cx: number = (x-cmx);
         const cy: number = -(y-cmy);
@@ -45,7 +42,7 @@ export class ImageRendererC extends RendererC {
         context.translate(this.offset.x, this.offset.y);
 
         
-        context.fillStyle = color;
+        // context.fillStyle = color;
         context.shadowBlur = 30;
        
         context.drawImage(this.image, -a/2,  -a/2, a, a);

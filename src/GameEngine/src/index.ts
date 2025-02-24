@@ -1,6 +1,5 @@
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
-import { SquareRendererC } from "./Components/Renderers/SquareRenderer";
 import { GameObjectFactory } from "./GameObjectFactory";
 import { Vector } from "./Helpers/Vector";
 import { RigidBodyC } from "./Components/RigidBody";

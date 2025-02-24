@@ -1,21 +1,15 @@
 import { Component } from "../Component";
 import { FollowerC } from "../Components/Follower";
 import { RigidBodyC } from "../Components/RigidBody";
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
-import { StandaloneComponent } from "../Components/StandaloneComponent";
-import { TriangleRendererC } from "../Components/Renderers/TriangleRenderer";
-import { GameObject } from "../GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { GameWorld } from "../GameWorld";
 import { Vector } from "../Helpers/Vector";
-import { CameraPlugin } from "../Plugins/Camera";
-import { ConfigPlugin } from "../Plugins/Config";
-import { PhysicsPlugin } from "../Plugins/Physics";
 import { PlayerPlugin } from "../Plugins/Player";
-import { RendererPlugin } from "../Plugins/Renderer";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
-import { GunC } from "../Components/Gun";
+import { CanonC } from "../Components/Canon";
 import { NpcC } from "../Components/Npc";
+import { GMath } from "../Helpers/Math";
+import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
 
 export class MyWorld extends GameWorld {
     override Start() {
@@ -23,26 +17,24 @@ export class MyWorld extends GameWorld {
         
         
         const r = 100;
-        for(let i = 0; i < 50; i++){
-            let sqr = GameObjectFactory.squareGO()
+        for(let i = 0; i < 150; i++){
+            const radius = 2.5+GMath.symRand(0.25);
+            let sqr = GameObjectFactory.polygonGO(radius/2, 4)
             sqr.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            sqr.getComponent<SquareRendererC>(SquareRendererC.name).side = Math.random()/2+2;
             sqr.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
             this.spawn(sqr);
         }
-        for(let i = 0; i < 50; i++){
-            let triangle = GameObjectFactory.triangleGO()
-            const side = 2.5;
+        for(let i = 0; i < 150; i++){
+            const radius = 2.5+GMath.symRand(0.25);
+            let triangle = GameObjectFactory.polygonGO(radius/2, 3)
             triangle.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            triangle.getComponent<TriangleRendererC>(TriangleRendererC.name).side = Math.random()/2+side;
             triangle.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
             this.spawn(triangle);
         }
-        for(let i = 0; i < 50; i++){
-            let polygon = GameObjectFactory.polygonGO(undefined, Math.round(Math.random()*5)+3);
-            const side = 3.5;
+        for(let i = 0; i < 150; i++){
+            const radius = 3+GMath.symRand(0.25);
+            let polygon = GameObjectFactory.polygonGO(radius/2, Math.round(Math.random()*3)+5);
             polygon.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            polygon.getComponent<PolygonRendererC>(PolygonRendererC.name).radius = Math.random()/2+side;
             polygon.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
             this.spawn(polygon);
         }
@@ -51,9 +43,10 @@ export class MyWorld extends GameWorld {
         
         let followerC = new FollowerC(this.getPlugin<PlayerPlugin>(PlayerPlugin.name).player);
         
-        let follower = GameObjectFactory.circleGO(3, "Fella", 
+        let follower = GameObjectFactory.enemyGO(3, "Fella⚖️", 
             followerC,
-            new GunC(),
+            new CanonC(),
+            new CanonRendererC(),
             new NpcC()
         );
 

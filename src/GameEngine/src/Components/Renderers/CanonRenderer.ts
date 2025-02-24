@@ -1,16 +1,20 @@
 import { Color } from "../../Helpers/Color";
 import { CameraPlugin } from "../../Plugins/Camera";
-import { ConfigPlugin } from "../../Plugins/Config";
-import { RendererC } from "../Renderer";
+import { CanonC } from "../Canon";
+import { RendererC } from "./Renderer";
 
-export class CircleRendererC extends RendererC {
-    public radius: number = 3;
+export class CanonRendererC extends RendererC {
+    private color: Color;
+    private length: number;
+    private width: number;
 
-    constructor(radius: number, zindex=0, color=Color.randomColor2()){
+    constructor(length: number=4, width: number=2, zindex=0, color=Color.background.clone()){
         super();
-        this.color = color;
-        this.radius = radius;
         this.zindex = zindex;
+        this.color = color;
+        this.color = new Color(91, 93, 98);
+        this.length = length;
+        this.width = width;
     }
 
     public render(context: CanvasRenderingContext2D): void {
@@ -18,32 +22,36 @@ export class CircleRendererC extends RendererC {
         const size = [context.canvas.width, context.canvas.height];
         const x = this.gameObject.transform.position.x;
         const y = this.gameObject.transform.position.y;
-        const r = this.gameObject.transform.rotation;
         const transformScale = this.gameObject.transform.scale;
         const scale = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).scale;
 
-        const a = this.radius;
         const cmx = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.x;
         const cmy = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.y;
         const color = this.color.toString();
 
         const cx: number = (x-cmx);
         const cy: number = -(y-cmy);
+        const canon = this.gameObject.getComponent<CanonC>(CanonC.name);
+        const sp: number = Math.sin( Math.min(1, canon.getShotDelta()/canon.cooldown) * Math.PI);
+
 
         context.save();
         
         context.translate(size[0]/2, size[1]/2);
         context.scale(scale, scale);
         context.translate(cx, cy);
-        context.rotate(r);
         context.scale(transformScale.x, transformScale.y);
         
-        context.fillStyle = color;
-        context.shadowBlur = 30;
+        context.rotate(-canon.direction.toRad());
+        
         context.beginPath();
-        context.arc(0, 0, a, 0, 2 * Math.PI);
+        context.roundRect(0, -this.width/2, this.length-sp, this.width, 0.25);
         context.closePath();
+        
+        context.fillStyle = color;
+        context.shadowBlur = 0;
         context.fill();
+        context.shadowBlur = 30;
         context.stroke();
 
         context.restore();

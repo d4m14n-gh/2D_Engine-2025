@@ -3,7 +3,7 @@ import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { ConfigPlugin } from "../../Plugins/Config";
 import { ColliderC } from "../Collider";
-import { RendererC } from "../Renderer";
+import { RendererC } from "./Renderer";
 
 export class ColliderRendererC extends RendererC {
     private activeColor: Color = new Color(172, 42, 55, 0.125);
@@ -14,7 +14,6 @@ export class ColliderRendererC extends RendererC {
     constructor(){
         super();
         this.zindex = -1;
-        this.color = this.dynamicColor;
         this.enabled = ConfigPlugin.get("displayColliders")??false;
     }
 
@@ -34,8 +33,7 @@ export class ColliderRendererC extends RendererC {
         const collider: ColliderC = this.gameObject.getComponent<ColliderC>(ColliderC.name);
         const offset = collider.offset;
         const radius = collider.radius+0.25;
-        this.color = this.getColor();
-        const color = this.color;
+        const color = this.getColor();
      
         const size = [context.canvas.width, context.canvas.height];
         const x = this.gameObject.transform.position.x+offset.x;
