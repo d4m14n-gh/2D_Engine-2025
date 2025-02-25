@@ -57,7 +57,7 @@ export class MyWorld extends GameWorld {
         
         let followerC = new FollowerC(this.getPlugin<PlayerPlugin>(PlayerPlugin.name).player);
         
-        let follower = GameObjectFactory.enemyGO(3, "Fella⚖️", 
+        let follower = GameObjectFactory.enemyGO(3, "📖 Fella", 
             followerC,
             new CanonC(),
             new CanonRendererC(),

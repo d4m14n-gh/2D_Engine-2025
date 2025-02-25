@@ -41,7 +41,7 @@ export class GameObjectFactory {
         let circleGO: GameObject = new GameObject(
             new TextRendererC(text, undefined, 1.1),
             new RigidBodyC(),
-            new PolygonRendererC(radius, 10, 1),
+            new PolygonRendererC(radius, 8, 1),
             new BarRendererC(12),
             new ColliderC(radius, false),
             new ColliderRendererC(),
@@ -50,7 +50,7 @@ export class GameObjectFactory {
             ...components
         );
         circleGO.transform.rotation = 0;
-        circleGO.name = "Circle";
+        circleGO.name = "Enemy";
       
         return circleGO;
     }
