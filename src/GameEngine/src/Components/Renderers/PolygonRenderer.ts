@@ -59,7 +59,7 @@ export class PolygonRendererC extends RendererC {
         context.fillStyle = color;
         context.shadowBlur = 0;
         context.fill();
-        context.shadowBlur = 30;
+        context.shadowBlur = 50;
         context.stroke();
 
         context.restore();

@@ -16,6 +16,7 @@ import { CollisionDetectionPlugin } from "./Plugins/CollisionDetection";
 import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
 import { WorldComponent } from "./WorldComponent";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
+import { ProfilerPlugin } from "./Plugins/Profiler";
 
 const pressedKeys = new Set<string>();
 
@@ -41,19 +42,20 @@ export async function main (canvas: HTMLCanvasElement) {
   plugins.push(new PlayerPlugin());
   plugins.push(new PhysicsPlugin());
   plugins.push(new CameraPlugin());
+  plugins.push(new ProfilerPlugin());
   plugins.push(new CollisionDetectionPlugin());
   plugins.push(new StandaloneComponentPlugin());
   plugins.push(new RendererPlugin(canvas.getContext("2d")!));
 
   let world: MyWorld = new MyWorld(...plugins);
     
-
-  for (;;){
-      world.nextLoop();
-      await sleep(1);
+  function x() {
+    requestAnimationFrame(x);
+    world.nextLoop();
   }
-}
 
+  x();
+}
 main(document.getElementById("gameCanvas") as HTMLCanvasElement);
 
 

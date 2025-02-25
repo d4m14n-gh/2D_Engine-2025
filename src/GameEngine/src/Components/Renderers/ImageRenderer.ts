@@ -1,18 +1,23 @@
 import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
+import { PolygonRendererC } from "./PolygonRenderer";
 import { RendererC } from "./Renderer";
 
 export class ImageRendererC extends RendererC {
     private image = new Image();
-    public side: number;
+    public side: Vector;
     public offset: Vector;
 
-    constructor(side: number=1, offset: Vector=Vector.zero(),  src: string="GameEngine/src/Assets/tank.png", zindex=0){
+    constructor(side: Vector=Vector.zero(), offset: Vector=Vector.zero(),  src: string="GameEngine/src/Assets/vectorpaint2.svg", zindex=0){
         super();
         this.zindex = zindex;
         this.side = side;
         this.offset=offset;
         this.image.src = src;
+    }
+
+    public start(): void {
+        this.gameObject.getComponent<PolygonRendererC>(PolygonRendererC.name).enabled = false;
     }
 
     public render(context: CanvasRenderingContext2D): void {
@@ -30,7 +35,11 @@ export class ImageRendererC extends RendererC {
 
         const cx: number = (x-cmx);
         const cy: number = -(y-cmy);
-        const a: number = this.side;
+        let a: Vector = this.side;
+        if (a.x==0)
+            a.x = this.image.width;
+        if (a.y==0)
+            a.y = this.image.height;
 
         context.save();
         
@@ -45,7 +54,7 @@ export class ImageRendererC extends RendererC {
         // context.fillStyle = color;
         context.shadowBlur = 30;
        
-        context.drawImage(this.image, -a/2,  -a/2, a, a);
+        context.drawImage(this.image, -a.x/2,  -a.y/2, a.x, a.y);
 
         context.restore();
     }

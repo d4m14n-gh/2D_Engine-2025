@@ -23,7 +23,7 @@ export class GameObjectFactory {
     public static polygonGO(radius: number = 2, n: number = 3, ...components: Component[]): GameObject {
         let polygonGO: GameObject = new GameObject(
             new RigidBodyC(),
-            new PolygonRendererC(radius, n, 0, Color.randomColor2().toArgb(0.6)),
+            new PolygonRendererC(radius, n, 0, Color.randomColor2().toArgb(0.95)),
             new BarRendererC(0.1),
             new ColliderC(GMath.getColliderRadius(n, radius)),
             new ColliderRendererC(),

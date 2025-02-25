@@ -1,5 +1,8 @@
 import { Component } from "./Component";
 import { GameObject } from "./GameObject";
+import { Vector } from "./Helpers/Vector";
+import { ProfilerPlugin } from "./Plugins/Profiler";
+import { RendererPlugin } from "./Plugins/Renderer";
 import { WorldComponent } from "./WorldComponent";
 
 export class GameWorld {
@@ -82,7 +85,7 @@ export class GameWorld {
     }
     private startInterval(): void{
         let interval: any;
-        let fixedDelta: number = 7;
+        let fixedDelta: number = 10;
         interval = setInterval(() => {this.worldFixedUpdate(fixedDelta/1e3, (performance.now() - this.startTime)/1e3) }, fixedDelta);
     }
     
@@ -91,7 +94,13 @@ export class GameWorld {
         this.Start();            
     }
     private worldUpdate(delta: number, totalDelta: number): void { 
-        this.plugins.forEach(plugin => plugin.update(delta, totalDelta));
+        this.plugins.forEach(
+            (plugin, key) => {
+                let start = performance.now(); 
+                plugin.update(delta, totalDelta);
+                this.getPlugin<ProfilerPlugin>(ProfilerPlugin.name).addRecord(key, performance.now()-start);
+            } 
+        );
         this.Update(delta, totalDelta);        
         
     }

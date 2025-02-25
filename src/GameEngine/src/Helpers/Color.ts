@@ -40,7 +40,7 @@ export class Color{
     }
     public static randomColor2(): Color {
       const hue = Math.floor(Math.random() * 360);
-      const saturation = Math.floor(Math.random() * 50) + 30;
+      const saturation = Math.floor(Math.random() * 30) + 10;
       const lightness = Math.floor(Math.random() * 45) + 15;
     
       return Color.hslToRgb(hue, saturation, lightness);

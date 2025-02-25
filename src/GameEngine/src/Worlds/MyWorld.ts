@@ -10,13 +10,15 @@ import { CanonC } from "../Components/Canon";
 import { NpcC } from "../Components/Npc";
 import { GMath } from "../Helpers/Math";
 import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
+import { ImageRendererC } from "../Components/Renderers/ImageRenderer";
+import { RendererPlugin } from "../Plugins/Renderer";
 
 export class MyWorld extends GameWorld {
     override Start() {
         console.log("Hello, MyWorld!");
         
         
-        const r = 100;
+        const r = 120;
         for(let i = 0; i < 150; i++){
             const radius = 2.5+GMath.symRand(0.25);
             let sqr = GameObjectFactory.polygonGO(radius/2, 4)
@@ -34,6 +36,18 @@ export class MyWorld extends GameWorld {
         for(let i = 0; i < 150; i++){
             const radius = 3+GMath.symRand(0.25);
             let polygon = GameObjectFactory.polygonGO(radius/2, Math.round(Math.random()*3)+5);
+            polygon.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
+            polygon.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+            this.spawn(polygon);
+        }
+        
+        for(let i = 0; i < 50; i++){
+            const radius = 3+GMath.symRand(0.25);
+            let polygon = GameObjectFactory.polygonGO(
+                radius/2, 
+                Math.round(Math.random()*3)+5,
+                new ImageRendererC(Vector.zero(), undefined, undefined, 12)
+            );
             polygon.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
             polygon.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
             this.spawn(polygon);
