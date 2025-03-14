@@ -1,5 +1,4 @@
 import { Component } from "../Component";
-import { FollowerC } from "../Components/Follower";
 import { RigidBodyC } from "../Components/RigidBody";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { GameWorld } from "../GameWorld";
@@ -18,62 +17,58 @@ export class MyWorld extends GameWorld {
         console.log("Hello, MyWorld!");
         
         
-        const r = 120;
-        for(let i = 0; i < 150; i++){
-            const radius = 2.5+GMath.symRand(0.25);
+        const r = 500;
+        for(let i = 0; i < 350; i++){
+            const radius = 5+GMath.symRand(0.25);
             let sqr = GameObjectFactory.polygonGO(radius/2, 4)
-            sqr.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            sqr.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+            sqr.getTransform().position = Vector.randomPos(r);
+            sqr.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(sqr);
         }
         for(let i = 0; i < 150; i++){
-            const radius = 2.5+GMath.symRand(0.25);
+            const radius = 5+GMath.symRand(0.25);
             let triangle = GameObjectFactory.polygonGO(radius/2, 3)
-            triangle.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            triangle.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+            triangle.getTransform().position = Vector.randomPos(r);
+            triangle.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(triangle);
         }
         for(let i = 0; i < 150; i++){
-            const radius = 3+GMath.symRand(0.25);
+            const radius = 5+GMath.symRand(0.25);
             let polygon = GameObjectFactory.polygonGO(radius/2, Math.round(Math.random()*3)+5);
-            polygon.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            polygon.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+            polygon.getTransform().position = Vector.randomPos(r);
+            polygon.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(polygon);
         }
         
-        for(let i = 0; i < 50; i++){
+        for(let i = 0; i < 25; i++){
             const radius = 3+GMath.symRand(0.25);
             let polygon = GameObjectFactory.polygonGO(
                 radius/2, 
                 Math.round(Math.random()*3)+5,
                 new ImageRendererC(Vector.zero(), undefined, undefined, 12)
             );
-            polygon.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            polygon.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+            polygon.getTransform().position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
+            polygon.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
+            polygon.getComponent(PolygonRendererC).enable(false);
             this.spawn(polygon);
         }
         
         
         
-        let followerC = new FollowerC(this.getPlugin<PlayerPlugin>(PlayerPlugin.name).player);
         
-        let follower = GameObjectFactory.enemyGO(3, "📖 Fella", 
-            followerC,
-            new CanonC(),
-            new CanonRendererC(),
-            new NpcC()
-        );
+        for(let i = 0; i < 50; i++){
+            let follower = GameObjectFactory.enemyGO(2.5, "Enemy nr."+i, 4,
+                new CanonC(),
+                new CanonRendererC(4-0.1),
+                new NpcC()
+            );
 
-
-        follower.transform.position = new Vector(10, 10);
-        // follower.getComponent<RigidBodyC>(RigidBodyC.name).drag = 0.01;
-
-        
-        follower.spawn(this);
-        // follower.getAllComponents().forEach(w => console.log(w, w instanceof StandaloneComponent))
+            follower.getTransform().position = Vector.randomPos(r);
+            follower.spawn(this);
+        }
     }
 
-    override Update(delta: number, totalDelta: number) {
+    override Update(delta: number) {
         
     }
 }

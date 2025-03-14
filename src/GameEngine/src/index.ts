@@ -3,7 +3,7 @@ import { GameWorld } from "./GameWorld";
 import { GameObjectFactory } from "./GameObjectFactory";
 import { Vector } from "./Helpers/Vector";
 import { RigidBodyC } from "./Components/RigidBody";
-import { Color } from "./Helpers/Color";
+import { rgb } from "./Helpers/Color";
 import { MyWorld } from "./Worlds/MyWorld";
 import { RendererPlugin } from "./Plugins/Renderer";
 import { PhysicsPlugin } from "./Plugins/Physics";
@@ -14,7 +14,7 @@ import { CameraPlugin } from "./Plugins/Camera";
 import { ConfigPlugin } from "./Plugins/Config";
 import { CollisionDetectionPlugin } from "./Plugins/CollisionDetection";
 import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
-import { WorldComponent } from "./WorldComponent";
+import { Plugin } from "./Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
 
@@ -34,7 +34,7 @@ function sleep(ms: number) {
 
 export async function main (canvas: HTMLCanvasElement) {
 
-  let plugins: WorldComponent[] = [];
+  let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));

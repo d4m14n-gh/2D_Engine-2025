@@ -1,62 +1,31 @@
-import { ColliderC } from "../Components/Collider";
 import { CanonC } from "../Components/Canon";
-import { RigidBodyC } from "../Components/RigidBody";
+import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
+import { RigidBodyC as RigidBodyC } from "../Components/RigidBody";
 import { GameObject } from "../GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
+import { rgb } from "../Helpers/Color";
 import { Vector } from "../Helpers/Vector";
-import { WorldComponent } from "../WorldComponent";
-import { CollisionDetectionPlugin } from "./CollisionDetection";
+import { Plugin } from "../Plugin";
 import { KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
 
-export class PlayerPlugin extends WorldComponent {
+export class PlayerPlugin extends Plugin {
     public player: GameObject = GameObjectFactory.playerGO();
     
     public override start(): void {
-        // this.player.transform.scale = new Vector(1, 1);
-        this.gameWorld.spawn(this.player);
-        // let collider = this.player.getComponent<ColliderC>(ColliderC.name);
-        // let myHealth = this.player.getComponent<HealthC>(HealthC.name);
-        // collider.onCollision = other => {
-        //   myHealth.damage(other.gameObject);
-        // };
+        this.player.spawn(this.gameWorld);
+        this.player.name="player";
     }
     public getPlayerPosition(): Vector {
-        return this.player.transform.position.clone();
+        return this.player.getTransform().position.clone();
+    }
+    public getPlayerColor(): rgb {
+        return this.player.getComponent(PolygonRendererC).color.clone();
     }
 
-    public override update(delta: number, totalDelta: number): void {
-      let collider = this.player.getComponent<ColliderC>(ColliderC.name);
-      
-
-      
-    }
-    
-    public override fixedUpdate(delta: number, totalDelta: number): void {
-        const speed = 18;
-        let vmax = 30.0;
-        let keyboard = this.gameWorld.getPlugin<KeyboardPlugin>("KeyboardPlugin");
-        let mouse = this.gameWorld.getPlugin<MousePlugin>(MousePlugin.name);
-        let rigidBody = this.player.getComponent<RigidBodyC>("RigidBodyC");
-        let vx = rigidBody.velocity.x;
-        let vy = rigidBody.velocity.y;
-
-        if (keyboard.isKeyDown("w")) {
-          vy += speed*delta;
-          vy = speed;
-        }
-        if (keyboard.isKeyDown("s")) {
-          vy += -speed*delta;
-          vy = -speed;
-        }
-        if (keyboard.isKeyDown("a")) {
-          vx += -speed*delta;
-          vx = -speed;
-        }
-        if (keyboard.isKeyDown("d")) {
-          vx += speed*delta;
-          vx = speed;
-        }
+    override update(delta: number): void {
+        let mouse = this.getPlugin(MousePlugin);
+        let keyboard = this.getPlugin(KeyboardPlugin);
         if (keyboard.isKeyDown("r")) {
           try{
             this.gameWorld.destroy(this.player);
@@ -64,16 +33,80 @@ export class PlayerPlugin extends WorldComponent {
           this.player = GameObjectFactory.playerGO();
           this.player.spawn(this.gameWorld);
         }
-        let gun = this.player.getComponent<CanonC>(CanonC.name);
-        gun.direction = mouse.getWorldPosition().sub(this.player.transform.position);
-        this.player.transform.rotation=-gun.direction.toRad();
+        let gun = this.player.getComponent(CanonC);
+        gun.targetDirection = mouse.getWorldPosition().sub(this.player.getTransform().position);
+        gun.range = mouse.getWorldPosition().sub(this.player.getTransform().position).magnitude();
         if (keyboard.isKeyDown("e")||mouse.isKeyDown(0)) {
           gun.shoot();
         }
+      }
+      override fixedUpdate(delta: number): void {
+        let a = 150;
+        const g = -55;
+        const vmax = 50.0;
+        
+        const keyboard = this.getPlugin(KeyboardPlugin);
+        const rotation = this.player.getTransform().rotation;
+        const direction = Vector.fromRad(rotation);
+        
+        const turnSpeed = 2.5;
+        let rigidBody = this.player.getComponent(RigidBodyC);
+        let velocity = rigidBody.velocity;
+        // Przyspieszanie
+        if (keyboard.isKeyDown("shift")) 
+          a = 250;
+        if (keyboard.isKeyDown("w")) {
+          rigidBody.acceleration = direction.toUnit().times(a);
+          if (keyboard.isKeyDown("s"))
+            rigidBody.acceleration = direction.toUnit().times(-g);
+        }
+        else if (keyboard.isKeyDown("s"))
+          rigidBody.acceleration = direction.toUnit().times(g);
+        else
+          rigidBody.acceleration = Vector.zero();
 
-        let newVelocity = new Vector(vx, vy);
-        if(newVelocity.magnitude()>vmax)
-            newVelocity = newVelocity.toUnit().times(vmax);
-        rigidBody.velocity = newVelocity;
-    }
-}
+        velocity = velocity.sub(velocity.perpendicular(direction));
+
+        if (velocity.magnitude() > vmax)
+          velocity.setLength(vmax);
+        if (keyboard.isKeyDown("a"))
+          rigidBody.angularVelocity = turnSpeed;
+        else if (keyboard.isKeyDown("d"))
+          rigidBody.angularVelocity = -turnSpeed;
+        else 
+          rigidBody.angularVelocity = 0;
+      }}
+//     public override fixedUpdate(delta: number): void {
+//         const speed = 18;
+//         let vmax = 30.0;
+//         let keyboard = this.getPlugin(KeyboardPlugin);
+//         let rigidBody = this.player.getComponent(RigidBodyC);
+//         let vx = rigidBody.velocity.x;
+//         let vy = rigidBody.velocity.y;
+
+//         if (keyboard.isKeyDown("w")) {
+//           vy += speed*delta;
+//           vy = speed;
+//         }
+//         if (keyboard.isKeyDown("s")) {
+//           vy += -speed*delta;
+//           vy = -speed;
+//         }
+//         if (keyboard.isKeyDown("a")) {
+//           vx += -speed*delta;
+//           vx = -speed;
+//         }
+//         if (keyboard.isKeyDown("d")) {
+//           vx += speed*delta;
+//           vx = speed;
+//         }
+
+
+//         let newVelocity = new Vector(vx, vy);
+//         if(newVelocity.magnitude()>vmax)
+//             newVelocity = newVelocity.toUnit().times(vmax);
+//         rigidBody.velocity = newVelocity;
+//         if (newVelocity.magnitude()!=0)
+//           this.player.getTransform().rotation = newVelocity.toRad();
+//     }
+// }

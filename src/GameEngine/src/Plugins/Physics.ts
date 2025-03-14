@@ -1,13 +1,15 @@
 import { RigidBodyC } from "../Components/RigidBody";
-import { WorldComponent } from "../WorldComponent";
+import { Plugin } from "../Plugin";
 
-export class PhysicsPlugin extends WorldComponent {
+export class PhysicsPlugin extends Plugin {
    
-    public override update(delta: number, totalDelta: number): void {
-        this.gameWorld.getComponents<RigidBodyC>("RigidBodyC").forEach(rigidBody => rigidBody.update(delta, totalDelta));
+    public override update(delta: number): void {
+        const totalDelta: number = this.gameWorld.getTotal();
+        this.gameWorld.getComponents(RigidBodyC).forEach(rigidBody => rigidBody.update(delta));
     }
    
-    public override fixedUpdate(delta: number, totalDelta: number): void {
-        this.gameWorld.getComponents<RigidBodyC>("RigidBodyC").forEach(rigidBody => rigidBody.fixedUpdate(delta, totalDelta));
+    public override fixedUpdate(delta: number): void {
+        const totalDelta: number = this.gameWorld.getTotal();
+        this.gameWorld.getComponents(RigidBodyC).forEach(rigidBody => rigidBody.fixedUpdate(delta));
     }
 }

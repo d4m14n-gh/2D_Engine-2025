@@ -1,7 +1,7 @@
 import { main } from "..";
 import { ColliderC } from "../Components/Collider";
 import { Vector } from "../Helpers/Vector";
-import { WorldComponent } from "../WorldComponent";
+import { Plugin } from "../Plugin";
 import { PlayerPlugin } from "./Player";
 
 export interface ICollision {
@@ -9,7 +9,7 @@ export interface ICollision {
     onCollisionExit(other: ColliderC): void;
 }
 
-export class CollisionDetectionPlugin extends WorldComponent {
+export class CollisionDetectionPlugin extends Plugin {
     
     override update(): void {
         this.checkCollisions();
@@ -37,7 +37,7 @@ export class CollisionDetectionPlugin extends WorldComponent {
     }
     
     checkCollisions(): void {
-        let AllColliders = this.gameWorld.getComponents<ColliderC>(ColliderC.name)
+        let AllColliders = this.gameWorld.getComponents(ColliderC)
         
         let cells: Map<string, ColliderC[]> = new Map();
         for (const c of AllColliders){
@@ -68,12 +68,12 @@ export class CollisionDetectionPlugin extends WorldComponent {
 
                 for(let newC of newCollisions)
                     if(!mainC.collisions.has(newC))  
-                        mainC.gameObject.getAllComponents().filter(c => "onCollisionEnter" in c)
+                        mainC.getAllComponents().filter(c => "onCollisionEnter" in c)
                         .forEach(c=> {try{(c as unknown as ICollision).onCollisionEnter(newC)}catch{}});
                 
                 for(let oldC of mainC.collisions)
                     if(!newCollisions.has(oldC))  
-                        mainC.gameObject.getAllComponents().filter(c => "onCollisionExit" in c)
+                        mainC.getAllComponents().filter(c => "onCollisionExit" in c)
                         .forEach(c=> {try{(c as unknown as ICollision).onCollisionExit(oldC)}catch{}});
 
                 mainC.collisions.clear();

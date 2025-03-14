@@ -1,5 +1,4 @@
 import { Component } from "../Component";
-import { GameObject } from "../GameObject";
 import { IInvokable, SchedulerPlugin } from "../Plugins/Scheduler";
 import { AnimationC } from "./Animation";
 
@@ -11,12 +10,12 @@ export class DestroyerC extends Component implements IInvokable {
 
     onInvoke(topic: string): void {
         try{
-            this.gameObject.getComponent<AnimationC>(AnimationC.name).startShrink();
+            this.getComponent(AnimationC).startShrink();
         } catch {}
     }
 
-    override start(): void {
-        let destroyTime = this.gameObject.gameWorld.getTotal()+this.lifeTime;
-        this.gameObject.gameWorld.getPlugin<SchedulerPlugin>(SchedulerPlugin.name).addInvoke(this, destroyTime, "destroy");    
+    override onSpawn(): void {
+        let destroyTime = this.getGameWorld().getTotal()+this.lifeTime;
+        this.getGameWorld().getPlugin(SchedulerPlugin).addInvoke(this, destroyTime, "destroy");    
     }
 } 

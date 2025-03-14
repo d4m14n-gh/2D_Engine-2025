@@ -1,10 +1,10 @@
 import { RendererC } from "../Components/Renderers/Renderer";
 import { Vector } from "../Helpers/Vector";
-import { WorldComponent } from "../WorldComponent";
+import { Plugin } from "../Plugin";
 import { CameraPlugin } from "./Camera";
 import { RendererPlugin } from "./Renderer";
 
-export class ProfilerPlugin extends WorldComponent {
+export class ProfilerPlugin extends Plugin {
     public size: number = 200;
     private readonly usage = new Map<string, Array<number>>();
 
@@ -21,9 +21,11 @@ export class ProfilerPlugin extends WorldComponent {
             let usage = this.usage.get(key)!; 
             let len = usage.length;
             if (len >= this.size){
-                for(let i=0;i<len-1;i++)
-                    usage[i]=usage[i+1];
-                usage[len-1]=value;
+                usage.shift();
+                // for(let i=0;i<len-1;i++)
+                    // usage[i]=usage[i+1];
+                // usage[len-1]=value;
+                usage.push(value);
             }
             else{
                 usage.push(value);
@@ -31,7 +33,7 @@ export class ProfilerPlugin extends WorldComponent {
         }
     }
 
-    override update(delta: number, totalDelta: number): void {
+    override update(delta: number): void {
         let i = 0;
         for (const element of this.usage) {
             let key = element[0];
@@ -42,7 +44,7 @@ export class ProfilerPlugin extends WorldComponent {
             mean/=len;    
 
             i++;
-            this.gameWorld.getPlugin<RendererPlugin>(RendererPlugin.name).hud.setLabel(key, new Vector(40, i*40), `${key}: `+(mean).toFixed(2).toString());
+            this.getPlugin(RendererPlugin).hud.setLabel(key, new Vector(40, i*40), `${key}: `+(mean).toFixed(2).toString());
                 
         }
     }

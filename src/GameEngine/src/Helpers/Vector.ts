@@ -1,3 +1,5 @@
+import { GMath } from "./Math";
+
 export class Vector {
     x : number = 0;
     y : number = 0;
@@ -39,16 +41,42 @@ export class Vector {
     perpendicular(n: Vector){
         return this.sub(n.cross().times((n.scalarProduct(this))/(n.magnitude()*n.magnitude())));
     }
-    toUnit(){
+    toUnit(): Vector{
       if(this.magnitude()!=0)
         return new Vector(this.x, this.y).times(1/this.magnitude());
       else return new Vector(1, 0);
     }
-    public toString(): string{
+    setLength(length: number): Vector{
+        return this.toUnit().times(length);
+    }
+    toString(): string{
         return "{"+this.x+":"+this.y+"}";
     }
-    public toRad(): number{
+    toRad(): number{
         return Math.atan2(this.y, this.x); // Kąt w radianach
+    }
+    reverse(): Vector{
+        let sx=1e32;
+        let sy=1e32;
+        if(this.x!=0)
+            sx=1/this.x;
+        if(this.y!=0)
+            sy=1/this.y;
+        return new Vector(sx, sy);
+    }
+    static fromRad(rad: number){
+        return new Vector(
+            Math.cos(rad), 
+            Math.sin(rad)
+        );
+    }
+    static randomPos(range: number): Vector{
+      return new Vector(GMath.symRand(range), GMath.symRand(range));
+    }
+    static randomPos2(range: number): Vector{
+        let angle = GMath.symRand(Math.PI);
+        let distance = Math.random()*range;
+        return Vector.fromRad(angle).times(distance);
     }
     clone(){
         return new Vector(this.x, this.y);

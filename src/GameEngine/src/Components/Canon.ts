@@ -1,51 +1,82 @@
 import { Component } from "../Component";
 import { GameObject } from "../GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
+import { GMath } from "../Helpers/Math";
 import { Vector } from "../Helpers/Vector";
 import { ConfigPlugin } from "../Plugins/Config";
 import { ColliderC } from "./Collider";
+import { CanonRendererC } from "./Renderers/CanonRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 import { RigidBodyC } from "./RigidBody";
+import { StandaloneComponent } from "./StandaloneComponent";
 
-export class CanonC extends Component {
-    public cooldown: number = 0.1;
-    public bulletSpeed: number = 25;
+export class CanonC extends StandaloneComponent {
+    public cooldown: number = 0.15;
+    public bulletSpeed: number = 40;
+    public length: number;
+    public width: number;
+    public range: number=250;
     public bulletSpraed: number = 0.1;
-    public offset: Vector = new Vector(2.5, 0);
+    
+    public offset: Vector;
     public direction: Vector = Vector.right();
+    public targetDirection: Vector = Vector.right();
+
     private lastShootTime: number = -10;
 
-    constructor(){
+    constructor(length: number=4, width: number=2, private damage=10){
         super();
+        this.length = length;
+        this.width = width;
+        this.offset = new Vector(length-width/2, 0);
     }
 
     public getShotDelta(): number{
-        let totalTime = this.gameObject.gameWorld.getTotal();
+        let totalTime = this.getGameWorld().getTotal();
         return totalTime-this.lastShootTime;
     }
 
+    override fixedUpdate(delta: number): void {
+        let angle=this.direction.toRad();
+        let targetAngle=this.targetDirection.toRad();
+        angle += 9*delta*GMath.deltaAngle(angle, targetAngle);
+        this.direction = Vector.fromRad(angle);
+    }
+
+    public getBulletLifetime(): number{
+        return this.range/this.bulletSpeed;
+    }
+
     public shoot(): void{
-        if(!this.enabled||!this.gameObject.enabled)
+        if(!this.isEnabled||!this.getGameObject().enabled)
             return;
         if(this.getShotDelta()>=this.cooldown){
             const sW = 0.125;
-            let bullet = GameObjectFactory.bulletGO((ConfigPlugin.get("bulletSize")??0.65)+(Math.random()*2-1)*sW);
+            const zindex = this.getComponent(CanonRendererC).zindex-0.01;
+            let bullet = GameObjectFactory.bulletGO(
+                this.getGameObject(),
+                this.damage,
+                this.width/2+GMath.symRand(sW),
+                this.getBulletLifetime(),
+                zindex
+            );
             
-            let rigidBody = bullet.getComponent<RigidBodyC>(RigidBodyC.name);
-            let collider = bullet.getComponent<ColliderC>(ColliderC.name);
-            let renderer = bullet.getComponent<PolygonRendererC>(PolygonRendererC.name);
-            renderer.color = this.gameObject.getComponent<PolygonRendererC>(PolygonRendererC.name).color.clone();
+            let rigidBody = bullet.getComponent(RigidBodyC);
+            let collider = bullet.getComponent(ColliderC);
+            let renderer = bullet.getComponent(PolygonRendererC);
+            renderer.color = this.getComponent(PolygonRendererC).color.clone();
 
-            collider.avoid = other => other.gameObject === this.gameObject;
+            collider.avoidObjectes.add(this.getGameObject());
             
             const offset = this.direction.toUnit().times(this.offset.x).add(this.direction.cross().times(this.offset.y));
-            bullet.transform.position = this.gameObject.transform.position.add(offset);
+            bullet.getTransform().position = this.getTransform().position.add(offset);
 
             let spread = this.direction.cross().times(Math.random()*2*this.bulletSpraed-this.bulletSpraed);
-            rigidBody.velocity = this.direction.toUnit().add(spread).times(45); 
+            rigidBody.velocity = this.direction.toUnit().add(spread).times(this.bulletSpeed);
+            // rigidBody.velocity = rigidBody.velocity .add(this.getComponent(RigidBodyC).velocity.times(0.25)); 
  
-            bullet.spawn(this.gameObject.gameWorld);
-            this.lastShootTime=this.gameObject.gameWorld.getTotal();
+            bullet.spawn(this.getGameWorld());
+            this.lastShootTime=this.getGameWorld().getTotal();
         }
     }    
 } 

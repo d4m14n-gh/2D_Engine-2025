@@ -8,7 +8,7 @@ export class ImageRendererC extends RendererC {
     public side: Vector;
     public offset: Vector;
 
-    constructor(side: Vector=Vector.zero(), offset: Vector=Vector.zero(),  src: string="GameEngine/src/Assets/vectorpaint2.svg", zindex=0){
+    constructor(side: Vector=Vector.zero(), offset: Vector=Vector.zero(),  src: string="GameEngine/src/Assets/vectorpaint3.svg", zindex=0){
         super();
         this.zindex = zindex;
         this.side = side;
@@ -16,25 +16,24 @@ export class ImageRendererC extends RendererC {
         this.image.src = src;
     }
 
-    public start(): void {
-        this.gameObject.getComponent<PolygonRendererC>(PolygonRendererC.name).enabled = false;
+    public onSpawn(): void {
+        // this.getComponent(PolygonRendererC).enable(false);
     }
 
     public render(context: CanvasRenderingContext2D): void {
      
         const size = [context.canvas.width, context.canvas.height];
-        const x = this.gameObject.transform.position.x;
-        const y = this.gameObject.transform.position.y;
-        const r = this.gameObject.transform.rotation;
-        const transformScale = this.gameObject.transform.scale;
-        const scale = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).scale;
+        const x = this.getTransform().position.x;
+        const y = this.getTransform().position.y;
+        const r = this.getTransform().rotation;
+        const transformScale = this.getTransform().scale;
+        const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
-        const cmx = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.x;
-        const cmy = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.y;
-        // const color = this.color.toString();
-
+        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
+        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
         const cx: number = (x-cmx);
         const cy: number = -(y-cmy);
+
         let a: Vector = this.side;
         if (a.x==0)
             a.x = this.image.width;
@@ -50,9 +49,7 @@ export class ImageRendererC extends RendererC {
         context.scale(transformScale.x, transformScale.y);
         context.translate(this.offset.x, this.offset.y);
 
-        
-        // context.fillStyle = color;
-        context.shadowBlur = 30;
+        context.shadowBlur = 15;
        
         context.drawImage(this.image, -a.x/2,  -a.y/2, a.x, a.y);
 
