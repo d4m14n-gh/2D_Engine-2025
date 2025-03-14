@@ -1,8 +1,6 @@
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
-import { WorldComponent } from "../WorldComponent";
-import { CameraPlugin } from "./Camera";
+import { Plugin } from "../Plugin";
 
-export class KeyboardPlugin extends WorldComponent {
+export class KeyboardPlugin extends Plugin {
     private readonly pressedKeys = new Set<string>();;
     
     

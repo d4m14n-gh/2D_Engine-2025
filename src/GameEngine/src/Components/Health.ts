@@ -1,13 +1,11 @@
 import { Component } from "../Component";
 import { GameObject } from "../GameObject";
-import { Color } from "../Helpers/Color";
-import { Vector } from "../Helpers/Vector";
 import { ICollision } from "../Plugins/CollisionDetection";
 import { AnimationC } from "./Animation";
-import { BarRendererC } from "./Renderers/BarRenderer";
 import { ColliderC } from "./Collider";
-import { RendererC } from "./Renderer";
 import { RigidBodyC } from "./RigidBody";
+import { PolygonRendererC } from "./Renderers/PolygonRenderer";
+import { GMath } from "../Helpers/Math";
 
 export interface IDamage{
     onDamage(other: GameObject): void;
@@ -24,21 +22,25 @@ export class HealthC extends Component implements ICollision{
     }
 
     onCollisionEnter(other: ColliderC): void { 
-        let otherGO = other.gameObject;       
+        let otherGO = other.getGameObject();       
+        
+        
+        let otherRigidbody = otherGO.getComponent(RigidBodyC);
+        let thisRigidbody = this.getComponent(RigidBodyC);
+
+        let op = thisRigidbody.mass/(otherRigidbody.mass+thisRigidbody.mass);
+        if(thisRigidbody.mass<otherRigidbody.mass){
+            otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)); //toUnit().times(v2);
+            thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1-op)); //toUnit().times(v2);
+            
+            // let otherColor = other.getComponent(PolygonRendererC).color;
+            // this.getComponent(PolygonRendererC).color = otherColor.toRgb();
+        }
+        otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/10);
         this.damage(otherGO);
         
-        
-        let otherRigidbody = otherGO.getRigidBody();
-        let thisRigidbody = this.gameObject.getRigidBody();
-        otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(1/20));
-       
-        otherRigidbody.angularVelocity -= this.gameObject.transform.position.sub(otherGO.transform.position).vectorProduct(thisRigidbody.velocity)/20;
     }
     onCollisionExit(other: ColliderC): void {
-        let otherColor = (other.gameObject.getAllComponents().filter(c => c instanceof RendererC&&!(c instanceof BarRendererC))[0] as RendererC).color;
-        this.gameObject.getAllComponents().filter(c => c instanceof RendererC).forEach(
-          c => (c as RendererC).color = otherColor.clone()
-        );
     }
 
     public getHealth(): number {
@@ -47,54 +49,55 @@ export class HealthC extends Component implements ICollision{
     public heal(value: number): void {
         this.health = Math.min(this.maxHealth, this.health+value);
     }
-    
-    public onDamage(otherGameObject: GameObject){
-        otherGameObject.getAllComponents().filter(c => "onDamage" in c)
-        .forEach(c=> {try{(c as unknown as IDamage).onDamage(otherGameObject)}catch{}});
-    }
 
     public damage(otherGameObject: GameObject){
         let damageValue = 0;
         try{
-            const other = otherGameObject.getComponent<HealthC>(HealthC.name);
+            const other = otherGameObject.getComponent(HealthC);
             damageValue = Math.min(other.health, this.health);
+            if (damageValue==0)
+                return;
             if (other.health>this.health){
                 other.health -= this.health;
                 this.health = 0;
                 try{
-                    other.gameObject.getComponent<AnimationC>(AnimationC.name).startZoom();
+                    other.getComponent(AnimationC).startZoom();
                 }catch {}
             }
             else if (other.health<this.health){
                 this.health -= other.health;
                 other.health = 0;
                 try{
-                    this.gameObject.getComponent<AnimationC>(AnimationC.name).startZoom();
+                    this.getComponent(AnimationC).startZoom();
                 }catch {}
             }
             else{
                 this.health = 0;
                 other.health = 0;
             }
-
+            
             if(this.health==0){
-                this.gameObject.getComponent<ColliderC>(ColliderC.name).enabled=false;
-                this.gameObject.getRigidBody().drag=0.5;
+                this.getComponent(ColliderC).enable(false);
+                this.getComponent(RigidBodyC).drag=0.8;
                 try{
-                    this.gameObject.getComponent<AnimationC>(AnimationC.name).startShrink();
+                    this.getComponent(AnimationC).startShrink();
                 }catch {}
             }
             if(other.health==0){
-                other.gameObject.getComponent<ColliderC>(ColliderC.name).enabled=false;
-                other.gameObject.getRigidBody().drag=0.5;
+                other.getComponent(ColliderC).enable(false);
+                other.getComponent(RigidBodyC).drag=0.8;
                 try{
-                    other.gameObject.getComponent<AnimationC>(AnimationC.name).startShrink();
+                    other.getComponent(AnimationC).startShrink();
                 }catch {}
             }
-
-            other.onDamage(this.gameObject);
+            
+            otherGameObject.getAllComponents().filter(c => "onDamage" in c)
+            .forEach(c=> {try{(c as unknown as IDamage).onDamage(this.getGameObject())}catch{}});
+            this.getAllComponents().filter(c => "onDamage" in c)
+            .forEach(c=> {try{(c as unknown as IDamage).onDamage(otherGameObject)}catch{}});
+            
         }
-        catch {}
+        catch {console.log("error")}
         return damageValue;
     }
 } 

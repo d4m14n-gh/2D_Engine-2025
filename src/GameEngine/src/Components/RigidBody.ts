@@ -10,19 +10,20 @@ export class RigidBodyC extends Component {
     public angularAcceleration: number = 0;
     public angularDrag: number = 0.01;
 
-    constructor(drag=0.01){
+    constructor(mass: number, drag=0.01){
         super();
         const s=15;
         this.velocity = new Vector(Math.random()*s*2-s, Math.random()*s*2-s);
         this.drag = drag;
+        this.mass = mass;
     }
 
-    public update(delta: number, totalDelta: number): void {
+    public update(delta: number): void {
         
     }
-    public fixedUpdate(delta: number, totalDelta: number): void {
-        this.gameObject.transform.position = this.gameObject.transform.position.add(this.velocity.times(delta));
-        this.gameObject.transform.rotation += this.angularVelocity * delta;
+    public fixedUpdate(delta: number): void {
+        this.getTransform().position = this.getTransform().position.add(this.velocity.times(delta));
+        this.getTransform().rotation += this.angularVelocity * delta;
         this.velocity = this.velocity.add(this.acceleration.times(delta)).times(1 - this.drag);
         this.angularVelocity = (this.angularVelocity+this.angularAcceleration * delta) * (1 - this.angularDrag);
     }

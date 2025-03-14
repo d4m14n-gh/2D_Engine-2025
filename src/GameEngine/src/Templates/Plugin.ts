@@ -1,15 +1,14 @@
 import { RigidBodyC } from "../Components/RigidBody";
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
-import { WorldComponent } from "../WorldComponent";
+import { Plugin } from "../Plugin";
 
-export class TemplatePlugin extends WorldComponent {
+export class TemplatePlugin extends Plugin {
     override start(): void {
         
     }
 
-    override update(delta: number, totalDelta: number): void {
+    override update(delta: number): void {
     }
    
-    override fixedUpdate(delta: number, totalDelta: number): void {
+    override fixedUpdate(delta: number): void {
     }
 }

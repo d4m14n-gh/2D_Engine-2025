@@ -1,10 +1,10 @@
-import { Color } from "../../Helpers/Color";
+import { rgb } from "../../Helpers/Color";
 import { Component } from "../../Component";
 import { RendererPlugin } from "../../Plugins/Renderer";
 import { GameObject } from "../../GameObject";
 import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
-import { RendererC } from "../Renderer";
+import { RendererC } from "./Renderer";
 import { HealthC } from "../Health";
 
 export class BarRendererC extends RendererC {
@@ -21,24 +21,25 @@ export class BarRendererC extends RendererC {
         let width = this.width;
         let fill = this.fill;
         try {
-            fill = this.gameObject.getComponent<HealthC>(HealthC.name).getHealth();
-            width = 2+this.gameObject.getComponent<HealthC>(HealthC.name).maxHealth/250.0;
+            fill = this.getComponent(HealthC).getHealth();
+            width = 2+this.getComponent(HealthC).maxHealth/250.0;
         } catch {}
         if(fill>=1||fill<=0)
             return;
 
         const size = [context.canvas.width, context.canvas.height];
-        const x = this.gameObject.transform.position.x;
-        const y = this.gameObject.transform.position.y;
-        const transformScale = this.gameObject.transform.scale;
-        const scale = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).scale;
+        const x = this.getTransform().position.x;
+        const y = this.getTransform().position.y;
+        const transformScale = this.getTransform().scale;
+        const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
-        const cmx = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.x;
-        const cmy = this.gameObject.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon.y;
-        const color = Color.getHeatmapColor(fill).toString();
+        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
+        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+        const color = rgb.getHeatmapColor(fill).toString();
 
         const cx: number = (x-cmx);
         const cy: number = -(y-cmy);
+        const radius = 0.25;
 
 
         context.save();
@@ -50,17 +51,33 @@ export class BarRendererC extends RendererC {
         context.scale(transformScale.x, transformScale.y);
         context.translate(this.offset.x, -this.offset.y);
 
-
-        // context.shadowBlur = 0;
-        // context.fillRect(-a, -a, 2*a, 2*a);
-        // context.shadowBlur = 30;
-        // context.strokeRect(-a, -a, 2*a, 2*a);
-
-        context.fillStyle = Color.background.toString();
-        context.fillRect(-width/2, -this.height/2, width, this.height);
+        
         context.fillStyle = color;
-        context.fillRect(-width/2, -this.height/2, width*fill, this.height);
-        context.strokeRect(-width/2, -this.height/2, width, this.height);
+        context.shadowBlur = 0;
+        
+        context.beginPath();
+        context.roundRect(-width/2, -this.height/2, width, this.height, radius);
+        context.closePath();
+        context.fillStyle = rgb.background.toString();
+        context.fill();
+        
+        context.beginPath();
+        context.roundRect(-width/2, -this.height/2, width*fill, this.height, radius);
+        context.closePath();
+        context.fillStyle = color;
+        context.fill();
+        
+        context.beginPath();
+        context.roundRect(-width/2, -this.height/2, width, this.height, radius);
+        context.closePath();
+        context.shadowBlur = 30;
+        context.stroke();
+        
+        context.beginPath();
+        context.roundRect(-width/2, -this.height/2, width*fill, this.height, radius);
+        context.closePath();
+        context.shadowBlur = 0;
+        context.stroke();
 
         context.restore();
     }

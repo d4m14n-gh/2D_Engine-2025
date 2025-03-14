@@ -1,23 +1,19 @@
-import { Vector } from "../Helpers/Vector";
 import { StandaloneComponent } from "../Components/StandaloneComponent";
-import { WorldComponent } from "../WorldComponent";
-import { PlayerPlugin } from "./Player";
-import { Component } from "../Component";
-import { FollowerC } from "../Components/Follower";
+import { Plugin } from "../Plugin";
 
-export class StandaloneComponentPlugin extends WorldComponent {
+export class StandaloneComponentPlugin extends Plugin {
     
-    override update(delta: number, totalDelta: number): void {
+    override update(delta: number): void {
         this.gameWorld.getAllComponents()
         .filter(component => component instanceof StandaloneComponent)
         .map(component => component as StandaloneComponent)
-        .forEach(component => component.update(delta, totalDelta));
+        .forEach(component => component.update(delta));
     }
     
-    override fixedUpdate(delta: number, totalDelta: number): void {
+    override fixedUpdate(delta: number): void {
         this.gameWorld.getAllComponents()
         .filter(component => component instanceof StandaloneComponent)
         .map(component => component as StandaloneComponent)
-        .forEach(component => component.fixedUpdate(delta, totalDelta));
+        .forEach(component => component.fixedUpdate(delta));
     }
 }

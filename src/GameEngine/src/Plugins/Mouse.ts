@@ -1,9 +1,8 @@
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
 import { Vector } from "../Helpers/Vector";
-import { WorldComponent } from "../WorldComponent";
+import { Plugin } from "../Plugin";
 import { CameraPlugin } from "./Camera";
 
-export class MousePlugin extends WorldComponent {
+export class MousePlugin extends Plugin {
     private readonly pressedKeys = new Set<number>();
     private readonly canvasSize: Vector;
     private position: Vector = Vector.zero();
@@ -17,7 +16,7 @@ export class MousePlugin extends WorldComponent {
     
     
     public scroll(delta: number): void{
-        let camera = this.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name);
+        let camera = this.getPlugin(CameraPlugin);
         delta = Math.sign(delta);
         if(delta>0&&camera.targetScale*0.9>5)
             camera.targetScale=0.9*camera.targetScale;
@@ -28,8 +27,8 @@ export class MousePlugin extends WorldComponent {
         return this.pressedKeys.has(key);
     }
     public getWorldPosition(): Vector{
-        let scale = this.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).scale;
-        let cameraPosition = this.gameWorld.getPlugin<CameraPlugin>(CameraPlugin.name).cameraPositon;
+        let scale = this.getPlugin(CameraPlugin).scale;
+        let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
         let worldPosition = new Vector((this.position.x-this.canvasSize.x/2)/scale, (-this.position.y+this.canvasSize.y/2)/scale).add(cameraPosition);
         return worldPosition;
     }

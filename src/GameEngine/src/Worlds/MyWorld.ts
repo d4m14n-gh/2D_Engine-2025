@@ -1,72 +1,74 @@
 import { Component } from "../Component";
-import { FollowerC } from "../Components/Follower";
 import { RigidBodyC } from "../Components/RigidBody";
-import { SquareRendererC } from "../Components/Renderers/SquareRenderer";
-import { StandaloneComponent } from "../Components/StandaloneComponent";
-import { TriangleRendererC } from "../Components/Renderers/TriangleRenderer";
-import { GameObject } from "../GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { GameWorld } from "../GameWorld";
 import { Vector } from "../Helpers/Vector";
-import { CameraPlugin } from "../Plugins/Camera";
-import { ConfigPlugin } from "../Plugins/Config";
-import { PhysicsPlugin } from "../Plugins/Physics";
 import { PlayerPlugin } from "../Plugins/Player";
-import { RendererPlugin } from "../Plugins/Renderer";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
-import { GunC } from "../Components/Gun";
+import { CanonC } from "../Components/Canon";
 import { NpcC } from "../Components/Npc";
+import { GMath } from "../Helpers/Math";
+import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
+import { ImageRendererC } from "../Components/Renderers/ImageRenderer";
+import { RendererPlugin } from "../Plugins/Renderer";
 
 export class MyWorld extends GameWorld {
     override Start() {
         console.log("Hello, MyWorld!");
         
         
-        const r = 100;
-        for(let i = 0; i < 50; i++){
-            let sqr = GameObjectFactory.squareGO()
-            sqr.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            sqr.getComponent<SquareRendererC>(SquareRendererC.name).side = Math.random()/2+2;
-            sqr.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+        const r = 500;
+        for(let i = 0; i < 350; i++){
+            const radius = 5+GMath.symRand(0.25);
+            let sqr = GameObjectFactory.polygonGO(radius/2, 4)
+            sqr.getTransform().position = Vector.randomPos(r);
+            sqr.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(sqr);
         }
-        for(let i = 0; i < 50; i++){
-            let triangle = GameObjectFactory.triangleGO()
-            const side = 2.5;
-            triangle.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            triangle.getComponent<TriangleRendererC>(TriangleRendererC.name).side = Math.random()/2+side;
-            triangle.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+        for(let i = 0; i < 150; i++){
+            const radius = 5+GMath.symRand(0.25);
+            let triangle = GameObjectFactory.polygonGO(radius/2, 3)
+            triangle.getTransform().position = Vector.randomPos(r);
+            triangle.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(triangle);
         }
-        for(let i = 0; i < 50; i++){
-            let polygon = GameObjectFactory.polygonGO(undefined, Math.round(Math.random()*5)+3);
-            const side = 3.5;
-            polygon.transform.position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
-            polygon.getComponent<PolygonRendererC>(PolygonRendererC.name).radius = Math.random()/2+side;
-            polygon.getComponent<RigidBodyC>(RigidBodyC.name).angularVelocity = Math.random()*2-1;
+        for(let i = 0; i < 150; i++){
+            const radius = 5+GMath.symRand(0.25);
+            let polygon = GameObjectFactory.polygonGO(radius/2, Math.round(Math.random()*3)+5);
+            polygon.getTransform().position = Vector.randomPos(r);
+            polygon.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
+            this.spawn(polygon);
+        }
+        
+        for(let i = 0; i < 25; i++){
+            const radius = 3+GMath.symRand(0.25);
+            let polygon = GameObjectFactory.polygonGO(
+                radius/2, 
+                Math.round(Math.random()*3)+5,
+                new ImageRendererC(Vector.zero(), undefined, undefined, 12)
+            );
+            polygon.getTransform().position = new Vector(Math.random()*2*r-r, Math.random()*2*r-r);
+            polygon.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
+            polygon.getComponent(PolygonRendererC).enable(false);
             this.spawn(polygon);
         }
         
         
         
-        let followerC = new FollowerC(this.getPlugin<PlayerPlugin>(PlayerPlugin.name).player);
         
-        let follower = GameObjectFactory.circleGO(3, "Fella", 
-            followerC,
-            new GunC(),
-            new NpcC()
-        );
+        for(let i = 0; i < 50; i++){
+            let follower = GameObjectFactory.enemyGO(2.5, "Enemy nr."+i, 4,
+                new CanonC(),
+                new CanonRendererC(4-0.1),
+                new NpcC()
+            );
 
-
-        follower.transform.position = new Vector(10, 10);
-        // follower.getComponent<RigidBodyC>(RigidBodyC.name).drag = 0.01;
-
-        
-        follower.spawn(this);
-        // follower.getAllComponents().forEach(w => console.log(w, w instanceof StandaloneComponent))
+            follower.getTransform().position = Vector.randomPos(r);
+            follower.spawn(this);
+        }
     }
 
-    override Update(delta: number, totalDelta: number) {
+    override Update(delta: number) {
         
     }
 }

@@ -1,5 +1,5 @@
 import { Component } from "../Component";
-import { WorldComponent } from "../WorldComponent";
+import { Plugin } from "../Plugin";
 
 export interface IInvokable {
     onInvoke(topic: string): void;
@@ -11,7 +11,7 @@ type record = {
     topic: string;
 }
 
-export class SchedulerPlugin extends WorldComponent {
+export class SchedulerPlugin extends Plugin {
     private schedule: record[] = [];
 
     public addInvoke(subscriber: IInvokable, totalTime: number, topic: string){
@@ -20,7 +20,8 @@ export class SchedulerPlugin extends WorldComponent {
         this.schedule.sort((a, b)=>b.totalTime-a.totalTime);
     }
 
-    public override update(delta: number, totalDelta: number): void {
+    public override update(delta: number): void {
+        const totalDelta = this.gameWorld.getTotal();
         if(this.schedule.length!=0)
         while(this.schedule.length!=0&&this.schedule[this.schedule.length-1].totalTime<=totalDelta){
             let last = this.schedule.pop()!;

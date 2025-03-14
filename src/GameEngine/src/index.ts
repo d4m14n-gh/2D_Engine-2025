@@ -1,10 +1,9 @@
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
-import { SquareRendererC } from "./Components/Renderers/SquareRenderer";
 import { GameObjectFactory } from "./GameObjectFactory";
 import { Vector } from "./Helpers/Vector";
 import { RigidBodyC } from "./Components/RigidBody";
-import { Color } from "./Helpers/Color";
+import { rgb } from "./Helpers/Color";
 import { MyWorld } from "./Worlds/MyWorld";
 import { RendererPlugin } from "./Plugins/Renderer";
 import { PhysicsPlugin } from "./Plugins/Physics";
@@ -15,8 +14,9 @@ import { CameraPlugin } from "./Plugins/Camera";
 import { ConfigPlugin } from "./Plugins/Config";
 import { CollisionDetectionPlugin } from "./Plugins/CollisionDetection";
 import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
-import { WorldComponent } from "./WorldComponent";
+import { Plugin } from "./Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
+import { ProfilerPlugin } from "./Plugins/Profiler";
 
 const pressedKeys = new Set<string>();
 
@@ -34,7 +34,7 @@ function sleep(ms: number) {
 
 export async function main (canvas: HTMLCanvasElement) {
 
-  let plugins: WorldComponent[] = [];
+  let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));
@@ -42,19 +42,20 @@ export async function main (canvas: HTMLCanvasElement) {
   plugins.push(new PlayerPlugin());
   plugins.push(new PhysicsPlugin());
   plugins.push(new CameraPlugin());
+  plugins.push(new ProfilerPlugin());
   plugins.push(new CollisionDetectionPlugin());
   plugins.push(new StandaloneComponentPlugin());
   plugins.push(new RendererPlugin(canvas.getContext("2d")!));
 
   let world: MyWorld = new MyWorld(...plugins);
     
-
-  for (;;){
-      world.nextLoop();
-      await sleep(1);
+  function x() {
+    requestAnimationFrame(x);
+    world.nextLoop();
   }
-}
 
+  x();
+}
 main(document.getElementById("gameCanvas") as HTMLCanvasElement);
 
 
