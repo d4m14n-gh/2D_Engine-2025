@@ -3,10 +3,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh;
     background-color: #1f1f28;
 }
 canvas {
-    border: 1px solid silver;
-    border-radius: 20px;
+    /* border: 1px solid silver; */
+    /* border-radius: 20px; */
+    display: block;
+    width: 100vw;
+    height: 100vh;
 }
