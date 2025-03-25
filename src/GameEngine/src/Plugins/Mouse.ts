@@ -4,16 +4,18 @@ import { CameraPlugin } from "./Camera";
 
 export class MousePlugin extends Plugin {
     private readonly pressedKeys = new Set<number>();
-    private readonly canvasSize: Vector;
+    private readonly canvas: HTMLCanvasElement;
+    // private readonly canvasSize: Vector;
     private position: Vector = Vector.zero();
     // private worldPosition: Vector = Vector.zero();
 
     constructor(canvas: HTMLCanvasElement) {
         super();
-        this.canvasSize = new Vector(canvas.width, canvas.height);
+        this.canvas = canvas;
         this.trackMouse(canvas);
     }
     
+
     
     public scroll(delta: number): void{
         let camera = this.getPlugin(CameraPlugin);
@@ -29,7 +31,8 @@ export class MousePlugin extends Plugin {
     public getWorldPosition(): Vector{
         let scale = this.getPlugin(CameraPlugin).scale;
         let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
-        let worldPosition = new Vector((this.position.x-this.canvasSize.x/2)/scale, (-this.position.y+this.canvasSize.y/2)/scale).add(cameraPosition);
+        const canvasSize = new Vector(this.canvas.width, this.canvas.height);
+        let worldPosition = new Vector((this.position.x-canvasSize.x/2)/scale, (-this.position.y+canvasSize.y/2)/scale).add(cameraPosition);
         return worldPosition;
     }
 
