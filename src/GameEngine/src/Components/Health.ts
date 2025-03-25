@@ -52,8 +52,7 @@ export class HealthC extends Component implements Subscriber{
             otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)); //toUnit().times(v2);
             thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1-op)); //toUnit().times(v2);
             
-            // let otherColor = other.getComponent(PolygonRendererC).color;
-            // this.getComponent(PolygonRendererC).color = otherColor.toRgb();
+          
         }
         otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/10);
         
@@ -83,9 +82,19 @@ export class HealthC extends Component implements Subscriber{
         this.health -= value;
         this.damageEvent.addInvokeArgs(new DamageEventArgs(value, participant));
         this.damageEvent.invoke();
+       
         if(this.health==0){
             this.getComponent(ColliderC).enable(false);
-            this.getComponent(RigidBodyC).drag=0.8;
+            this.getComponent(RigidBodyC).drag=0.025;
+            if(participant.hasComponent(PolygonRendererC)){
+                let myColor = this.getComponent(PolygonRendererC).color;
+                let newColor = myColor.blend(
+                    participant.getComponent(PolygonRendererC).color.toRgb(),
+                    0.5
+                );
+                this.getComponent(PolygonRendererC).color = newColor;
+                participant.getComponent(PolygonRendererC).color = newColor;
+            }
             try{
                 this.getComponent(AnimationC).startShrink();
             }catch {}
