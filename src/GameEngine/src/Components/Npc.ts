@@ -3,11 +3,12 @@ import { GameObject } from "../GameObject";
 import { Vector } from "../Helpers/Vector";
 import { PlayerPlugin } from "../Plugins/Player";
 import { CanonC } from "./Canon";
-import { HealthC, IDamage } from "./Health";
 import { StandaloneComponent } from "./StandaloneComponent";
 import { BulletC } from "./Bullet";
 import { RigidBodyC } from "./RigidBody";
 import { GMath } from "../Helpers/Math";
+import { DamageEventArgs, HealthC } from "./Health";
+import { EventArgs, EventSubsKey, Subscriber } from "../GameEvent";
 
 
 export enum NpcType{
@@ -15,7 +16,7 @@ export enum NpcType{
     passive,
     aggresive
 }
-export class NpcC extends StandaloneComponent implements IDamage {
+export class NpcC extends StandaloneComponent{
     public type: NpcType = NpcType.aggresive;
     public isAttacing: boolean = false;
     private target?: WeakRef<GameObject>;
@@ -28,21 +29,26 @@ export class NpcC extends StandaloneComponent implements IDamage {
         super();
     }
 
-    onDamage(other: GameObject): void {
-        if(other.hasComponent(BulletC)&&other.getComponent(BulletC).getOwner())
-            this.attack(other.getComponent(BulletC).getOwner()!);
-        // else
-        //     this.attack(other);
+    override onEvent(key: EventSubsKey, args: EventArgs): void {
+        if (key.equals(this.damageKey)){
+
+            let damageArgs = args as DamageEventArgs;
+            const other = damageArgs.participant;
+            if(other.hasComponent(BulletC) && other.getComponent(BulletC).getOwner())
+                this.attack(other.getComponent(BulletC).getOwner()!);
+        }
     }
-    
+
     private attack(gameObject: GameObject): void{
         this.isAttacing = true;
         this.target = new WeakRef(gameObject);
         this.isFollowing = true;
     }
 
-    override onSpawn(): void {
-        
+    private damageKey!: EventSubsKey;
+    protected override start(): void {
+        let health = this.getComponent(HealthC);
+        this.damageKey = health.damageEvent.subscribe(this);
     }
 
     override update(delta: number): void {

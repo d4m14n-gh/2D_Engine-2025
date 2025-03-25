@@ -51,7 +51,7 @@ export async function main (canvas: HTMLCanvasElement) {
     
   function x() {
     requestAnimationFrame(x);
-    world.nextLoop();
+    world.tick();
   }
 
   x();

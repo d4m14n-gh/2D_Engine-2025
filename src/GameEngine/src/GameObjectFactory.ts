@@ -91,7 +91,7 @@ export class GameObjectFactory {
             new ColliderC(radius, false),
             new HealthC(1000),
             new AnimationC(),
-            new CanonC(11, .75, 55),
+            new CanonC(11, .75, 44),
             new TracesRendererC(-21.37),
             ...components
         );

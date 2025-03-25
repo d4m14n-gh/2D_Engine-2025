@@ -36,7 +36,7 @@ export class CanonC extends StandaloneComponent {
         return totalTime-this.lastShootTime;
     }
 
-    override fixedUpdate(delta: number): void {
+    override update(delta: number): void {
         let angle=this.direction.toRad();
         let targetAngle=this.targetDirection.toRad();
         angle += 9*delta*GMath.deltaAngle(angle, targetAngle);
