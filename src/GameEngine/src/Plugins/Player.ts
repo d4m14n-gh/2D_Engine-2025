@@ -1,11 +1,11 @@
 import { CanonC } from "../Components/Canon";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
 import { RigidBodyC as RigidBodyC } from "../Components/RigidBody";
-import { GameObject } from "../GameObject";
+import { GameObject } from "../Core/GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { rgb } from "../Helpers/Color";
 import { Vector } from "../Helpers/Vector";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 import { KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
 

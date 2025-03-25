@@ -1,7 +1,7 @@
-import { Component } from "../Component";
+import { Component } from "../Core/Component";
 import { RigidBodyC } from "../Components/RigidBody";
 import { GameObjectFactory } from "../GameObjectFactory";
-import { GameWorld } from "../GameWorld";
+import { GameWorld } from "../Core/GameWorld";
 import { Vector } from "../Helpers/Vector";
 import { PlayerPlugin } from "../Plugins/Player";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";

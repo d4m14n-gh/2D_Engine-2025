@@ -1,5 +1,5 @@
-import { Component } from "../Component";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { GameObject } from "../Core/GameObject";
 
 export class TemplateC extends Component {
 

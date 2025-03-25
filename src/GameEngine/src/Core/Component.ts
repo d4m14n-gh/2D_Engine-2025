@@ -1,8 +1,8 @@
-import { RigidBodyC } from "./Components/RigidBody";
+import { RigidBodyC } from "../Components/RigidBody";
 import { EventArgs, EventSubsKey, Subscriber } from "./GameEvent";
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
-import { Transform } from "./Helpers/Transform";
+import { Transform } from "../Helpers/Transform";
 import { Plugin } from "./Plugin";
 
 export abstract class Component implements Subscriber {

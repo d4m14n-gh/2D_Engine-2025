@@ -1,5 +1,5 @@
-import { GameObject } from "./GameObject";
-import { GameWorld } from "./GameWorld";
+import { GameObject } from "./Core/GameObject";
+import { GameWorld } from "./Core/GameWorld";
 import { GameObjectFactory } from "./GameObjectFactory";
 import { Vector } from "./Helpers/Vector";
 import { RigidBodyC } from "./Components/RigidBody";
@@ -14,7 +14,7 @@ import { CameraPlugin } from "./Plugins/Camera";
 import { ConfigPlugin } from "./Plugins/Config";
 import { CollisionDetectionPlugin } from "./Plugins/CollisionDetection";
 import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
-import { Plugin } from "./Plugin";
+import { Plugin } from "./Core/Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
 

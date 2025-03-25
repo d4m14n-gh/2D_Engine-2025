@@ -1,5 +1,5 @@
 import { rgb as rgb } from "../Helpers/Color";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 
 export class ConfigPlugin extends Plugin{
     private static readonly config: Map<string, any> = new Map(

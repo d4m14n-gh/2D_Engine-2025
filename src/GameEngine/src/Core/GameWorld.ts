@@ -1,6 +1,6 @@
 import { Component } from "./Component";
-import { GameObject } from "./GameObject";
-import { ProfilerPlugin } from "./Plugins/Profiler";
+import { GameObject } from "../Core/GameObject";
+import { ProfilerPlugin } from "../Plugins/Profiler";
 import { Plugin } from "./Plugin";
 
 export class GameWorld {

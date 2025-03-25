@@ -1,5 +1,5 @@
-import { Component } from "../Component";
-import { Plugin } from "../Plugin";
+import { Component } from "../Core/Component";
+import { Plugin } from "../Core/Plugin";
 
 export interface IInvokable {
     onInvoke(topic: string): void;

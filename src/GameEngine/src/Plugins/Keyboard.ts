@@ -1,4 +1,4 @@
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 
 export class KeyboardPlugin extends Plugin {
     private readonly pressedKeys = new Set<string>();;

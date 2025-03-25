@@ -1,5 +1,5 @@
 import { StandaloneComponent } from "../Components/StandaloneComponent";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 
 export class StandaloneComponentPlugin extends Plugin {
     

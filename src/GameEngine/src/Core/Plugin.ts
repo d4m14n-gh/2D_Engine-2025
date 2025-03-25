@@ -1,5 +1,5 @@
 import { Component } from "./Component";
-import { GameWorld } from "./GameWorld";
+import { GameWorld } from "../Core/GameWorld";
 
 //WorldComponent = Plugin
 export abstract class Plugin {

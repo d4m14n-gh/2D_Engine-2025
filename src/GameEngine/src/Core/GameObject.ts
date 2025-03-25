@@ -1,6 +1,6 @@
 import { Component } from "./Component";
 import { GameWorld } from "./GameWorld";
-import { Transform } from "./Helpers/Transform";
+import { Transform } from "../Helpers/Transform";
 
 export class GameObject {
     private transform: Transform = new Transform();

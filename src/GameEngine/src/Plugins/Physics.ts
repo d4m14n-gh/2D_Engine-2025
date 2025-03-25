@@ -1,5 +1,5 @@
 import { RigidBodyC } from "../Components/RigidBody";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 
 export class PhysicsPlugin extends Plugin {
    

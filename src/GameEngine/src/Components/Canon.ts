@@ -1,5 +1,5 @@
-import { Component } from "../Component";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { GameObject } from "../Core/GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { GMath } from "../Helpers/Math";
 import { Vector } from "../Helpers/Vector";

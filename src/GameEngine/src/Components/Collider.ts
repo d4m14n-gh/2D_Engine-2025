@@ -1,6 +1,6 @@
-import { Component } from "../Component";
-import { EventArgs, GameEvent } from "../GameEvent";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { EventArgs, GameEvent } from "../Core/GameEvent";
+import { GameObject } from "../Core/GameObject";
 import { Vector } from "../Helpers/Vector";
 
 export class CollisionEventArgs extends EventArgs{

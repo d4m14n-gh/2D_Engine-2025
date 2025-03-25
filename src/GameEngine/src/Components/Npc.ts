@@ -1,5 +1,5 @@
-import { Component } from "../Component";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { GameObject } from "../Core/GameObject";
 import { Vector } from "../Helpers/Vector";
 import { PlayerPlugin } from "../Plugins/Player";
 import { CanonC } from "./Canon";
@@ -8,7 +8,7 @@ import { BulletC } from "./Bullet";
 import { RigidBodyC } from "./RigidBody";
 import { GMath } from "../Helpers/Math";
 import { DamageEventArgs, HealthC } from "./Health";
-import { EventArgs, EventSubsKey, Subscriber } from "../GameEvent";
+import { EventArgs, EventSubsKey, Subscriber } from "../Core/GameEvent";
 
 
 export enum NpcType{

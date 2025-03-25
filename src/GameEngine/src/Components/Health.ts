@@ -1,11 +1,11 @@
-import { Component } from "../Component";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { GameObject } from "../Core/GameObject";
 import { AnimationC } from "./Animation";
 import { ColliderC, CollisionEventArgs } from "./Collider";
 import { RigidBodyC } from "./RigidBody";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 import { GMath } from "../Helpers/Math";
-import { EventArgs, EventSubsKey, GameEvent, Subscriber } from "../GameEvent";
+import { EventArgs, EventSubsKey, GameEvent, Subscriber } from "../Core/GameEvent";
 
 export class DamageEventArgs extends EventArgs{
     public damage: number;
@@ -35,8 +35,8 @@ export class HealthC extends Component implements Subscriber{
     }
     onEvent(key: EventSubsKey, args: EventArgs): void {
         if (key.equals(this.collisionEnterKey)){
-            let other = (args as CollisionEventArgs).collider;
-            this.onCollisionEnter(other);
+            let cargs = args as CollisionEventArgs;
+            this.onCollisionEnter(cargs.collider);
         }
     }
 
