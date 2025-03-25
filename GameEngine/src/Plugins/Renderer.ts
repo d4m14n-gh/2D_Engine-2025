@@ -91,11 +91,12 @@ export class RendererPlugin extends Plugin {
     }
 
     public override update(delta:number): void {
+        const width = this.context.canvas.width;
+        const height = this.context.canvas.height;
         // this.context.fillStyle = new Color(113, 111, 107).toString();
         this.context.fillStyle = "#716f6b";
         this.context.fillStyle ="rgb(85, 106, 86)";
-        // this.context.clearRect(0, 0, 1920, 1080);
-        this.context.fillRect(0, 0, 1920, 1080);
+        this.context.fillRect(0, 0, width, height);
         this.drawGrid(this.context, 10, "rgb(43,43,44)");
         
         (this.gameWorld.getComponents(TextRendererC) as RendererC[])
