@@ -66,6 +66,7 @@ jobs:
         npm install
     - name: Build app
       run: |
+        cd src/GameEngine
         npm install -D webpack-cli
         npx webpack
     - name: Upload artifacts
