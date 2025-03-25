@@ -1,12 +1,12 @@
 import { Component } from "./Component";
-import { GameObject } from "./GameObject";
-import { ProfilerPlugin } from "./Plugins/Profiler";
+import { GameObject } from "../Core/GameObject";
+import { ProfilerPlugin } from "../Plugins/Profiler";
 import { Plugin } from "./Plugin";
 
 export class GameWorld {
     private gameObjects: Set<GameObject> = new Set<GameObject>();
     private plugins: Map<string, Plugin> = new Map<string, Plugin>();
-    private loopIteration: number = 0;
+    private tickCount: number = 0;
     // private toStart: Array<WeakRef<Component>> = [];
     
     constructor(...plugins: Plugin[]){
@@ -73,47 +73,44 @@ export class GameWorld {
     private prevTotal: number=0;
     private totalDelta: number=0;
     public getTotal(): number {return this.totalDelta/1e3}
-    public nextLoop(): void {
-        if (this.loopIteration == 0) {
+   
+    public tick(): void {
+        let delta = 0
+        const fixedDelta: number = 10;
+        if (this.tickCount == 0) {
+            setInterval(() => {this.worldFixedUpdate(fixedDelta/1e3) }, fixedDelta);
             this.startTime = performance.now();
-            this.worldStart();
-            this.startInterval();
+            this.WorldStart();
+
+            this.plugins.forEach(plugin => (plugin as any).start());
         }
-        this.totalDelta = performance.now() - this.startTime;
-        const delta = this.totalDelta - this.prevTotal;
-        this.prevTotal = this.totalDelta;
-        this.worldUpdate(delta/1e3);
-        this.loopIteration++;
-    }
-    private startInterval(): void{
-        let fixedDelta: number = 10;
-        setInterval(() => {this.worldFixedUpdate(fixedDelta/1e3, (performance.now() - this.startTime)/1e3) }, fixedDelta);
+        else{
+            this.totalDelta = performance.now() - this.startTime;
+            delta = this.totalDelta - this.prevTotal;
+            this.prevTotal = this.totalDelta;
+            this.worldUpdate(delta / 1e3);
+
+            this.plugins.forEach(plugin => {
+                let start = performance.now(); 
+                (plugin as any).update(delta/1e3);
+                this.getPlugin(ProfilerPlugin).addRecord(plugin.constructor.name, performance.now()-start);
+            });
+        }
+        this.tickCount++;
     }
     
-    private worldStart(): void {
-        this.plugins.forEach(plugin => plugin.start());
-        this.Start();            
+    
+    private WorldStart(): void {
+        this.Start();
     }
     private worldUpdate(delta: number): void { 
-        // while(this.toStart.length>0){
-        //     let last = this.toStart[this.toStart.length-1];
-        //     last.deref()?.onSpawn();
-        //     this.toStart.pop();
-        // }
-        this.plugins.forEach(
-            (plugin, key) => {
-                let start = performance.now(); 
-                plugin.update(delta);
-                this.getPlugin(ProfilerPlugin).addRecord(key, performance.now()-start);
-            } 
-        );
         this.Update(delta);        
-        
     }
-    private worldFixedUpdate(delta: number, totalDelta: number): void {
-        this.plugins.forEach(plugin => plugin.fixedUpdate(delta));
+    private worldFixedUpdate(delta: number): void {
         this.FixedUpdate(delta);
+        this.plugins.forEach(plugin => (plugin as any).fixedUpdate(delta));
     }
+    
     //overridable methods
     protected Start(): void { }
     protected Update(delta: number): void { }

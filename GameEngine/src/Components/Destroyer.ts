@@ -1,4 +1,4 @@
-import { Component } from "../Component";
+import { Component } from "../Core/Component";
 import { IInvokable, SchedulerPlugin } from "../Plugins/Scheduler";
 import { AnimationC } from "./Animation";
 

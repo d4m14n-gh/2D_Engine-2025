@@ -1,5 +1,5 @@
 import { Vector } from "../Helpers/Vector";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 import { PlayerPlugin } from "./Player";
 
 export class CameraPlugin extends Plugin {

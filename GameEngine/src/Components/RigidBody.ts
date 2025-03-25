@@ -1,4 +1,4 @@
-import { Component } from "../Component";
+import { Component } from "../Core/Component";
 import { Vector } from "../Helpers/Vector";
 
 export class RigidBodyC extends Component {

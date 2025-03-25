@@ -1,21 +1,22 @@
 import { main } from "..";
 import { ColliderC } from "../Components/Collider";
 import { Vector } from "../Helpers/Vector";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 import { PlayerPlugin } from "./Player";
 
-export interface ICollision {
-    onCollisionEnter(other: ColliderC): void;
-    onCollisionExit(other: ColliderC): void;
-}
+// export interface ICollision {
+//     onCollisionEnter(other: ColliderC): void;
+//     onCollisionExit(other: ColliderC): void;
+// }
 
 export class CollisionDetectionPlugin extends Plugin {
     
+    private cellSize: number = 5;
+
     override update(): void {
         this.checkCollisions();
     }
 
-    private cellSize: number = 5;
     
     public getCellKey(position: Vector): Vector {
         const cellX = Math.floor(position.x / this.cellSize);
@@ -67,14 +68,19 @@ export class CollisionDetectionPlugin extends Plugin {
                 }
 
                 for(let newC of newCollisions)
-                    if(!mainC.collisions.has(newC))  
-                        mainC.getAllComponents().filter(c => "onCollisionEnter" in c)
-                        .forEach(c=> {try{(c as unknown as ICollision).onCollisionEnter(newC)}catch{}});
+                    if(!mainC.collisions.has(newC)) 
+                        mainC.getComponent(ColliderC).onCollisionEnter(newC); 
+
+                      
+                // for(let newC of newCollisions)
+                //     if(!mainC.collisions.has(newC))  
+                //         mainC.getAllComponents().filter(c => "onCollisionEnter" in c)
+                //         .forEach(c=> {try{(c as unknown as ICollision).onCollisionEnter(newC)}catch{}});
                 
-                for(let oldC of mainC.collisions)
-                    if(!newCollisions.has(oldC))  
-                        mainC.getAllComponents().filter(c => "onCollisionExit" in c)
-                        .forEach(c=> {try{(c as unknown as ICollision).onCollisionExit(oldC)}catch{}});
+                // for(let oldC of mainC.collisions)
+                //     if(!newCollisions.has(oldC))  
+                //         mainC.getAllComponents().filter(c => "onCollisionExit" in c)
+                //         .forEach(c=> {try{(c as unknown as ICollision).onCollisionExit(oldC)}catch{}});
 
                 mainC.collisions.clear();
                 mainC.collisions = newCollisions;

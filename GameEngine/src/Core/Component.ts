@@ -1,10 +1,11 @@
-import { RigidBodyC } from "./Components/RigidBody";
+import { RigidBodyC } from "../Components/RigidBody";
+import { EventArgs, EventSubsKey, Subscriber } from "./GameEvent";
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
-import { Transform } from "./Helpers/Transform";
+import { Transform } from "../Helpers/Transform";
 import { Plugin } from "./Plugin";
 
-export abstract class Component {
+export abstract class Component implements Subscriber {
     private enabled: boolean = true;
     private gameObject!: GameObject;
     
@@ -14,6 +15,9 @@ export abstract class Component {
     }
     protected onDestroy(): void{
         
+    }
+    onEvent(key: EventSubsKey, args: EventArgs): void {
+        console.log("Event received", args);
     }
 
     public getGameWorld(): GameWorld{

@@ -1,6 +1,6 @@
 import { RendererC } from "../Components/Renderers/Renderer";
 import { Vector } from "../Helpers/Vector";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 import { CameraPlugin } from "./Camera";
 import { RendererPlugin } from "./Renderer";
 

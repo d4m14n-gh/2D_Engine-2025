@@ -1,5 +1,5 @@
 import { StandaloneComponent } from "../Components/StandaloneComponent";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 
 export class StandaloneComponentPlugin extends Plugin {
     
@@ -7,13 +7,6 @@ export class StandaloneComponentPlugin extends Plugin {
         this.gameWorld.getAllComponents()
         .filter(component => component instanceof StandaloneComponent)
         .map(component => component as StandaloneComponent)
-        .forEach(component => component.update(delta));
-    }
-    
-    override fixedUpdate(delta: number): void {
-        this.gameWorld.getAllComponents()
-        .filter(component => component instanceof StandaloneComponent)
-        .map(component => component as StandaloneComponent)
-        .forEach(component => component.fixedUpdate(delta));
+        .forEach(component => (component as any).tick(delta));
     }
 }

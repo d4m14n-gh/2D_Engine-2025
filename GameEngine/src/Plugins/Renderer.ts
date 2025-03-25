@@ -3,7 +3,7 @@ import { RendererC } from "../Components/Renderers/Renderer";
 import { BarRendererC } from "../Components/Renderers/BarRenderer";
 import { TextRendererC } from "../Components/Renderers/TextRenderer";
 import { rgb } from "../Helpers/Color";
-import { Plugin } from "../Plugin";
+import { Plugin } from "../Core/Plugin";
 import { CameraPlugin } from "./Camera";
 import { ImageRendererC } from "../Components/Renderers/ImageRenderer";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
@@ -53,6 +53,33 @@ export class RendererPlugin extends Plugin {
         }
     }
 
+    drawGrid(context: CanvasRenderingContext2D, gridSize: number, lineColor: string) {
+        const canvasWidth = context.canvas.width;
+        const canvasHeight = context.canvas.height;
+        const scale = this.getPlugin(CameraPlugin).scale;
+        const camera = this.getPlugin(CameraPlugin).cameraPositon;
+
+        context.save();
+        gridSize *= scale;
+        context.strokeStyle = lineColor;
+        context.lineWidth = 0.1 * scale;
+
+        context.beginPath();
+
+        for (let x = (canvasWidth / 2 - camera.x * scale) % gridSize; x <= canvasWidth; x += gridSize) {
+            context.moveTo(x, 0);
+            context.lineTo(x, canvasHeight);
+        }
+
+        for (let y = (canvasHeight / 2 + camera.y * scale) % gridSize; y <= canvasHeight; y += gridSize) {
+            context.moveTo(0, y);
+            context.lineTo(canvasWidth, y);
+        }
+
+        context.stroke();
+        context.restore();
+    }
+
     public override start(): void {
         ////
         this.context.imageSmoothingEnabled = true;
@@ -69,7 +96,7 @@ export class RendererPlugin extends Plugin {
         this.context.fillStyle ="rgb(85, 106, 86)";
         // this.context.clearRect(0, 0, 1920, 1080);
         this.context.fillRect(0, 0, 1920, 1080);
-        this.drawDotGrid(this.context, 10, 0.175, "rgb(43,43,44)");
+        this.drawGrid(this.context, 10, "rgb(43,43,44)");
         
         (this.gameWorld.getComponents(TextRendererC) as RendererC[])
         .concat(this.gameWorld.getComponents(ColliderRendererC) as RendererC[])

@@ -1,4 +1,4 @@
-import { Component } from "../../Component";
+import { Component } from "../../Core/Component";
 
 export abstract class RendererC extends Component {
     public zindex: number;

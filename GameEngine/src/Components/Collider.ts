@@ -1,6 +1,15 @@
-import { Component } from "../Component";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { EventArgs, GameEvent } from "../Core/GameEvent";
+import { GameObject } from "../Core/GameObject";
 import { Vector } from "../Helpers/Vector";
+
+export class CollisionEventArgs extends EventArgs{
+    public collider: ColliderC;
+    constructor(collider: ColliderC) {
+        super();
+        this.collider = collider;
+    }
+}
 
 export class ColliderC extends Component {
     public offset: Vector = Vector.zero();
@@ -10,6 +19,9 @@ export class ColliderC extends Component {
     // public layer: number;
     public avoidObjectes: WeakSet<GameObject>;
     public collisions: Set<ColliderC> = new Set<ColliderC>();
+    public onCollisionEnterEvent: GameEvent = new GameEvent(); 
+    public onCollisionExitEvent: GameEvent = new GameEvent(); 
+
 
     constructor(radius: number = 1, isStatic: boolean = true, ...avoidObjectes: GameObject[]){
         super();
@@ -29,4 +41,14 @@ export class ColliderC extends Component {
         .magnitude() <= this.radius+other.radius )
         && !this.avoidObjectes.has(other.getGameObject()) && !other.avoidObjectes.has(this.getGameObject());
     }
-} 
+
+    public onCollisionEnter(other: ColliderC): void{
+        this.onCollisionEnterEvent.addInvokeArgs(new CollisionEventArgs(other));
+        this.onCollisionEnterEvent.invoke();
+    }
+
+    public onCollisionExit(other: ColliderC): void{
+        this.onCollisionExitEvent.addInvokeArgs(new CollisionEventArgs(other));
+        this.onCollisionExitEvent.invoke();
+    }
+}
