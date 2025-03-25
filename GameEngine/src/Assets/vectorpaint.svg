@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:se="http://svg-edit.googlecode.com"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="10" height="10">
+    <title>my vector image</title>                                    
+    <g class="currentLayer" style="">
+        <title>Layer 1</title>
+        <path fill="#4e5646" fill-opacity="1" stroke="#2b2b2c" stroke-opacity="1"
+            stroke-width="0.175" stroke-dasharray="none" stroke-linejoin="round"
+            stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1"
+            marker-start="" marker-mid="" marker-end="" id="svg_14"
+            d="M5.00808,3.84752C5.08686,3.86272 5.57475,3.08455 6.14516,3.83217C6.71557,4.57979 7.04007,3.66067 7.27369,4.26339C7.50731,4.8661 6.76476,5.24383 6.76102,5.27672C6.75728,5.30961 7.57145,5.56612 7.49768,5.97342C7.4239,6.38073 6.32929,6.09748 6.23695,6.16027C6.1446,6.22306 6.16424,6.89365 5.65334,6.9975C5.14244,7.10135 5.31826,5.99783 4.30679,6.60321C3.29532,7.20859 3.89774,5.50243 3.90503,5.49258C3.91232,5.48273 2.50314,5.45767 2.68137,5.0405C2.85959,4.62334 3.58053,4.48629 3.58839,4.41468C3.59625,4.34307 3.39096,3.61478 3.91967,3.4984C4.44838,3.38203 4.9293,3.83232 5.00808,3.84752z"
+            style="color: rgb(0, 0, 0);" class="" />
+    </g>
+</svg>
