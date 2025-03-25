@@ -8,10 +8,24 @@
     <script src="./GameEngine/dist/bundle.js" defer></script> 
 </head>
 <body>
-    <canvas id="gameCanvas" width="1920" height="1080"></canvas>
+    <canvas id="gameCanvas"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const context = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            context.imageSmoothingEnabled = true;
+            context.strokeStyle = "rgb(43,43,44)";
+            context.lineWidth = 0.175;
+            context.lineJoin = "round";
+            context.shadowColor =  'rgba(0, 0, 0, 0.75)';
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
     </script>
 </body>
 </html>
