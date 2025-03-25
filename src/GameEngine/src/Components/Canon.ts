@@ -1,5 +1,5 @@
-import { Component } from "../Component";
-import { GameObject } from "../GameObject";
+import { Component } from "../Core/Component";
+import { GameObject } from "../Core/GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { GMath } from "../Helpers/Math";
 import { Vector } from "../Helpers/Vector";
@@ -36,7 +36,7 @@ export class CanonC extends StandaloneComponent {
         return totalTime-this.lastShootTime;
     }
 
-    override fixedUpdate(delta: number): void {
+    override update(delta: number): void {
         let angle=this.direction.toRad();
         let targetAngle=this.targetDirection.toRad();
         angle += 9*delta*GMath.deltaAngle(angle, targetAngle);

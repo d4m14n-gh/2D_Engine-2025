@@ -1,7 +1,7 @@
 import { rgb } from "../../Helpers/Color";
-import { Component } from "../../Component";
+import { Component } from "../../Core/Component";
 import { RendererPlugin } from "../../Plugins/Renderer";
-import { GameObject } from "../../GameObject";
+import { GameObject } from "../../Core/GameObject";
 import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { RendererC } from "./Renderer";
