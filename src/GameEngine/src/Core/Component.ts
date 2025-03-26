@@ -1,5 +1,5 @@
 import { RigidBodyC } from "../Components/RigidBody";
-import { EventArgs, EventSubsKey, Subscriber } from "./GameEvent";
+import { EventArgs, Subscriber } from "./GameEvent";
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
 import { Transform } from "../Helpers/Transform";
@@ -9,21 +9,14 @@ export abstract class Component implements Subscriber {
     private enabled: boolean = true;
     private gameObject!: GameObject;
     
+    //overideable methods
+    protected start(): void{ }
+    protected event(args: EventArgs, alias?: string): void{ }
+
     
-    protected onSpawn(): void{
-        
-    }
-    protected onDestroy(): void{
-        
-    }
-    onEvent(key: EventSubsKey, args: EventArgs): void {
-        console.log("Event received", args);
-    }
-
     public getGameWorld(): GameWorld{
-        return this.gameObject!.getGameWorld();
+        return this.gameObject.getGameWorld();
     }
-
     public hasComponent<T extends Component>(classC: new (...args: any[]) => T): boolean{
         return this.gameObject.hasComponent(classC);
     }
@@ -34,11 +27,15 @@ export abstract class Component implements Subscriber {
         return this.gameObject.getAllComponents();
     }
 
+
     public getTransform(): Transform{
         return this.gameObject.getTransform();
     }
     public getGameObject(): GameObject{
         return this.gameObject;
+    }
+    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
+        return this.getGameWorld().getPlugin(plugin);
     }
     public isEnabled(): boolean{
         return this.gameObject.enabled&&this.enabled;

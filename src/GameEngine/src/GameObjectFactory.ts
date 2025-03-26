@@ -22,12 +22,12 @@ import { TracesRendererC } from "./Components/Renderers/TracesRenderer";
 export class GameObjectFactory {
     public static polygonGO(radius: number = 2, n: number = 3, ...components: Component[]): GameObject {
         let polygonGO: GameObject = new GameObject(
-            new RigidBodyC(0.1),
+            new RigidBodyC(0.1, 0.01),
             new PolygonRendererC(radius, n, 0, rgb.randomColor2().toArgb(0.75)),
             new BarRendererC(0.1),
             new ColliderC(GMath.getColliderRadius(n, radius)),
             new ColliderRendererC(),
-            new HealthC(15*n),
+            new HealthC(25*n),
             new AnimationC(),
             ...components
         );
@@ -43,9 +43,9 @@ export class GameObjectFactory {
             new PolygonRendererC(radius, 8, zindex),
             new BarRendererC(zindex+0.1),
             new ChasisRendererC(zindex-0.2),
-            new ColliderRendererC(),
             new RigidBodyC(30, 0.01),
             new ColliderC(radius, false),
+            new ColliderRendererC(zindex-0.15),
             new HealthC(1500),
             new AnimationC(),
             new TracesRendererC(-21.37),
@@ -62,7 +62,7 @@ export class GameObjectFactory {
     public static bulletGO(owner: GameObject, hp=30, radius: number = 0.65, lifeTime: number=1, zindex=-1, ...components: Component[]): GameObject {
         let bulletGO: GameObject = new GameObject(
             new RigidBodyC(0.05 ,0.0),
-            new PolygonRendererC(radius, 10, zindex, ConfigPlugin.get("bulletColor").clone()),
+            new PolygonRendererC(radius, 10, zindex, new rgb(173, 87, 87)),
             new ColliderC(radius, false),
             new ColliderRendererC(),
             new HealthC(hp),
@@ -77,20 +77,20 @@ export class GameObjectFactory {
         return bulletGO;
     }
 
-    public static playerGO(radius: number = ConfigPlugin.get("playerSize")??2.5, zindex = 5, ...components: Component[]): GameObject {
+    public static playerGO(radius: number = 2.5, zindex = 5, ...components: Component[]): GameObject {
         let playerGO: GameObject = new GameObject(
             // new ImageRendererC(undefined, new Vector(1.3, 0.3), "GameEngine/src/Assets/vectorpaint2.svg" , zindex-0.2),
             new ChasisRendererC(zindex-0.2),
-            new PolygonRendererC(radius, 10, zindex, ConfigPlugin.get("playerColor").clone()),
+            new PolygonRendererC(radius, 10, zindex, new rgb(80, 37, 36)),
             new TextRendererC("Player", true, zindex+0.1),
-            new ColliderRendererC(),
+            new ColliderRendererC(zindex-0.15),
             new BarRendererC(zindex+0.1),
             new CanonRendererC(zindex-0.1),
             new RigidBodyC(30, 0.05),
             new ColliderC(radius, false),
             new HealthC(1000),
             new AnimationC(),
-            new CanonC(5, 1.75, 44),
+            new CanonC(6, 1.55, 44),
             new TracesRendererC(-21.37),
             ...components
         );

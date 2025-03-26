@@ -1,3 +1,4 @@
+import { GameWorld } from "../../Core/GameWorld";
 import { rgb } from "../../Helpers/Color";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { ConfigPlugin } from "../../Plugins/Config";
@@ -10,16 +11,15 @@ export class ColliderRendererC extends RendererC {
     private dynamicColor: rgb = new rgb(57, 127, 31, 0.125);
     private disabledColor: rgb = new rgb(36, 24, 36, 0.125);
 
-    constructor(){
+    constructor(zindex=-1){
         super();
-        this.zindex = -1;
-        this.enable(ConfigPlugin.get("displayColliders")??false);
+        this.zindex = zindex;
     }
-
+    
     public getColor(): rgb{
         let color: rgb = this.dynamicColor; 
         let collider: ColliderC = this.getComponent(ColliderC);
-        if (!collider.isEnabled)
+        if (!collider.isEnabled())
             color = this.disabledColor;
         else if (collider.isActive)
             color = this.activeColor;
@@ -29,6 +29,9 @@ export class ColliderRendererC extends RendererC {
     }
     
     public render(context: CanvasRenderingContext2D): void {
+        let display = this.getPlugin(ConfigPlugin)?.get("displayColliders")??false;
+        if(!display)
+            return;
         const collider: ColliderC = this.getComponent(ColliderC);
         const offset = collider.offset;
         const radius = collider.radius+0.25;

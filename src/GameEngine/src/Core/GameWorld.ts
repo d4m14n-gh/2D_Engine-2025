@@ -2,12 +2,18 @@ import { Component } from "./Component";
 import { GameObject } from "../Core/GameObject";
 import { ProfilerPlugin } from "../Plugins/Profiler";
 import { Plugin } from "./Plugin";
+import { GameEvent } from "./GameEvent";
 
 export class GameWorld {
+    private startTime: number=0;
+    private prevWorldTime: number=0;
+    private worldTime: number=0;
+    private tickCount: number = 0;
+
     private gameObjects: Set<GameObject> = new Set<GameObject>();
     private plugins: Map<string, Plugin> = new Map<string, Plugin>();
-    private tickCount: number = 0;
-    // private toStart: Array<WeakRef<Component>> = [];
+    private events: Array<WeakRef<GameEvent>> = [];
+    private componentsToStart: Array<WeakRef<Component>> = [];
     
     constructor(...plugins: Plugin[]){
         for(let plugin of plugins){
@@ -18,14 +24,10 @@ export class GameWorld {
             plugin.gameWorld = this;
             this.plugins.set(name, plugin);
         }
-
     }
-
+    //plugins
     public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
         const name = plugin.name;
-        // if (!this.plugins.has(name))
-            // throw new Error(`Plugin ${name} does'not exist in the game object`);
-        
         return this.plugins.get(name) as T;
     }
     public hasPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): boolean{
@@ -35,21 +37,23 @@ export class GameWorld {
 
 
     //game objects
+    public isSpawned(gameObject: GameObject): boolean{
+        return this.gameObjects.has(gameObject);
+    }
     public spawn(gameObject: GameObject): GameObject{
         if (this.gameObjects.has(gameObject))
             throw new Error(`GameObject ${gameObject.name} already exists in the game world`);
 
-        // gameObject.getAllComponents().forEach(comp => this.toStart.push(new WeakRef(comp)));
         (gameObject as any).gameWorld = this;
         this.gameObjects.add(gameObject);
-        gameObject.getAllComponents().forEach(cmp => (cmp as any).onSpawn());
+
+        gameObject.getAllComponents().forEach(comp => this.componentsToStart.push(new WeakRef(comp)));
         return gameObject;
     }
     public destroy(gameObject: GameObject): void{
         if (!this.gameObjects.has(gameObject))
             throw new Error(`GameObject ${gameObject.name} does'not exist in the game world`);
         
-        gameObject.getAllComponents().forEach(cmp => (cmp as any).onDestroy());
         gameObject.enabled=false;
         this.gameObjects.delete(gameObject);
     }
@@ -63,55 +67,79 @@ export class GameWorld {
         .filter(go => go.hasComponent(classC)&&(go.getComponent(classC).isEnabled()||!onlyEnabled))
         .map(go => go.getComponent(classC));
     }
-    //not optimalized
     public getAllComponents(onlyEnabled: boolean=true): Component[]{
+        //to do optimalization
+        //not optimalized
         return Array.from(this.getAllGameObjects(onlyEnabled)).flatMap(go => go.getAllComponents());
     }
+    //events
+    public registerEvent(event: GameEvent): void{
+        this.events.push(new WeakRef(event));
+    }
+    //time
+    public getWorldTime(): number {
+        return this.worldTime/1e3;
+    }
 
 
 
-    //main flow control
-    private startTime!: number;
-    private prevTotal: number=0;
-    private totalDelta: number=0;
-    public getTotal(): number {return this.totalDelta/1e3}
-   
+    //flow control
     public tick(): void {
-        let delta = 0
-        const fixedDelta: number = 10;
-        if (this.tickCount == 0) {
-            setInterval(() => {this.worldFixedUpdate(fixedDelta/1e3) }, fixedDelta);
-            this.startTime = performance.now();
-            this.WorldStart();
-
-            this.plugins.forEach(plugin => (plugin as any).start());
-        }
-        else{
-            this.totalDelta = performance.now() - this.startTime;
-            delta = this.totalDelta - this.prevTotal;
-            this.prevTotal = this.totalDelta;
-            this.worldUpdate(delta / 1e3);
-
-            this.plugins.forEach(plugin => {
-                let start = performance.now(); 
-                (plugin as any).update(delta/1e3);
-                this.getPlugin(ProfilerPlugin).addRecord(plugin.constructor.name, performance.now()-start);
-            });
-        }
         this.tickCount++;
+        if (this.tickCount == 1) 
+            this.startWorld();
+        else
+            this.updateWorld();
+
+        this.startComponents();
+        this.invokeEvents();
     }
-    
-    
-    private WorldStart(): void {
+
+
+    private startComponents(): void{
+        for (let componentRef of this.componentsToStart) {
+            const component = componentRef.deref();
+            if (component)
+                (component as any).start();
+        }
+        this.componentsToStart = [];
+    }
+    private startWorld(): void{
+        const fixedDelta: number = 10;
+        this.startTime = performance.now();
         this.Start();
+        this.plugins.forEach(plugin => (plugin as any).start());
+        // setInterval(() => 
+        //     {
+        //         this.FixedUpdate(fixedDelta/1e3); 
+        //         this.plugins.forEach(plugin => (plugin as any).fixedUpdate(fixedDelta/1e3));
+        //     }, 
+        //     fixedDelta
+        // );
     }
-    private worldUpdate(delta: number): void { 
-        this.Update(delta);        
+    private updateWorld(): void{
+        this.worldTime = performance.now() - this.startTime;
+        let delta = this.worldTime - this.prevWorldTime;
+        this.prevWorldTime = this.worldTime;
+
+        this.Update(delta / 1e3);
+        this.plugins.forEach(plugin => {
+            let start = performance.now(); 
+            (plugin as any).update(delta/1e3);
+            (plugin as any).fixedUpdate(delta/1e3);
+            this.getPlugin(ProfilerPlugin).addRecord(plugin.constructor.name, performance.now()-start);
+        });
     }
-    private worldFixedUpdate(delta: number): void {
-        this.FixedUpdate(delta);
-        this.plugins.forEach(plugin => (plugin as any).fixedUpdate(delta));
+    private invokeEvents(): void{
+        let start = performance.now(); 
+        for (const eventRef of this.events) {
+            const event = eventRef.deref();
+            if (event)
+                (event as any).invoke();
+        }
+        this.getPlugin(ProfilerPlugin).addRecord("Events", performance.now()-start);
     }
+
     
     //overridable methods
     protected Start(): void { }

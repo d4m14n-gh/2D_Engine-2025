@@ -41,20 +41,20 @@ export class TracesRendererC extends RendererC {
                 {
                     position: currentPosition,
                     rotation: currentRotation,
-                    startTime: this.getGameWorld().getTotal(),
+                    startTime: this.getGameWorld().getWorldTime(),
                 }
             );
             this.lastPosition = this.getTransform().position.clone();//.position.add(new Vector(1, 2)); 
         }
 
         ////////////////////
-        while(this.traces.length>0&&this.traces[0].startTime+this.duration<this.getGameWorld().getTotal())
+        while(this.traces.length>0&&this.traces[0].startTime+this.duration<this.getGameWorld().getWorldTime())
             this.traces.shift();
         for (const trace of this.traces) {
             const cx: number = trace.position.x-cmx;
             const cy: number = trace.position.y-cmy;
             
-            const lifeTime: number = 1-(this.getGameWorld().getTotal()-trace.startTime)/this.duration;
+            const lifeTime: number = 1-(this.getGameWorld().getWorldTime()-trace.startTime)/this.duration;
 
             context.save();
             context.translate(size[0]/2, size[1]/2);

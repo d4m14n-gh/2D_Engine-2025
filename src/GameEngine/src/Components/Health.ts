@@ -5,7 +5,7 @@ import { ColliderC, CollisionEventArgs } from "./Collider";
 import { RigidBodyC } from "./RigidBody";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 import { GMath } from "../Helpers/Math";
-import { EventArgs, EventSubsKey, GameEvent, Subscriber } from "../Core/GameEvent";
+import { EventArgs, GameEvent} from "../Core/GameEvent";
 
 export class DamageEventArgs extends EventArgs{
     public damage: number;
@@ -17,7 +17,7 @@ export class DamageEventArgs extends EventArgs{
     }
 }
 
-export class HealthC extends Component implements Subscriber{
+export class HealthC extends Component{
     private health: number;
     public maxHealth: number;
     public damageEvent: GameEvent; 
@@ -29,33 +29,25 @@ export class HealthC extends Component implements Subscriber{
         this.damageEvent = new GameEvent();
     }
 
-    private collisionEnterKey!: EventSubsKey;
-    protected onSpawn(): void {
-        this.collisionEnterKey = this.getComponent(ColliderC).onCollisionEnterEvent.subscribe(this);
+    protected override start(): void {
+        this.damageEvent.register(this.getGameWorld());
+        this.getComponent(ColliderC).onCollisionEnterEvent.subscribe(this, "onCollisionEnter");
     }
-    onEvent(key: EventSubsKey, args: EventArgs): void {
-        if (key.equals(this.collisionEnterKey)){
-            let cargs = args as CollisionEventArgs;
-            this.onCollisionEnter(cargs.collider);
-        }
+    protected override event(args: EventArgs): void {
+        let cargs = args as CollisionEventArgs;
+        this.onCollisionEnter(cargs.collider);
     }
 
     onCollisionEnter(other: ColliderC): void { 
         let otherGO = other.getGameObject();       
-        
-        
         let otherRigidbody = otherGO.getComponent(RigidBodyC);
         let thisRigidbody = this.getComponent(RigidBodyC);
-
         let op = thisRigidbody.mass/(otherRigidbody.mass+thisRigidbody.mass);
         if(thisRigidbody.mass<otherRigidbody.mass){
-            otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)); //toUnit().times(v2);
-            thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1-op)); //toUnit().times(v2);
-            
-          
+            otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)).times(0.5); //toUnit().times(v2);
+            thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1-op).times(0.5)); //toUnit().times(v2);
         }
-        otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/10);
-        
+        otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/15);
         try{
             const other = otherGO.getComponent(HealthC);
             const damageValue = Math.min(other.health, this.health);
@@ -65,10 +57,6 @@ export class HealthC extends Component implements Subscriber{
             other.onDamage(damageValue, this);            
         }
         catch {}
-        
-    }
-
-    onCollisionExit(other: ColliderC): void {
     }
 
     public getHealth(): number {
@@ -80,12 +68,13 @@ export class HealthC extends Component implements Subscriber{
 
     public onDamage(value: number, participant: HealthC): void {
         this.health -= value;
-        this.damageEvent.addInvokeArgs(new DamageEventArgs(value, participant));
-        this.damageEvent.invoke();
+        this.damageEvent.emit(new DamageEventArgs(value, participant));
        
         if(this.health==0){
-            this.getComponent(ColliderC).enable(false);
+            this.getComponent(ColliderC)?.enable(false);
             this.getComponent(RigidBodyC).drag=0.025;
+            this.getComponent(AnimationC)?.startShrink();
+            
             if(participant.hasComponent(PolygonRendererC)){
                 let myColor = this.getComponent(PolygonRendererC).color;
                 let newColor = myColor.blend(
@@ -95,14 +84,8 @@ export class HealthC extends Component implements Subscriber{
                 this.getComponent(PolygonRendererC).color = newColor;
                 participant.getComponent(PolygonRendererC).color = newColor;
             }
-            try{
-                this.getComponent(AnimationC).startShrink();
-            }catch {}
         }
-        else{
-            try{
-                this.getComponent(AnimationC).startZoom();
-            }catch {}
-        }
+        else
+            this.getComponent(AnimationC)?.startZoom();
     }
 } 

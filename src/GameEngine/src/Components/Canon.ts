@@ -32,7 +32,7 @@ export class CanonC extends StandaloneComponent {
     }
 
     public getShotDelta(): number{
-        let totalTime = this.getGameWorld().getTotal();
+        let totalTime = this.getGameWorld().getWorldTime();
         return totalTime-this.lastShootTime;
     }
 
@@ -79,7 +79,7 @@ export class CanonC extends StandaloneComponent {
             // rigidBody.velocity = rigidBody.velocity .add(this.getComponent(RigidBodyC).velocity.times(0.25)); 
  
             bullet.spawn(this.getGameWorld());
-            this.lastShootTime=this.getGameWorld().getTotal();
+            this.lastShootTime=this.getGameWorld().getWorldTime();
         }
     }    
 } 
