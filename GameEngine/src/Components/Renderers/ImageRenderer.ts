@@ -16,10 +16,6 @@ export class ImageRendererC extends RendererC {
         this.image.src = src;
     }
 
-    public onSpawn(): void {
-        // this.getComponent(PolygonRendererC).enable(false);
-    }
-
     public render(context: CanvasRenderingContext2D): void {
      
         const size = [context.canvas.width, context.canvas.height];

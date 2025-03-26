@@ -21,7 +21,7 @@ export class SchedulerPlugin extends Plugin {
     }
 
     public override update(delta: number): void {
-        const totalDelta = this.gameWorld.getTotal();
+        const totalDelta = this.gameWorld.getWorldTime();
         if(this.schedule.length!=0)
         while(this.schedule.length!=0&&this.schedule[this.schedule.length-1].totalTime<=totalDelta){
             let last = this.schedule.pop()!;

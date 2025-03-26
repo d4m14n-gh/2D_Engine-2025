@@ -4,7 +4,6 @@ import { Transform } from "../Helpers/Transform";
 
 export class GameObject {
     private transform: Transform = new Transform();
-    // private id: number = 0;
     private components: Map<string, Component> = new Map<string, Component>();
     
     public enabled: boolean = true;
@@ -26,9 +25,6 @@ export class GameObject {
     }
     public getComponent<T extends Component>(classC: new (...args: any[]) => T): T{
         const type=classC.name;
-        //if (!this.components.has(type))
-            // throw new Error(`Component doesn't ${type} exists in the game object`);
-
         return this.components.get(type) as T;
     }
     public getAllComponents(): Component[]{

@@ -17,16 +17,16 @@ export class MyWorld extends GameWorld {
         console.log("Hello, MyWorld!");
         
         
-        const r = 250;
+        const r = 300;
         for(let i = 0; i < 350; i++){
-            const radius = 4+GMath.symRand(0.25);
+            const radius = 3+GMath.symRand(0.25);
             let sqr = GameObjectFactory.polygonGO(radius/2, 4)
             sqr.getTransform().position = Vector.randomPos(r);
             sqr.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(sqr);
         }
         for(let i = 0; i < 150; i++){
-            const radius = 4+GMath.symRand(0.25);
+            const radius = 3.5+GMath.symRand(0.25);
             let triangle = GameObjectFactory.polygonGO(radius/2, 3)
             triangle.getTransform().position = Vector.randomPos(r);
             triangle.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
@@ -39,7 +39,6 @@ export class MyWorld extends GameWorld {
             polygon.getComponent(RigidBodyC).angularVelocity = Math.random()*2-1;
             this.spawn(polygon);
         }
-        
         for(let i = 0; i < 25; i++){
             const radius = 3+GMath.symRand(0.25);
             let polygon = GameObjectFactory.polygonGO(
@@ -56,9 +55,9 @@ export class MyWorld extends GameWorld {
         
         
         
-        for(let i = 0; i < 5; i++){
+        for(let i = 0; i < 25; i++){
             let follower = GameObjectFactory.enemyGO(2.5, "Enemy nr."+i, 4,
-                new CanonC(),
+                new CanonC(undefined, undefined, 10+Math.random()*5),
                 new CanonRendererC(4-0.1),
                 new NpcC()
             );

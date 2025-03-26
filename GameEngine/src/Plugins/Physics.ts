@@ -4,12 +4,12 @@ import { Plugin } from "../Core/Plugin";
 export class PhysicsPlugin extends Plugin {
    
     public override update(delta: number): void {
-        const totalDelta: number = this.gameWorld.getTotal();
+        const totalDelta: number = this.gameWorld.getWorldTime();
         this.gameWorld.getComponents(RigidBodyC).forEach(rigidBody => rigidBody.update(delta));
     }
    
     public override fixedUpdate(delta: number): void {
-        const totalDelta: number = this.gameWorld.getTotal();
+        const totalDelta: number = this.gameWorld.getWorldTime();
         this.gameWorld.getComponents(RigidBodyC).forEach(rigidBody => rigidBody.fixedUpdate(delta));
     }
 }

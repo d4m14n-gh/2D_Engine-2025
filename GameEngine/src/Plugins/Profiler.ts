@@ -22,9 +22,6 @@ export class ProfilerPlugin extends Plugin {
             let len = usage.length;
             if (len >= this.size){
                 usage.shift();
-                // for(let i=0;i<len-1;i++)
-                    // usage[i]=usage[i+1];
-                // usage[len-1]=value;
                 usage.push(value);
             }
             else{
@@ -44,8 +41,7 @@ export class ProfilerPlugin extends Plugin {
             mean/=len;    
 
             i++;
-            this.getPlugin(RendererPlugin).hud.setLabel(key, new Vector(40, i*40), `${key}: `+(mean).toFixed(2).toString());
-                
+            this.getPlugin(RendererPlugin).hud.setLabel(key, new Vector(40, i*40), `${key}: `+(mean).toFixed(2).toString()+"ms");
         }
     }
     

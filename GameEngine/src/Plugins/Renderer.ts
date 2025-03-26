@@ -28,7 +28,7 @@ export class RendererPlugin extends Plugin {
         const centerY = context.canvas.height / 2;
         const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
         const gradient = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
-        gradient.addColorStop(0.1, 'rgba(0, 0, 0, 0)');
+        gradient.addColorStop(0.25, 'rgba(0, 0, 0, 0)');
         gradient.addColorStop(1, color);
         context.fillStyle = gradient;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -98,6 +98,7 @@ export class RendererPlugin extends Plugin {
         this.context.fillStyle ="rgb(85, 106, 86)";
         this.context.fillRect(0, 0, width, height);
         this.drawGrid(this.context, 10, "rgb(43,43,44)");
+        // this.drawDotGrid(this.context, 10, 0.175, "rgb(43,43,44)");
         
         (this.gameWorld.getComponents(TextRendererC) as RendererC[])
         .concat(this.gameWorld.getComponents(ColliderRendererC) as RendererC[])

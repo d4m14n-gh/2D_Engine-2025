@@ -31,6 +31,11 @@ export class ColliderC extends Component {
         avoidObjectes.forEach(ao => this.avoidObjectes.add(ao))
     }
 
+    protected override start(): void {
+        this.onCollisionEnterEvent.register(this.getGameWorld());
+        this.onCollisionExitEvent.register(this.getGameWorld());
+    }
+
     public getCenter(): Vector {
         return this.getTransform().position.add(this.offset);
     }
@@ -43,12 +48,10 @@ export class ColliderC extends Component {
     }
 
     public onCollisionEnter(other: ColliderC): void{
-        this.onCollisionEnterEvent.addInvokeArgs(new CollisionEventArgs(other));
-        this.onCollisionEnterEvent.invoke();
+        this.onCollisionEnterEvent.emit(new CollisionEventArgs(other));
     }
 
     public onCollisionExit(other: ColliderC): void{
-        this.onCollisionExitEvent.addInvokeArgs(new CollisionEventArgs(other));
-        this.onCollisionExitEvent.invoke();
+        this.onCollisionExitEvent.emit(new CollisionEventArgs(other));
     }
 }

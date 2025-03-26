@@ -6,16 +6,13 @@ import { GameObjectFactory } from "../GameObjectFactory";
 import { rgb } from "../Helpers/Color";
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
-import { KeyboardPlugin } from "./Keyboard";
+import { KeyboardEventArgs, KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
+import { ConfigPlugin } from "./Config";
 
 export class PlayerPlugin extends Plugin {
     public player: GameObject = GameObjectFactory.playerGO();
     
-    public override start(): void {
-        this.player.spawn(this.gameWorld);
-        this.player.name="player";
-    }
     public getPlayerPosition(): Vector {
         return this.player.getTransform().position.clone();
     }
@@ -23,24 +20,40 @@ export class PlayerPlugin extends Plugin {
         return this.player.getComponent(PolygonRendererC).color.clone();
     }
 
-    override update(delta: number): void {
+
+    public override start(): void {
+        this.player.spawn(this.gameWorld);
+        this.player.name="player";
+        this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "KeyDownEvent");
+    }
+
+    public override event(args: any, alias?: string): void {
+      let keyArgs = args as KeyboardEventArgs;
+      if (keyArgs.key === "r") {
+        if(this.player && this.gameWorld.isSpawned(this.player))  
+          this.gameWorld.destroy(this.player);
+        this.player = GameObjectFactory.playerGO();
+        this.player.spawn(this.gameWorld);
+      }
+      else if (keyArgs.key === "c") {
+        let displayColliders = this.getPlugin(ConfigPlugin)?.get("displayColliders")??false;
+        if (displayColliders !== undefined) 
+          this.getPlugin(ConfigPlugin)?.set("displayColliders", !displayColliders);
+      }
+    }
+    
+    protected override update(delta: number): void {
+      if (!this.player.enabled) 
+        return;
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
       let gun = this.player.getComponent(CanonC);
       
-      if (keyboard.isKeyDown("r")) {
-        try{
-          this.gameWorld.destroy(this.player);
-        } catch{}
-        this.player = GameObjectFactory.playerGO();
-        this.player.spawn(this.gameWorld);
-      }
-      if (!this.player.enabled) 
-        return;
+
 
       gun.targetDirection = mouse.getWorldPosition().sub(this.player.getTransform().position);
       gun.range = mouse.getWorldPosition().sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
-      if (keyboard.isKeyDown("e")||mouse.isKeyDown(0)) 
+      if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
         gun.shoot();
     }
 
@@ -59,14 +72,14 @@ export class PlayerPlugin extends Plugin {
       let rigidBody = this.player.getComponent(RigidBodyC);
       let velocity = rigidBody.velocity;
       // Przyspieszanie
-      if (keyboard.isKeyDown("shift")) 
+      if (keyboard.isPressed("shift")) 
         a = 250;
-      if (keyboard.isKeyDown("w")) {
+      if (keyboard.isPressed("w")) {
         rigidBody.acceleration = direction.toUnit().times(a);
-        if (keyboard.isKeyDown("s"))
+        if (keyboard.isPressed("s"))
           rigidBody.acceleration = direction.toUnit().times(-g);
       }
-      else if (keyboard.isKeyDown("s"))
+      else if (keyboard.isPressed("s"))
         rigidBody.acceleration = direction.toUnit().times(g);
       else
         rigidBody.acceleration = Vector.zero();
@@ -75,9 +88,9 @@ export class PlayerPlugin extends Plugin {
 
       if (velocity.magnitude() > vmax)
         velocity.setLength(vmax);
-      if (keyboard.isKeyDown("a"))
+      if (keyboard.isPressed("a"))
         rigidBody.angularVelocity = turnSpeed;
-      else if (keyboard.isKeyDown("d"))
+      else if (keyboard.isPressed("d"))
         rigidBody.angularVelocity = -turnSpeed;
       else 
         rigidBody.angularVelocity = 0;
