@@ -30,6 +30,8 @@ export class PlayerPlugin extends Plugin {
     }
 
     public override event(args: any, alias?: string): void {
+      if (!this.player.enabled || !this.enabled) 
+        return;
       let keyArgs = args as KeyboardEventArgs;
       if (keyArgs.key === "r") {
         if(this.player && this.gameWorld.isSpawned(this.player))  
@@ -45,7 +47,7 @@ export class PlayerPlugin extends Plugin {
     }
     
     protected override update(delta: number): void {
-      if (!this.player.enabled) 
+      if (!this.player.enabled || !this.enabled) 
         return;
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
@@ -60,8 +62,9 @@ export class PlayerPlugin extends Plugin {
     }
 
     override fixedUpdate(delta: number): void {
-      if (!this.player.enabled) 
+      if (!this.player.enabled || !this.enabled) 
         return;
+      
       let a = 150;
       const g = -55;
       const vmax = 50.0;

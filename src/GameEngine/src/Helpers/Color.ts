@@ -23,7 +23,7 @@ export class rgb{
       return new rgb(this.r, this.g, this.b, alpha);
     }
     public blend(color: rgb, alpha: number): rgb{
-      return new rgb(this.r*(1-alpha)+color.r*alpha, this.g*(1-alpha)+color.g*alpha, this.b*(1-alpha)+color.b*alpha);
+      return new rgb(this.r*(1-alpha)+color.r*alpha, this.g*(1-alpha)+color.g*alpha, this.b*(1-alpha)+color.b*alpha, this.a*(1-alpha)+color.a*alpha);
     }
     public static randomColor(): rgb{
       return new rgb(Math.random()*255, Math.random()*255, Math.random()*255);

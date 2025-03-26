@@ -21,7 +21,7 @@ export class GameWorld {
             if (this.plugins.has(name))
                 throw new Error(`Plugin ${name} already exists in the game object`);
                     
-            plugin.gameWorld = this;
+            (plugin as any).gameWorld = this;
             this.plugins.set(name, plugin);
         }
     }
