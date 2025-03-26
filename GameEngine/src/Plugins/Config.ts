@@ -11,10 +11,10 @@ export class ConfigPlugin extends Plugin{
             ["bulletColor", new rgb(56, 57, 60) as any],
             // ["playerColor", new Color(145, 125, 39) as any],
             ["playerColor", new rgb(122, 111, 62) as any],
-            ["playerColor", new rgb(130, 111, 51) as any],
             ["playerColor", new rgb(80, 37, 36) as any],
             ["playerColor", new rgb(59, 94, 76) as any],
             ["playerColor", new rgb(129, 49, 54) as any],
+            ["playerColor", new rgb(130, 111, 51) as any],
         ]
     );
 
