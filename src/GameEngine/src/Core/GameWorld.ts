@@ -12,7 +12,7 @@ export class GameWorld {
 
     private gameObjects: Set<GameObject> = new Set<GameObject>();
     private plugins: Map<string, Plugin> = new Map<string, Plugin>();
-    private events: Array<WeakRef<GameEvent>> = [];
+    private events: Set<WeakRef<GameEvent>> = new Set<WeakRef<GameEvent>>();
     private componentsToStart: Array<WeakRef<Component>> = [];
     
     constructor(...plugins: Plugin[]){
@@ -74,7 +74,7 @@ export class GameWorld {
     }
     //events
     public registerEvent(event: GameEvent): void{
-        this.events.push(new WeakRef(event));
+        this.events.add(new WeakRef(event));
     }
     //time
     public getWorldTime(): number {
@@ -130,11 +130,13 @@ export class GameWorld {
         });
     }
     private invokeEvents(): void{
-        let start = performance.now(); 
+        let start = performance.now();
         for (const eventRef of this.events) {
             const event = eventRef.deref();
             if (event)
                 (event as any).invoke();
+            else
+                this.events.delete(eventRef);
         }
         this.getPlugin(ProfilerPlugin).addRecord("Events", performance.now()-start);
     }
