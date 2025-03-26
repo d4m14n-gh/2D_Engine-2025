@@ -25,6 +25,7 @@ export class PlayerPlugin extends Plugin {
     public override start(): void {
         this.player.spawn(this.gameWorld);
         this.player.name="player";
+        this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
         this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "KeyDownEvent");
     }
 

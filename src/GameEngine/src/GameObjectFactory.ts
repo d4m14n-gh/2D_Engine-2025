@@ -81,7 +81,7 @@ export class GameObjectFactory {
         let playerGO: GameObject = new GameObject(
             // new ImageRendererC(undefined, new Vector(1.3, 0.3), "GameEngine/src/Assets/vectorpaint2.svg" , zindex-0.2),
             new ChasisRendererC(zindex-0.2),
-            new PolygonRendererC(radius, 10, zindex, new rgb(80, 37, 36)),
+            new PolygonRendererC(radius, 10, zindex, new rgb(50, 99, 52)),
             new TextRendererC("Player", true, zindex+0.1),
             new ColliderRendererC(zindex-0.15),
             new BarRendererC(zindex+0.1),
