@@ -17,6 +17,9 @@ import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
 import { Plugin } from "./Core/Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
+import { ServerPlugin } from "./Plugins/Server";
+// import http from 'http';
+// import { Server as SocketIOServer } from 'socket.io';
 
 const pressedKeys = new Set<string>();
 
@@ -33,9 +36,19 @@ function sleep(ms: number) {
 }
 
 export async function main (canvas: HTMLCanvasElement) {
+  // const server = http.createServer((req, res) => {
+  //   res.writeHead(200, { 'Content-Type': 'text/plain' });
+  //   res.end('w\n');
+  // });
+  // server.listen(3000, 'localhost', () => {
+  //   console.log('Server is running on http://localhost:3000');
+  // });
+
+
 
   let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
+  plugins.push(new ServerPlugin());
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));
   plugins.push(new SchedulerPlugin());

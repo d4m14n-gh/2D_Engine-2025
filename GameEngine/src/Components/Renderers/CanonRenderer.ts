@@ -40,7 +40,7 @@ export class CanonRendererC extends RendererC {
         // const offset = this.getComponent(RigidBodyC).velocity.reverse().times(canon.getBulletLifetime());
         // const offset = this.getComponent(RigidBodyC).velocity.add(canon.direction.times(canon.bulletSpeed)).reverse().times(canon.getBulletLifetime()/3);
         // const offset = this.getComponent(RigidBodyC).velocity.times(0.25).add(canon.direction.times(canon.bulletSpeed)).times(canon.getBulletLifetime());
-        const offset = canon.direction.times(canon.bulletSpeed).times(canon.getBulletLifetime());
+        const offset = canon.direction.times(canon.bulletSpeed).times(canon.getBulletLifetime()).add(canon.getGlobalOffset());
         
         context.save();
         
@@ -56,7 +56,8 @@ export class CanonRendererC extends RendererC {
         context.arc(0, 0, r, 0, 2*Math.PI);
         context.closePath();
         context.shadowBlur = 0;
-        context.strokeStyle = color2.toString();
+        context.strokeStyle = rgb.stroke.toString();
+        // color2.toString();
         context.stroke();
         context.strokeRect(-r/2, -r/2, r, r);
 

@@ -23,8 +23,8 @@ export class GameWorld {
 
     public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
         const name = plugin.name;
-        if (!this.plugins.has(name))
-            throw new Error(`Plugin ${name} does'not exist in the game object`);
+        // if (!this.plugins.has(name))
+            // throw new Error(`Plugin ${name} does'not exist in the game object`);
         
         return this.plugins.get(name) as T;
     }
@@ -35,7 +35,7 @@ export class GameWorld {
 
 
     //game objects
-    public spawn(gameObject: GameObject): void{
+    public spawn(gameObject: GameObject): GameObject{
         if (this.gameObjects.has(gameObject))
             throw new Error(`GameObject ${gameObject.name} already exists in the game world`);
 
@@ -43,12 +43,14 @@ export class GameWorld {
         (gameObject as any).gameWorld = this;
         this.gameObjects.add(gameObject);
         gameObject.getAllComponents().forEach(cmp => (cmp as any).onSpawn());
+        return gameObject;
     }
     public destroy(gameObject: GameObject): void{
         if (!this.gameObjects.has(gameObject))
             throw new Error(`GameObject ${gameObject.name} does'not exist in the game world`);
         
         gameObject.getAllComponents().forEach(cmp => (cmp as any).onDestroy());
+        gameObject.enabled=false;
         this.gameObjects.delete(gameObject);
     }
     public getAllGameObjects(onlyEnabled: boolean=true): GameObject[]{

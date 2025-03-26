@@ -47,6 +47,10 @@ export class CanonC extends StandaloneComponent {
         return this.range/this.bulletSpeed;
     }
 
+    public getGlobalOffset(): Vector{
+        return this.direction.toUnit().times(this.offset.x).add(this.direction.cross().times(this.offset.y));
+    }
+
     public shoot(): void{
         if(!this.isEnabled||!this.getGameObject().enabled)
             return;
@@ -68,8 +72,7 @@ export class CanonC extends StandaloneComponent {
 
             collider.avoidObjectes.add(this.getGameObject());
             
-            const offset = this.direction.toUnit().times(this.offset.x).add(this.direction.cross().times(this.offset.y));
-            bullet.getTransform().position = this.getTransform().position.add(offset);
+            bullet.getTransform().position = this.getTransform().position.add(this.getGlobalOffset());
 
             let spread = this.direction.cross().times(Math.random()*2*this.bulletSpraed-this.bulletSpraed);
             rigidBody.velocity = this.direction.toUnit().add(spread).times(this.bulletSpeed);

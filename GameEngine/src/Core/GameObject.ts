@@ -26,8 +26,8 @@ export class GameObject {
     }
     public getComponent<T extends Component>(classC: new (...args: any[]) => T): T{
         const type=classC.name;
-        if (!this.components.has(type))
-            throw new Error(`Component doesn't ${type} exists in the game object`);
+        //if (!this.components.has(type))
+            // throw new Error(`Component doesn't ${type} exists in the game object`);
 
         return this.components.get(type) as T;
     }
@@ -38,8 +38,8 @@ export class GameObject {
     public destroy(): void{
         this.gameWorld.destroy(this);
     }
-    public spawn(gameWorld: GameWorld): void{
-        gameWorld.spawn(this);
+    public spawn(gameWorld: GameWorld): GameObject{
+        return gameWorld.spawn(this);
     }
     public getTransform(): Transform{
         return this.transform;
