@@ -6,6 +6,7 @@ import { Subscriber } from "./GameEvent";
 export abstract class Plugin implements Subscriber {
     public gameWorld!: GameWorld;
     public enabled: boolean = true;
+    public readonly name: string = "Plugin";
 
     //overideable methods
     protected event(args: any, alias?: string): void {}

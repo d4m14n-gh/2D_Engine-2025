@@ -2,6 +2,7 @@ import { rgb as rgb } from "../Helpers/Color";
 import { Plugin } from "../Core/Plugin";
 
 export class ConfigPlugin extends Plugin{
+    public name: string = "ConfigPlugin";
     private readonly config: Map<string, any> = new Map(
         [
             ["bulletSize", 0.75 as any],

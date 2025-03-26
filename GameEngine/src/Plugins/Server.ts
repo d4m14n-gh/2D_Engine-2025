@@ -4,7 +4,8 @@ import { io } from 'socket.io-client';
 
 
 
-export class ServerPlugin extends Plugin {
+export class ClientPlugin extends Plugin {
+    public name: string = "SlientPlugin";
     // override start(): void {
     //   const socket = io('http://localhost:3000/chat');
       

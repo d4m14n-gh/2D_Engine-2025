@@ -6,6 +6,7 @@ export class CameraPlugin extends Plugin {
     public cameraPositon: Vector = new Vector(4, 0);
     public scale: number = 20;
     public targetScale: number = 40;
+    public name: string = "CameraPlugin";
 
     override start(): void {
         let targetCamera = this.getPlugin(PlayerPlugin).getPlayerPosition();

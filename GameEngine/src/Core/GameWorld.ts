@@ -109,13 +109,13 @@ export class GameWorld {
         this.startTime = performance.now();
         this.Start();
         this.plugins.forEach(plugin => (plugin as any).start());
-        // setInterval(() => 
-        //     {
-        //         this.FixedUpdate(fixedDelta/1e3); 
-        //         this.plugins.forEach(plugin => (plugin as any).fixedUpdate(fixedDelta/1e3));
-        //     }, 
-        //     fixedDelta
-        // );
+        setInterval(() => 
+            {
+                this.FixedUpdate(fixedDelta/1e3); 
+                this.plugins.forEach(plugin => (plugin as any).fixedUpdate(fixedDelta/1e3));
+            }, 
+            fixedDelta
+        );
     }
     private updateWorld(): void{
         this.worldTime = performance.now() - this.startTime;
@@ -126,8 +126,7 @@ export class GameWorld {
         this.plugins.forEach(plugin => {
             let start = performance.now(); 
             (plugin as any).update(delta/1e3);
-            (plugin as any).fixedUpdate(delta/1e3);
-            this.getPlugin(ProfilerPlugin).addRecord(plugin.constructor.name, performance.now()-start);
+            this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now()-start);
         });
     }
     private invokeEvents(): void{

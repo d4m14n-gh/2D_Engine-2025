@@ -12,6 +12,7 @@ type record = {
 }
 
 export class SchedulerPlugin extends Plugin {
+    public name: string = "SchedulerPlugin";
     private schedule: record[] = [];
 
     public addInvoke(subscriber: IInvokable, totalTime: number, topic: string){

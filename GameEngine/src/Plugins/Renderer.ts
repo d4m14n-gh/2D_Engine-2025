@@ -12,6 +12,7 @@ import { Vector } from "../Helpers/Vector";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
 export class RendererPlugin extends Plugin {
+    public name: string = "RendererPlugin";
     private readonly context: CanvasRenderingContext2D;
     public hud: Hud = new Hud();
     public renderDistance: number = 150;
