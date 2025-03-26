@@ -10,7 +10,7 @@ import { PlayerPlugin } from "./Player";
 // }
 
 export class CollisionDetectionPlugin extends Plugin {
-    
+    public name: string = "CollisionDetectionPlugin";
     private cellSize: number = 5;
 
     override update(): void {

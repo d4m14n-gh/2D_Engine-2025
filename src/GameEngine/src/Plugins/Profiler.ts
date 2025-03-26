@@ -5,6 +5,7 @@ import { CameraPlugin } from "./Camera";
 import { RendererPlugin } from "./Renderer";
 
 export class ProfilerPlugin extends Plugin {
+    public name: string = "ProfilerPlugin";
     public size: number = 200;
     private readonly usage = new Map<string, Array<number>>();
 

@@ -17,7 +17,7 @@ import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
 import { Plugin } from "./Core/Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
-import { ServerPlugin } from "./Plugins/Server";
+import { ClientPlugin } from "./Plugins/Server";
 // import http from 'http';
 // import { Server as SocketIOServer } from 'socket.io';
 
@@ -48,7 +48,7 @@ export async function main (canvas: HTMLCanvasElement) {
 
   let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
-  plugins.push(new ServerPlugin());
+  plugins.push(new ClientPlugin());
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));
   plugins.push(new SchedulerPlugin());

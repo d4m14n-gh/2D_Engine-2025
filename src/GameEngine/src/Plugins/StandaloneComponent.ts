@@ -2,7 +2,7 @@ import { StandaloneComponent } from "../Components/StandaloneComponent";
 import { Plugin } from "../Core/Plugin";
 
 export class StandaloneComponentPlugin extends Plugin {
-    
+    public name: string = "StandaloneComponentPlugin";
     override update(delta: number): void {
         this.gameWorld.getAllComponents()
         .filter(component => component instanceof StandaloneComponent)

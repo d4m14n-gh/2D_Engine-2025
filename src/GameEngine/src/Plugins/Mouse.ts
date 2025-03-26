@@ -3,6 +3,7 @@ import { Plugin } from "../Core/Plugin";
 import { CameraPlugin } from "./Camera";
 
 export class MousePlugin extends Plugin {
+    public name: string = "MousePlugin";
     private readonly pressedKeys = new Set<number>();
     private readonly canvas: HTMLCanvasElement;
     // private readonly canvasSize: Vector;

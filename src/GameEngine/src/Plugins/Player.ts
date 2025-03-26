@@ -11,6 +11,7 @@ import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
 
 export class PlayerPlugin extends Plugin {
+    public name: string = "PlayerPlugin";
     public player: GameObject = GameObjectFactory.playerGO();
     
     public getPlayerPosition(): Vector {
