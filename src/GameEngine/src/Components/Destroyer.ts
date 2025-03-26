@@ -1,6 +1,8 @@
 import { Component } from "../Core/Component";
 import { IInvokable, SchedulerPlugin } from "../Plugins/Scheduler";
 import { AnimationC } from "./Animation";
+import { ColliderC } from "./Collider";
+import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 
 export class DestroyerC extends Component implements IInvokable {
     
@@ -9,9 +11,8 @@ export class DestroyerC extends Component implements IInvokable {
     }
 
     onInvoke(topic: string): void {
-        try{
-            this.getComponent(AnimationC).startShrink();
-        } catch {}
+        // this.getComponent(ColliderC)?.enable(false);
+        this.getComponent(AnimationC)?.startShrink();
     }
 
     override onSpawn(): void {
