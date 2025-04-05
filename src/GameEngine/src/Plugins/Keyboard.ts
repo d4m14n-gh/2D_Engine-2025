@@ -10,7 +10,7 @@ export class KeyboardEventArgs extends EventArgs {
 }
 
 export class KeyboardPlugin extends Plugin {
-    public name: string = "CameraPlugin";
+    public name: string = "KeyboardPlugin";
     private prevPressedKeys = new Set<string>();
     private readonly pressedKeys = new Set<string>();
     public KeyDownEvent: GameEvent = new GameEvent(); 

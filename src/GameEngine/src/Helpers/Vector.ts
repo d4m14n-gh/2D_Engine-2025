@@ -18,6 +18,9 @@ export class Vector {
     times(a: number) : Vector{
         return new Vector(this.x*a, this.y*a);
     }
+    timesV(other: Vector) : Vector{
+        return new Vector(this.x*other.x, this.y*other.y);
+    }
 
     //other operators 
     distance(other: Vector){

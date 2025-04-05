@@ -1,15 +1,17 @@
 import { Component } from "./Component";
 import { GameWorld } from "../Core/GameWorld";
-import { Subscriber } from "./GameEvent";
+import { EventArgs, ISubscriber } from "./GameEvent";
+import { CommandResult, gameCommand } from "../Helpers/Commands";
+
 
 //WorldComponent = Plugin
-export abstract class Plugin implements Subscriber {
+export abstract class Plugin implements ISubscriber {
     protected gameWorld!: GameWorld;
     protected enabled: boolean = true;
     public readonly name: string = "Plugin";
 
     //overideable methods
-    protected event(args: any, alias?: string): void {}
+    protected event(args: EventArgs, alias?: string): void {}
     protected start(): void { }
     protected update(delta: number): void { }
     protected fixedUpdate(delta: number): void { }
@@ -29,5 +31,28 @@ export abstract class Plugin implements Subscriber {
     }
     public disable(): void {
         this.enabled = false;
+    }
+
+
+    public cliGetName(): string {
+        return this.name;
+    }
+    @gameCommand
+    public help(): CommandResult {
+        let message = `Plugin ${this.cliGetName()} commands:\n`;
+        for (const element of Object.keys((this as any).constructor["commands"])) {
+            message += `/plugin ${this.cliGetName()} ${element}\n`;
+        }
+        return new CommandResult(true, message, undefined);
+    }
+    @gameCommand
+    public cliEnable(): CommandResult {
+        this.enabled = true;
+        return new CommandResult(true, `${this.name} enabled`, undefined);
+    }
+    @gameCommand
+    public cliDisable(): CommandResult {
+        this.enabled = false;
+        return new CommandResult(true, `${this.name} disabled`, undefined);
     }
 }

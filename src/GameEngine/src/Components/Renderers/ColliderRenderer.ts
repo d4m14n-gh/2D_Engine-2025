@@ -33,13 +33,13 @@ export class ColliderRendererC extends RendererC {
         if(!display)
             return;
         const collider: ColliderC = this.getComponent(ColliderC);
-        const offset = collider.offset;
+        const colliderOffset = collider.offset;
         const radius = collider.radius+0.25;
         const color = this.getColor();
      
-        const size = [context.canvas.width, context.canvas.height];
-        const x = this.getTransform().position.x+offset.x;
-        const y = this.getTransform().position.y+offset.y;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const x = this.getTransform().position.x+colliderOffset.x;
+        const y = this.getTransform().position.y+colliderOffset.y;
         const r = this.getTransform().rotation;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
@@ -48,12 +48,12 @@ export class ColliderRendererC extends RendererC {
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
 
         const cx: number = (x-cmx);
-        const cy: number = -(y-cmy);
+        const cy: number = (y-cmy);
 
         context.save();
         
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
 

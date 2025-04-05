@@ -19,13 +19,14 @@ export class TracesRendererC extends RendererC {
 
     constructor(zindex=0, color=new rgb(66, 83, 68)){
         super();
+        // color=rgb.background.blend(new rgb(0, 0, 0), 0.1)
         this.zindex = zindex;
         this.color = color;
     }
 
     public render(context: CanvasRenderingContext2D): void {
      
-        const size = [context.canvas.width, context.canvas.height];
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
         // const transformScale = this.getTransform().scale;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
@@ -57,8 +58,8 @@ export class TracesRendererC extends RendererC {
             const lifeTime: number = 1-(this.getGameWorld().getWorldTime()-trace.startTime)/this.duration;
 
             context.save();
-            context.translate(size[0]/2, size[1]/2);
-            context.scale(scale, -scale);
+            context.translate(offset.x, offset.y);
+            context.scale(scale.x, scale.y);
 
             context.translate(cx, cy);
             context.rotate(trace.rotation);

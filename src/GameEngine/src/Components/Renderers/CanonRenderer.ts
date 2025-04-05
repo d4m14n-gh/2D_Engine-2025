@@ -19,11 +19,12 @@ export class CanonRendererC extends RendererC {
         const length: number = this.getComponent(CanonC).length;
         const width: number = this.getComponent(CanonC).width;
      
-        const size = [context.canvas.width, context.canvas.height];
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const transformScale = this.getTransform().scale;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
@@ -40,14 +41,14 @@ export class CanonRendererC extends RendererC {
         // const offset = this.getComponent(RigidBodyC).velocity.reverse().times(canon.getBulletLifetime());
         // const offset = this.getComponent(RigidBodyC).velocity.add(canon.direction.times(canon.bulletSpeed)).reverse().times(canon.getBulletLifetime()/3);
         // const offset = this.getComponent(RigidBodyC).velocity.times(0.25).add(canon.direction.times(canon.bulletSpeed)).times(canon.getBulletLifetime());
-        const offset = canon.direction.times(canon.bulletSpeed).times(canon.getBulletLifetime()).add(canon.getGlobalOffset());
+        const gunOffset = canon.direction.times(canon.bulletSpeed).times(canon.getBulletLifetime()).add(canon.getGlobalOffset());
         
         context.save();
         
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, -scale);
-        context.translate(cx, cy);
         context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
+        context.translate(cx, cy);
+        context.translate(gunOffset.x, gunOffset.y);
         // context.scale(transformScale.x, transformScale.y);
         // context.rotate(canon.direction.toRad());
         
@@ -67,8 +68,8 @@ export class CanonRendererC extends RendererC {
 
         context.save();
         
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, -scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.scale(transformScale.x, transformScale.y);
         

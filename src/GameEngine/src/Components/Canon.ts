@@ -1,9 +1,6 @@
-import { Component } from "../Core/Component";
-import { GameObject } from "../Core/GameObject";
-import { GameObjectFactory } from "../GameObjectFactory";
 import { GMath } from "../Helpers/Math";
 import { Vector } from "../Helpers/Vector";
-import { ConfigPlugin } from "../Plugins/Config";
+import { BulletC } from "./Bullet";
 import { ColliderC } from "./Collider";
 import { CanonRendererC } from "./Renderers/CanonRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
@@ -57,7 +54,7 @@ export class CanonC extends StandaloneComponent {
         if(this.getShotDelta()>=this.cooldown){
             const sW = 0.125;
             const zindex = this.getComponent(CanonRendererC).zindex-0.01;
-            let bullet = GameObjectFactory.bulletGO(
+            let bullet = BulletC.bulletGO(
                 this.getGameObject(),
                 this.damage,
                 this.width/2+GMath.symRand(sW),

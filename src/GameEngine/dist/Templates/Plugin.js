@@ -4,6 +4,8 @@ export class TemplatePlugin extends Plugin {
     }
     update(delta) {
     }
+    event(args, alias) {
+    }
     fixedUpdate(delta) {
     }
 }

@@ -11,6 +11,9 @@ import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
 import { Vector } from "../Helpers/Vector";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
+import { timingSafeEqual } from "crypto";
+
+
 export class RendererPlugin extends Plugin {
     public name: string = "RendererPlugin";
     private readonly context: CanvasRenderingContext2D;
@@ -29,58 +32,38 @@ export class RendererPlugin extends Plugin {
         const centerY = context.canvas.height / 2;
         const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
         const gradient = context.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
-        gradient.addColorStop(0.25, 'rgba(0, 0, 0, 0)');
+        gradient.addColorStop(0.025, 'rgba(0, 0, 0, 0)');
         gradient.addColorStop(1, color);
         context.fillStyle = gradient;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     }
 
-    drawDotGrid(context: CanvasRenderingContext2D, gridSize: number, dotSize: number, dotColor: string) {
+  
+
+    drawGrid(context: CanvasRenderingContext2D, gridSize: Vector, dotSize: number, lineColor: string, scale: Vector) {
         const canvasWidth = context.canvas.width;
         const canvasHeight = context.canvas.height;
-        const scale = this.getPlugin(CameraPlugin).scale;
-        const camera = this.getPlugin(CameraPlugin).cameraPositon;
-
-        gridSize *= scale;
-        dotSize *= scale;
-        context.fillStyle = dotColor;
-
-        for (let x =  (canvasWidth/2-camera.x*scale)%gridSize; x <= canvasWidth; x += gridSize) {
-            for (let y = (canvasHeight/2+camera.y*scale)%gridSize; y <= canvasHeight; y += gridSize) {
-                context.beginPath();
-                context.arc(x, y, dotSize / 2, 0, Math.PI * 2);
-                context.fill();
-            }
-        }
-    }
-
-    drawGrid(context: CanvasRenderingContext2D, gridSize: number, lineColor: string) {
-        const canvasWidth = context.canvas.width;
-        const canvasHeight = context.canvas.height;
-        const scale = this.getPlugin(CameraPlugin).scale;
-        const camera = this.getPlugin(CameraPlugin).cameraPositon;
-
         context.save();
-        gridSize *= scale;
+        gridSize.x *= Math.abs(scale.x);
+        gridSize.y *= Math.abs(scale.y);
         context.strokeStyle = lineColor;
-        context.lineWidth = 0.1 * scale;
-
+        context.lineWidth = dotSize * scale.x;
         context.beginPath();
-
-        for (let x = (canvasWidth / 2 - camera.x * scale) % gridSize; x <= canvasWidth; x += gridSize) {
+        for (let x = (canvasWidth / 2) % gridSize.x; x <= canvasWidth; x += gridSize.x) {
             context.moveTo(x, 0);
             context.lineTo(x, canvasHeight);
         }
 
-        for (let y = (canvasHeight / 2 + camera.y * scale) % gridSize; y <= canvasHeight; y += gridSize) {
+        for (let y = (canvasHeight / 2) % gridSize.y; y <= canvasHeight; y += gridSize.y) {
             context.moveTo(0, y);
             context.lineTo(canvasWidth, y);
         }
-
         context.stroke();
         context.restore();
     }
+  
 
+    private gridCanvas: HTMLCanvasElement[] = [];
     public override start(): void {
         ////
         this.context.imageSmoothingEnabled = true;
@@ -88,19 +71,75 @@ export class RendererPlugin extends Plugin {
         this.context.lineWidth = 0.175;
         this.context.lineJoin = "round";
         this.context.shadowColor =  'rgba(0, 0, 0, 0.75)';
+        this.context.fillStyle = "#716f6b";
+        this.context.fillStyle ="rgb(85, 106, 86)";
+        this.context.fillStyle ="rgb(66, 85, 68)";
         ////
+        let worker = new Worker(new URL("../Components/Renderers/BackgroundRenderer.ts", import.meta.url), { type: 'module' }); //this.drawDotGrid(ctx, new Vector(2.5, 2.5), 0.175, rgb.stroke.toString(), new Vector(i*4+5, i*4+5));
+        for(let i=0;i<6;i++){
+            this.gridCanvas[i] = document.createElement("canvas");
+            this.gridCanvas[i].width = 3440;
+            this.gridCanvas[i].height = 1440;
+            document.createElement("canvas");
+            const offscreen = this.gridCanvas[i].transferControlToOffscreen();
+            worker.postMessage({ canvas: offscreen, args: [new Vector(2.5, 2.5), 0.175, rgb.stroke.toString(), new Vector(i*4+5, i*4+5)] }, [offscreen]);
+            // const ctx = this.gridCanvas[i].getContext("2d");
+            // if(ctx) {
+
+            // }
+                // this.drawHexGrid(ctx, new Vector(2.5, 2.5), 0.05, rgb.stroke.toString(), new Vector(i*4+5, i*4+5));
+        }
+        
     }
 
+    private clip(position: Vector): boolean{
+        const width = this.context.canvas.width;
+        const height = this.context.canvas.height;
+        
+        const scale = this.getPlugin(CameraPlugin).scale;
+        const cameraPositon = this.getPlugin(CameraPlugin).cameraPositon;
+        const xClip = Math.abs(width/2/scale.x);  
+        const yClip = Math.abs(height/2/scale.y);
+          
+        return Math.abs(position.x-cameraPositon.x) > xClip || Math.abs(position.y-cameraPositon.y) > yClip;
+    }
     public override update(delta:number): void {
         const width = this.context.canvas.width;
         const height = this.context.canvas.height;
         // this.context.fillStyle = new Color(113, 111, 107).toString();
-        this.context.fillStyle = "#716f6b";
-        this.context.fillStyle ="rgb(85, 106, 86)";
-        this.context.fillRect(0, 0, width, height);
-        this.drawGrid(this.context, 10, "rgb(43,43,44)");
+       
+        this.getPlugin(CameraPlugin).cameraOffset = new Vector(this.context.canvas.width/2, this.context.canvas.height/2);
         // this.drawDotGrid(this.context, 10, 0.175, "rgb(43,43,44)");
         
+        this.context.fillStyle ="rgb(66, 85, 68)";
+        this.context.fillStyle ="rgb(105, 111, 105)";
+        // (rgb as any).background = new rgb(80, 100, 81);
+        this.context.fillStyle ="rgba(80, 100, 81, 1)";
+        this.context.fillRect(0, 0, width, height);
+
+
+
+        this.context.save();
+        let gx = Math.sqrt(3)*2.5;
+        let gy = 3*2.5;
+        // let gx = 2.5;
+        // let gy = 2.5;
+        const offset = this.getPlugin(CameraPlugin).cameraOffset;
+        const scale = this.getPlugin(CameraPlugin).scale;
+        // const scale = new Vector(5, 5);
+        const cpos = this.getPlugin(CameraPlugin).cameraPositon;
+        let i = Math.max(0, Math.min(5, Math.round(scale.x/10)));
+        let c = i * 4 + 5;
+        this.context.translate(offset.x, offset.y);
+        this.context.scale(scale.x, scale.y);
+        this.context.translate((-cpos.x)%gx, (-cpos.y)%gy);
+        this.context.scale(1/c, 1/c);
+        // this.context.imageSmoothingEnabled = false;
+        this.context.drawImage(this.gridCanvas[i], -this.gridCanvas[i].width/2, -this.gridCanvas[i].height/2, this.gridCanvas[i].width, this.gridCanvas[i].height);
+        this.context.restore();
+
+
+
         (this.gameWorld.getComponents(TextRendererC) as RendererC[])
         .concat(this.gameWorld.getComponents(ColliderRendererC) as RendererC[])
         .concat(this.gameWorld.getComponents(BarRendererC)as RendererC[])
@@ -109,11 +148,11 @@ export class RendererPlugin extends Plugin {
         .concat(this.gameWorld.getComponents(CanonRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(TracesRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
-        .filter(renderer => renderer.getTransform().position.distance(this.getPlugin(CameraPlugin).cameraPositon)<this.renderDistance)
+        .filter(renderer => !this.clip(renderer.getTransform().position))
         .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context));
         // this.gameWorld.getAllComponents<RendererC>(RendererC.name).forEach(renderer => renderer.render(this.context));
         this.hud.draw(this.context);
-        this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.3)');
+        this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.5)');
     }
 }
 

@@ -1,41 +1,30 @@
 import { Plugin } from "../Core/Plugin";
-import { Socket, io } from "socket.io-client";
-import { ChatEventArgs, ChatPlugin } from "./Chat";
-
-
-
+import { ChatPlugin } from "./Chat";
 export class ClientPlugin extends Plugin {
-    public name: string = "SlientPlugin";
-    private socket!: Socket;
-
-    protected override start(): void {
+    name = "SlientPlugin";
+    socket;
+    start() {
         // this.getPlugin(ChatPlugin)?.chatMessageEvent.subscribe(this, "chatMessageEvent");
-
         // this.socket = io('http://localhost:3000', {});
         // this.socket.on('connect', () => this.onConnection());
         // this.socket.on('disconnect', (reason: string) => this.onDisconnection(reason));
         // this.socket.on('chat_message', (message: string) => this.onChatMessage(message));
     }
-
-    protected override event(args: any, alias?: string): void {
-        let chatArgs = args as ChatEventArgs;
+    event(args, alias) {
+        let chatArgs = args;
         this.sendChatMessage(chatArgs.message);
     }
-
-    private onConnection(): void {
+    onConnection() {
         console.log('Connected to server');
     }
-
-    private onDisconnection(reason: string): void {
+    onDisconnection(reason) {
         console.log(`Disconnected from server: ${reason}`);
     }
-
-    private onChatMessage(message: string): void {
+    onChatMessage(message) {
         console.log(`Received chat message: ${message}`);
         this.getPlugin(ChatPlugin)?.sendChatMessage(message, false);
     }
-  
-    public sendChatMessage(message: string): void {
+    sendChatMessage(message) {
         this.socket.emit('chat_message', message);
     }
 }

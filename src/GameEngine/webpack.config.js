@@ -3,8 +3,12 @@ const path = require("path");
 module.exports = {
   entry: "./src/index.ts",  
   output: {
+    module: true,
     filename: "bundle.js", 
     path: path.resolve(__dirname, "dist")
+  },
+  experiments: {
+    outputModule: true,
   },
   resolve: {
     extensions: [".ts", ".js"],  
@@ -15,7 +19,11 @@ module.exports = {
         test: /\.ts$/,          
         use: "ts-loader",      
         exclude: /node_modules/
-      }
+      },
+      {
+        test: /\.worker\.ts$/, // Worker jest traktowany jako osobny plik
+        use: { loader: 'worker-loader' }, 
+      },
     ]
   },
   mode: "production"        

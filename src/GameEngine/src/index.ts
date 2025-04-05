@@ -19,38 +19,21 @@ import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
 import { ClientPlugin } from "./Plugins/Client";
 import { ChatPlugin } from "./Plugins/Chat";
-// import http from 'http';
-// import { Server as SocketIOServer } from 'socket.io';
+
 
 const pressedKeys = new Set<string>();
-
 document.addEventListener("keydown", (event) => {
   pressedKeys.add(event.key.toLowerCase());
 });
-
 document.addEventListener("keyup", (event) => {
   pressedKeys.delete(event.key.toLowerCase());
 });
 
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export async function main (canvas: HTMLCanvasElement) {
-  // const server = http.createServer((req, res) => {
-  //   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  //   res.end('w\n');
-  // });
-  // server.listen(3000, 'localhost', () => {
-  //   console.log('Server is running on http://localhost:3000');
-  // });
-
-
-
+export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputElement, chat: HTMLDivElement) {
   let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
   plugins.push(new ClientPlugin());
-  plugins.push(new ChatPlugin());
+  plugins.push(new ChatPlugin(chatInput, chat));
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));
   plugins.push(new SchedulerPlugin());
@@ -63,14 +46,18 @@ export async function main (canvas: HTMLCanvasElement) {
   plugins.push(new RendererPlugin(canvas.getContext("2d")!));
 
   let world: MyWorld = new MyWorld(...plugins);
-    
-  function x() {
-    requestAnimationFrame(x);
+  function fixedTick(){
+    const delta = 10; 
+    setInterval(() => world.fixedTick(), delta);
+  }
+  function tick() {
+    requestAnimationFrame(tick);
     world.tick();
   }
-
-  x();
+  
+  tick();
+  fixedTick();
 }
-main(document.getElementById("gameCanvas") as HTMLCanvasElement);
+main(document.getElementById("gameCanvas") as HTMLCanvasElement, document.getElementById("chatInput") as HTMLInputElement, document.getElementById("chat") as HTMLDivElement);
 
 

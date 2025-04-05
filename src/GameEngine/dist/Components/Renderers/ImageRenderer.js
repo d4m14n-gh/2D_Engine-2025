@@ -12,11 +12,8 @@ export class ImageRendererC extends RendererC {
         this.offset = offset;
         this.image.src = src;
     }
-    onSpawn() {
-        // this.getComponent(PolygonRendererC).enable(false);
-    }
     render(context) {
-        const size = [context.canvas.width, context.canvas.height];
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
@@ -25,15 +22,15 @@ export class ImageRendererC extends RendererC {
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
         const cx = (x - cmx);
-        const cy = -(y - cmy);
+        const cy = (y - cmy);
         let a = this.side;
         if (a.x == 0)
             a.x = this.image.width;
         if (a.y == 0)
             a.y = this.image.height;
         context.save();
-        context.translate(size[0] / 2, size[1] / 2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
         context.scale(transformScale.x, transformScale.y);

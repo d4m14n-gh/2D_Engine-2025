@@ -9,6 +9,16 @@ import { Plugin } from "../Core/Plugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
+import { subscribe } from "diagnostics_channel";
+import { CommandResult, gameCommand } from "../Helpers/Commands";
+import { CameraPlugin } from "./Camera";
+
+// function gameCommand(target: any, propertyKey: string) {
+//   if (!target.constructor._decoratedMethods) {
+//       target.constructor._decoratedMethods = new Set<string>();
+//   }
+//   target.constructor._decoratedMethods.add(propertyKey);
+// }
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
@@ -30,7 +40,7 @@ export class PlayerPlugin extends Plugin {
     }
 
     public override event(args: any, alias?: string): void {
-      if (!this.player.enabled || !this.enabled) 
+      if (!this.enabled) 
         return;
       let keyArgs = args as KeyboardEventArgs;
       if (keyArgs.key === "r") {
@@ -49,14 +59,15 @@ export class PlayerPlugin extends Plugin {
     protected override update(delta: number): void {
       if (!this.player.enabled || !this.enabled) 
         return;
+      let camera = this.getPlugin(CameraPlugin);
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
       let gun = this.player.getComponent(CanonC);
       
 
-
-      gun.targetDirection = mouse.getWorldPosition().sub(this.player.getTransform().position);
-      gun.range = mouse.getWorldPosition().sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
+      camera.targetCameraPositon = this.player.getTransform().position.clone();
+      gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position);
+      gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
       if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
         gun.shoot();
     }
@@ -99,7 +110,39 @@ export class PlayerPlugin extends Plugin {
         rigidBody.angularVelocity = -turnSpeed;
       else 
         rigidBody.angularVelocity = 0;
-    }}
+    }
+  
+  public cliGetName(): string {
+      return "player";
+  }
+
+  @gameCommand
+  private setname(newName: string): CommandResult {
+      this.player.name = newName;
+      return new CommandResult(true, `Player name set to ${newName}`, undefined);
+  }
+
+  @gameCommand
+  private setcolor(color: string | rgb): CommandResult {
+      try{
+        let newColor = rgb.tryParseCssColor(color.toString());
+        if (newColor)
+          this.player.getComponent(PolygonRendererC).color = newColor;
+      } catch {}
+      return new CommandResult(true, `Player color set`, undefined);
+  }
+
+  @gameCommand
+  private getcolor(): CommandResult {
+    return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC).color}`, this.player.getComponent(PolygonRendererC).color);
+  }
+  
+  @gameCommand
+  private getrandomcolor(): CommandResult {
+    const randomColor = rgb.randomColor2();
+    return new CommandResult(true, `Random color is ${randomColor}`, randomColor);
+  }
+}
 //     public override fixedUpdate(delta: number): void {
 //         const speed = 18;
 //         let vmax = 30.0;

@@ -1,20 +1,21 @@
-import { channel } from "diagnostics_channel";
 import { GameWorld } from "./GameWorld";
 
 export class EventArgs{
     constructor(){}    
 }
 
-export interface Subscriber{}
+export interface ISubscriber{
+    // event(args: EventArgs, alias?: string): void;
+}
 
 export class GameEvent{
-    private subs: Map<WeakRef<Subscriber>, string|undefined> = new Map();
+    private subs: Map<WeakRef<ISubscriber>, string|undefined> = new Map();
     private args: Array<EventArgs> = [];
 
-    public subscribe(sub: Subscriber, alias?: string): void{
+    public subscribe(sub: ISubscriber, alias?: string): void{
         this.subs.set(new WeakRef(sub), alias);
     }
-    public unsubscribe(sub: Subscriber){
+    public unsubscribe(sub: ISubscriber){
         this.subs.delete(new WeakRef(sub));
     }
 
@@ -25,7 +26,6 @@ export class GameEvent{
         gameWorld.registerEvent(this);
     }
 
-   
     private invoke(): void{
         if (this.args.length == 0)
             return;
