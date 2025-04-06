@@ -20,10 +20,10 @@ module.exports = {
         use: "ts-loader",      
         exclude: /node_modules/
       },
-      {
-        test: /\.worker\.ts$/, // Worker jest traktowany jako osobny plik
-        use: { loader: 'worker-loader' }, 
-      },
+      // {
+      //   test: /\.worker\.ts$/, 
+      //   use: { loader: 'worker-loader' }, 
+      // },
     ]
   },
   mode: "production"        

@@ -19,15 +19,14 @@ export class TracesRendererC extends RendererC {
 
     constructor(zindex=0, color=new rgb(66, 83, 68)){
         super();
-        // color=rgb.background.blend(new rgb(0, 0, 0), 0.1)
+        color=color.blend(rgb.stroke, 0.3);//.toArgb(0.75);
         this.zindex = zindex;
         this.color = color;
     }
 
     public render(context: CanvasRenderingContext2D): void {
      
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
-        // const transformScale = this.getTransform().scale;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
@@ -37,7 +36,7 @@ export class TracesRendererC extends RendererC {
 
         const currentPosition = this.getTransform().position.clone();
         const currentRotation = this.getTransform().rotation;
-        if(this.lastPosition.distance(currentPosition)>0.75){
+        if(this.lastPosition.distance(currentPosition)>0.5){
             this.traces.push(
                 {
                     position: currentPosition,
@@ -45,28 +44,27 @@ export class TracesRendererC extends RendererC {
                     startTime: this.getGameWorld().getWorldTime(),
                 }
             );
-            this.lastPosition = this.getTransform().position.clone();//.position.add(new Vector(1, 2)); 
+            this.lastPosition = this.getTransform().position.clone();
         }
 
         ////////////////////
         while(this.traces.length>0&&this.traces[0].startTime+this.duration<this.getGameWorld().getWorldTime())
             this.traces.shift();
+
         for (const trace of this.traces) {
             const cx: number = trace.position.x-cmx;
             const cy: number = trace.position.y-cmy;
             
             const lifeTime: number = 1-(this.getGameWorld().getWorldTime()-trace.startTime)/this.duration;
 
-            context.save();
             context.translate(offset.x, offset.y);
             context.scale(scale.x, scale.y);
 
             context.translate(cx, cy);
             context.rotate(trace.rotation);
-            // context.scale(transformScale.x, transformScale.y);
 
             context.beginPath();
-            context.fillStyle = this.color.toArgb(this.transparency*lifeTime).toString();
+            context.fillStyle = this.color.toArgb(this.color.a*this.transparency*lifeTime).toString();
             context.shadowBlur = 0;
             context.roundRect(-4.5, -3.25, this.length, 2, 0.75);
             context.fill();
@@ -76,7 +74,7 @@ export class TracesRendererC extends RendererC {
             context.roundRect(-4.5, 1.25, this.length, 2, 0.75);
             context.fill();
             context.closePath();
-            context.restore();
+            context.setTransform(1, 0, 0, 1, 0, 0);
         }
     }
 }

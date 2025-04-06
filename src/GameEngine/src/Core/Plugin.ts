@@ -34,24 +34,24 @@ export abstract class Plugin implements ISubscriber {
     }
 
 
-    public cliGetName(): string {
+    protected cliGetName(): string {
         return this.name;
     }
     @gameCommand
-    public help(): CommandResult {
-        let message = `Plugin ${this.cliGetName()} commands:\n`;
+    protected help(): CommandResult {
+        let message = `${this.cliGetName()} commands:\n`;
         for (const element of Object.keys((this as any).constructor["commands"])) {
-            message += `/plugin ${this.cliGetName()} ${element}\n`;
+            message += `/${this.cliGetName()}:${element}\n`;
         }
         return new CommandResult(true, message, undefined);
     }
     @gameCommand
-    public cliEnable(): CommandResult {
+    private cliEnable(): CommandResult {
         this.enabled = true;
         return new CommandResult(true, `${this.name} enabled`, undefined);
     }
     @gameCommand
-    public cliDisable(): CommandResult {
+    private cliDisable(): CommandResult {
         this.enabled = false;
         return new CommandResult(true, `${this.name} disabled`, undefined);
     }

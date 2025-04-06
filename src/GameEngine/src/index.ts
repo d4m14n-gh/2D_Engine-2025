@@ -19,6 +19,7 @@ import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
 import { ClientPlugin } from "./Plugins/Client";
 import { ChatPlugin } from "./Plugins/Chat";
+import { CliPlugin } from "./Plugins/CliPlugin";
 
 
 const pressedKeys = new Set<string>();
@@ -34,6 +35,7 @@ export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputEleme
   plugins.push(new ConfigPlugin());
   plugins.push(new ClientPlugin());
   plugins.push(new ChatPlugin(chatInput, chat));
+  plugins.push(new CliPlugin());
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));
   plugins.push(new SchedulerPlugin());
@@ -47,16 +49,25 @@ export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputEleme
 
   let world: MyWorld = new MyWorld(...plugins);
   function fixedTick(){
-    const delta = 10; 
+    const delta = 15; 
     setInterval(() => world.fixedTick(), delta);
   }
+
+  let last = performance.now();
+  const interval = 20; // ms
   function tick() {
     requestAnimationFrame(tick);
     world.tick();
+    
+    // const now = performance.now();
+    // if (now - last >= interval) {
+      // world.fixedTick();
+      // last = now;
+    // }
   }
   
   tick();
-  fixedTick();
+  // fixedTick();
 }
 main(document.getElementById("gameCanvas") as HTMLCanvasElement, document.getElementById("chatInput") as HTMLInputElement, document.getElementById("chat") as HTMLDivElement);
 

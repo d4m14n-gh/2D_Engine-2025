@@ -19,12 +19,11 @@ export class RigidBodyC extends Component {
     }
 
     public update(delta: number): void {
-        
-    }
-    public fixedUpdate(delta: number): void {
-        this.getTransform().position = this.getTransform().position.add(this.velocity.times(delta));
+        this.getTransform().position = this.getTransform().position.add(this.velocity.times(delta)).add(this.acceleration.times(delta*delta/2));
         this.getTransform().rotation += this.angularVelocity * delta;
         this.velocity = this.velocity.add(this.acceleration.times(delta)).times(1 - this.drag);
         this.angularVelocity = (this.angularVelocity+this.angularAcceleration * delta) * (1 - this.angularDrag);
+    }
+    public fixedUpdate(delta: number): void {
     }
 }

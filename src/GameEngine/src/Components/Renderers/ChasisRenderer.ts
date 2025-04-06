@@ -15,7 +15,7 @@ export class ChasisRendererC extends RendererC {
 
     public render(context: CanvasRenderingContext2D): void {
      
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
@@ -30,7 +30,7 @@ export class ChasisRendererC extends RendererC {
         const cy: number = y-cmy;
 
 
-        context.save();
+        // context.save();
         
         context.translate(offset.x, offset.y);
         context.scale(scale.x, scale.y);
@@ -71,8 +71,10 @@ export class ChasisRendererC extends RendererC {
         context.fill();
         context.shadowBlur = 50;
         context.stroke();
-        context.closePath();
+        context.closePath()
+        context.shadowBlur = 0;;
         
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        // context.restore();
     }
 }

@@ -34,16 +34,16 @@ export class ColliderRendererC extends RendererC {
             return;
         const collider: ColliderC = this.getComponent(ColliderC);
         const colliderOffset = collider.offset;
-        const radius = collider.radius+0.25;
+        const radius = collider.radius;
+        const radius2 = collider.radius+0.25;
         const color = this.getColor();
      
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
         const x = this.getTransform().position.x+colliderOffset.x;
         const y = this.getTransform().position.y+colliderOffset.y;
         const r = this.getTransform().rotation;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
-        const a = radius;
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
 
@@ -61,11 +61,18 @@ export class ColliderRendererC extends RendererC {
         context.fillStyle = color.toString();
         context.shadowBlur = 30;
         context.beginPath();
-        context.arc(0, 0, a, 0, 2 * Math.PI);
+        context.arc(0, 0, radius2, 0, 2 * Math.PI);
         context.closePath();
         context.fill();
         context.stroke();
 
+        context.beginPath();
+        context.arc(0, 0, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.lineWidth = 0.1;
+        context.stroke();
+
+        // context.setTransform(1, 0, 0, 1, 0, 0);
         context.restore();
     }
 }

@@ -23,7 +23,7 @@ export class CanonRendererC extends RendererC {
         const y = this.getTransform().position.y;
         const transformScale = this.getTransform().scale;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
 
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
@@ -43,7 +43,6 @@ export class CanonRendererC extends RendererC {
         // const offset = this.getComponent(RigidBodyC).velocity.times(0.25).add(canon.direction.times(canon.bulletSpeed)).times(canon.getBulletLifetime());
         const gunOffset = canon.direction.times(canon.bulletSpeed).times(canon.getBulletLifetime()).add(canon.getGlobalOffset());
         
-        context.save();
         
         context.translate(offset.x, offset.y);
         context.scale(scale.x, scale.y);
@@ -57,16 +56,14 @@ export class CanonRendererC extends RendererC {
         context.arc(0, 0, r, 0, 2*Math.PI);
         context.closePath();
         context.shadowBlur = 0;
-        context.strokeStyle = rgb.stroke.toString();
         // color2.toString();
         context.stroke();
         context.strokeRect(-r/2, -r/2, r, r);
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
 
 
-        context.save();
         
         context.translate(offset.x, offset.y);
         context.scale(scale.x, scale.y);
@@ -84,7 +81,8 @@ export class CanonRendererC extends RendererC {
         context.fill();
         context.shadowBlur = 30;
         context.stroke();
+        context.shadowBlur = 0;
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
     }
 }

@@ -7,6 +7,7 @@ import { GameEvent } from "./GameEvent";
 export class GameWorld {
     private startTime: number=0;
     private prevWorldTime: number=0;
+    private prevFixedWorldTime: number=0;
     private worldTime: number=0;
     private tickCount: number = 0;
 
@@ -119,6 +120,9 @@ export class GameWorld {
         this.worldTime = performance.now() - this.startTime;
         const delta = this.worldTime - this.prevWorldTime;
         this.prevWorldTime = this.worldTime;
+        const fps = 1e3 / delta;
+        this.getPlugin(ProfilerPlugin).addRecord("FPS", fps);
+
 
         this.Update(delta / 1e3);
         this.plugins.forEach(plugin => {
@@ -130,12 +134,19 @@ export class GameWorld {
         });
     }
     private fixedUpdateWorld(): void {
-        const delta = 10/1e3;
+        this.worldTime = performance.now() - this.startTime;
+        let delta = (this.worldTime - this.prevFixedWorldTime) / 1e3;
+        this.prevFixedWorldTime = this.worldTime;
+
+        // console.log(delta*1e3);
+        delta = 15/1e3;
+
+
         this.FixedUpdate(delta);
         this.plugins.forEach(plugin => {
             if (!plugin.isEnabled()) 
                 return;
-            (plugin as any).fixedUpdate(delta);
+            // (plugin as any).fixedUpdate(delta);
         });
     }
 

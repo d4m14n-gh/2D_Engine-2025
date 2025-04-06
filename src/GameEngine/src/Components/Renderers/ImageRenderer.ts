@@ -18,7 +18,7 @@ export class ImageRendererC extends RendererC {
 
     public render(context: CanvasRenderingContext2D): void {
      
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
@@ -36,7 +36,7 @@ export class ImageRendererC extends RendererC {
         if (a.y==0)
             a.y = this.image.height;
 
-        context.save();
+        // context.save();
         
         context.translate(offset.x, offset.y);
         context.scale(scale.x, scale.y);
@@ -46,9 +46,11 @@ export class ImageRendererC extends RendererC {
         context.translate(this.offset.x, this.offset.y);
 
         context.shadowBlur = 15;
-       
+        
         context.drawImage(this.image, -a.x/2,  -a.y/2, a.x, a.y);
+        context.shadowBlur = 0;
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        // context.restore();
     }
 }

@@ -9,16 +9,8 @@ import { Plugin } from "../Core/Plugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
-import { subscribe } from "diagnostics_channel";
 import { CommandResult, gameCommand } from "../Helpers/Commands";
 import { CameraPlugin } from "./Camera";
-
-// function gameCommand(target: any, propertyKey: string) {
-//   if (!target.constructor._decoratedMethods) {
-//       target.constructor._decoratedMethods = new Set<string>();
-//   }
-//   target.constructor._decoratedMethods.add(propertyKey);
-// }
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
@@ -40,8 +32,6 @@ export class PlayerPlugin extends Plugin {
     }
 
     public override event(args: any, alias?: string): void {
-      if (!this.enabled) 
-        return;
       let keyArgs = args as KeyboardEventArgs;
       if (keyArgs.key === "r") {
         if(this.player && this.gameWorld.isSpawned(this.player))  
@@ -57,33 +47,27 @@ export class PlayerPlugin extends Plugin {
     }
     
     protected override update(delta: number): void {
-      if (!this.player.enabled || !this.enabled) 
+      console.log(this.enabled);
+      if (!this.player.enabled) 
         return;
       let camera = this.getPlugin(CameraPlugin);
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
       let gun = this.player.getComponent(CanonC);
-      
-
+      if (!gun) 
+        return;
       camera.targetCameraPositon = this.player.getTransform().position.clone();
       gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position);
       gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
       if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
         gun.shoot();
-    }
 
-    override fixedUpdate(delta: number): void {
-      if (!this.player.enabled || !this.enabled) 
-        return;
-      
+
       let a = 150;
       const g = -55;
       const vmax = 50.0;
-      
-      const keyboard = this.getPlugin(KeyboardPlugin);
       const rotation = this.player.getTransform().rotation;
       const direction = Vector.fromRad(rotation);
-      
       const turnSpeed = 2.5;
       let rigidBody = this.player.getComponent(RigidBodyC);
       let velocity = rigidBody.velocity;
@@ -111,6 +95,7 @@ export class PlayerPlugin extends Plugin {
       else 
         rigidBody.angularVelocity = 0;
     }
+
   
   public cliGetName(): string {
       return "player";

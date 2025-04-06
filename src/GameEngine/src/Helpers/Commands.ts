@@ -26,3 +26,9 @@ export function gameCommand(
         ctor.commands[propertyKey] = descriptor.value;
     }
 }
+
+export function cli(name: string): (target: any) => void {
+    return function (target: any): void {
+        target.prototype.cliGetName = function (): string { return name; };
+    };
+}

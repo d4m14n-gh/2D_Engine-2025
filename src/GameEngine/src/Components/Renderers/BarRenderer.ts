@@ -28,7 +28,7 @@ export class BarRendererC extends RendererC {
         const y = this.getTransform().position.y;
         const transformScale = this.getTransform().scale;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
@@ -39,7 +39,6 @@ export class BarRendererC extends RendererC {
         const radius = 0.25;
 
 
-        context.save();
         
         context.translate(offset.x, offset.y);
         context.scale(scale.x, scale.y);
@@ -76,6 +75,6 @@ export class BarRendererC extends RendererC {
         context.shadowBlur = 0;
         context.stroke();
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
     }
 }

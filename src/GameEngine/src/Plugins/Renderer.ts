@@ -38,31 +38,6 @@ export class RendererPlugin extends Plugin {
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     }
 
-  
-
-    drawGrid(context: CanvasRenderingContext2D, gridSize: Vector, dotSize: number, lineColor: string, scale: Vector) {
-        const canvasWidth = context.canvas.width;
-        const canvasHeight = context.canvas.height;
-        context.save();
-        gridSize.x *= Math.abs(scale.x);
-        gridSize.y *= Math.abs(scale.y);
-        context.strokeStyle = lineColor;
-        context.lineWidth = dotSize * scale.x;
-        context.beginPath();
-        for (let x = (canvasWidth / 2) % gridSize.x; x <= canvasWidth; x += gridSize.x) {
-            context.moveTo(x, 0);
-            context.lineTo(x, canvasHeight);
-        }
-
-        for (let y = (canvasHeight / 2) % gridSize.y; y <= canvasHeight; y += gridSize.y) {
-            context.moveTo(0, y);
-            context.lineTo(canvasWidth, y);
-        }
-        context.stroke();
-        context.restore();
-    }
-  
-
     private gridCanvas: HTMLCanvasElement[] = [];
     public override start(): void {
         ////
@@ -76,18 +51,13 @@ export class RendererPlugin extends Plugin {
         this.context.fillStyle ="rgb(66, 85, 68)";
         ////
         let worker = new Worker(new URL("../Components/Renderers/BackgroundRenderer.ts", import.meta.url), { type: 'module' }); //this.drawDotGrid(ctx, new Vector(2.5, 2.5), 0.175, rgb.stroke.toString(), new Vector(i*4+5, i*4+5));
-        for(let i=0;i<6;i++){
+        for(let i=0;i<10;i++){
             this.gridCanvas[i] = document.createElement("canvas");
             this.gridCanvas[i].width = 3440;
             this.gridCanvas[i].height = 1440;
             document.createElement("canvas");
             const offscreen = this.gridCanvas[i].transferControlToOffscreen();
-            worker.postMessage({ canvas: offscreen, args: [new Vector(2.5, 2.5), 0.175, rgb.stroke.toString(), new Vector(i*4+5, i*4+5)] }, [offscreen]);
-            // const ctx = this.gridCanvas[i].getContext("2d");
-            // if(ctx) {
-
-            // }
-                // this.drawHexGrid(ctx, new Vector(2.5, 2.5), 0.05, rgb.stroke.toString(), new Vector(i*4+5, i*4+5));
+            worker.postMessage({ canvas: offscreen, args: [new Vector(2, 2), 0.175, rgb.stroke.toString(), new Vector(i*5+5, i*5+5)] }, [offscreen]);
         }
         
     }
@@ -106,45 +76,38 @@ export class RendererPlugin extends Plugin {
     public override update(delta:number): void {
         const width = this.context.canvas.width;
         const height = this.context.canvas.height;
-        // this.context.fillStyle = new Color(113, 111, 107).toString();
-       
-        this.getPlugin(CameraPlugin).cameraOffset = new Vector(this.context.canvas.width/2, this.context.canvas.height/2);
-        // this.drawDotGrid(this.context, 10, 0.175, "rgb(43,43,44)");
-        
-        this.context.fillStyle ="rgb(66, 85, 68)";
-        this.context.fillStyle ="rgb(105, 111, 105)";
-        // (rgb as any).background = new rgb(80, 100, 81);
+        // this.context.fillStyle ="rgb(66, 85, 68)";
+        // this.context.fillStyle ="rgb(105, 111, 105)";
         this.context.fillStyle ="rgba(80, 100, 81, 1)";
         this.context.fillRect(0, 0, width, height);
+        this.getPlugin(CameraPlugin).cameraScreenOffset = new Vector(this.context.canvas.width/2, this.context.canvas.height/2);
 
 
 
-        this.context.save();
-        let gx = Math.sqrt(3)*2.5;
-        let gy = 3*2.5;
-        // let gx = 2.5;
-        // let gy = 2.5;
-        const offset = this.getPlugin(CameraPlugin).cameraOffset;
+        // let gx = Math.sqrt(3);
+        // let gy = 3;
+        let gx = 2;
+        let gy = 2;
+        const offset = this.getPlugin(CameraPlugin).cameraScreenOffset;
         const scale = this.getPlugin(CameraPlugin).scale;
-        // const scale = new Vector(5, 5);
         const cpos = this.getPlugin(CameraPlugin).cameraPositon;
-        let i = Math.max(0, Math.min(5, Math.round(scale.x/10)));
-        let c = i * 4 + 5;
+        let i = Math.max(0, Math.min(9, Math.round(scale.x/10)));
+        let c = i * 5 + 5;
         this.context.translate(offset.x, offset.y);
         this.context.scale(scale.x, scale.y);
         this.context.translate((-cpos.x)%gx, (-cpos.y)%gy);
         this.context.scale(1/c, 1/c);
-        // this.context.imageSmoothingEnabled = false;
         this.context.drawImage(this.gridCanvas[i], -this.gridCanvas[i].width/2, -this.gridCanvas[i].height/2, this.gridCanvas[i].width, this.gridCanvas[i].height);
-        this.context.restore();
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
 
-
-
+        
+        
         (this.gameWorld.getComponents(TextRendererC) as RendererC[])
         .concat(this.gameWorld.getComponents(ColliderRendererC) as RendererC[])
         .concat(this.gameWorld.getComponents(BarRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(PolygonRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(ImageRendererC)as RendererC[])
+        .filter(renderer => !this.clip(renderer.getTransform().position))
         .concat(this.gameWorld.getComponents(CanonRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(TracesRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
@@ -152,7 +115,7 @@ export class RendererPlugin extends Plugin {
         .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context));
         // this.gameWorld.getAllComponents<RendererC>(RendererC.name).forEach(renderer => renderer.render(this.context));
         this.hud.draw(this.context);
-        this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.5)');
+        this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.35)');
     }
 }
 
@@ -172,7 +135,7 @@ export class Hud{
             this.drawText(element.text, element.pos, context);
     }
     private drawText(text: string, position: Vector, context: CanvasRenderingContext2D): void{
-        context.save();
+        // context.save();
 
         context.translate(position.x, position.y);
 
@@ -180,11 +143,13 @@ export class Hud{
         context.font = "bold "+textHeight+"px Arial";
         context.fillStyle = "azure";
         context.lineWidth = 0.175*30;
-        const offset = 0;//context.measureText(text).width/2;
+        const offset = 0;
         
         context.strokeText(text, -offset, textHeight/4);
         context.fillText(text, -offset, textHeight/4);
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.lineWidth = 0.175;
+        // context.restore();
     } 
 }

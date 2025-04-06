@@ -21,7 +21,7 @@ export class NpcC extends StandaloneComponent{
     public isAttacing: boolean = false;
     private target?: WeakRef<GameObject>;
     isFollowing: boolean = false;
-    minDistance: number = 100;
+    minDistance: number = 35;
     maxDistance: number = 1000;
     maxSpeed: number = 10;
 
