@@ -2,9 +2,9 @@ import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
 import { MousePlugin, MouseScrollEventArgs } from "./Mouse";
 import { EventArgs } from "../Core/GameEvent";
-import { CommandResult, gameCommand, cli } from "../Helpers/Commands";
+import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
 
-@cli("camera")
+@cliPlugin("camera")
 export class CameraPlugin extends Plugin {
     public cameraPositon: Vector = new Vector(4, 0);
     public targetCameraPositon: Vector = new Vector(4, 0);
@@ -23,10 +23,10 @@ export class CameraPlugin extends Plugin {
     
     override event(args: EventArgs, alias?: string): void {
         const mouseArgs = args as MouseScrollEventArgs;
-        this.setZoom(mouseArgs.delta);
+        this.zoom(mouseArgs.delta);
     }
 
-    public setZoom(delta: number): void {
+    public zoom(delta: number): void {
         delta = Math.sign(delta);
         if (delta > 0 && this.targetScale * 0.9 > 10)
             this.targetScale = 0.9 * this.targetScale;
@@ -54,18 +54,18 @@ export class CameraPlugin extends Plugin {
         this.cameraPositon = this.cameraPositon.add(this.targetCameraPositon.sub(this.cameraPositon).times(0.02));
     }
 
-    @gameCommand
+    @cli("getscale", undefined, "number")
     private getscale(): CommandResult{
         return new CommandResult(true, this.scale.toString(), this.scale);
     }
 
-    @gameCommand
+    @cli("follow", "<following: boolean>")
     private follow(following: boolean): CommandResult{
         this.isFollowing = following;
         return new CommandResult(true, `Camera is ${following ? "following" : "not following"}`, undefined);
     }
-    @gameCommand
-    private zoom(zoom: number): CommandResult{
+    @cli("zoom", "<zoom: number>")
+    private setzoom(zoom: number): CommandResult{
         this.targetScale = zoom;
         return new CommandResult(true, `Camera zoom set to ${zoom}`, undefined);
     }

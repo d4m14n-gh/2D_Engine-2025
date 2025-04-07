@@ -1,5 +1,6 @@
 import { EventArgs, GameEvent } from "../Core/GameEvent";
 import { Plugin } from "../Core/Plugin";
+import { cli, CommandResult } from "../Helpers/Commands";
 import { Vector } from "../Helpers/Vector";
 import { CliPlugin } from "./CliPlugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "./Keyboard";
@@ -20,6 +21,8 @@ export class ChatPlugin extends Plugin {
     private chatHistoryIndex: number = 0;
     private isListening: boolean = false;
     public chatMessageEvent: GameEvent = new GameEvent();
+    public chatFocused: GameEvent = new GameEvent();
+    public chatBlured: GameEvent = new GameEvent();
     private textField: HTMLInputElement;
     private textArea: HTMLDivElement;
     
@@ -27,14 +30,15 @@ export class ChatPlugin extends Plugin {
         super();
         this.textField = textField;
         this.textArea = textArea;
-        // this.textField.addEventListener("input", (event) => this.message = (event.target as HTMLInputElement).value);
-        this.textField.addEventListener("blur", () => this.isListening = false);
-        this.textField.addEventListener("focus", () => this.isListening = true);
+        this.textField.addEventListener("blur", () => {this.isListening = false, this.chatBlured.emit(new EventArgs())});
+        this.textField.addEventListener("focus", () => {this.isListening = true; this.chatFocused.emit(new EventArgs());});
     }
 
     protected override start(): void {
         this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
         this.chatMessageEvent.register(this.gameWorld);
+        this.chatFocused.register(this.gameWorld);
+        this.chatBlured.register(this.gameWorld);
     }
 
     protected override event(args: EventArgs, alias?: string): void {
@@ -62,10 +66,14 @@ export class ChatPlugin extends Plugin {
                 this.textField.value = this.chatHistory[this.chatHistory.length - 1 - this.chatHistoryIndex] || "";
             }
         }
-        if(this.isListening)
+        if(this.isListening){
             this.textField.focus();
-        else
+            this.chatFocused.emit(new EventArgs());
+        }
+        else{
             this.textField.blur();
+            this.chatBlured.emit(new EventArgs());
+        }
     }
 
     offset: Vector = new Vector(60, 900);
@@ -84,11 +92,12 @@ export class ChatPlugin extends Plugin {
         }
     }
 
+
     public sendChatMessage(message: string, self: boolean=true): void {
         if(self){
             this.chatMessageEvent.emit(new ChatEventArgs(message));
             if (message.startsWith("/")){
-                const result = this.getPlugin(CliPlugin).executeCommand(message.slice(1));
+                const result = this.getPlugin(CliPlugin).execute(message.slice(1));
                 this.sendChatMessage(result.message, false);
             }
             this.chatHistory.push(message);
@@ -99,8 +108,18 @@ export class ChatPlugin extends Plugin {
         this.drawChatMessages();
     }
 
+    public isFocused(): boolean{
+        return this.isListening;
+    }
 
     override cliGetName(): string {
         return "chat";
-    }   
+    }
+    
+    @cli("clear")
+    public clearChat(): CommandResult {
+        this.chatMessages = [];
+        this.drawChatMessages();
+        return new CommandResult(true, "Chat cleared", undefined);
+    }
 }

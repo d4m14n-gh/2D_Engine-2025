@@ -1,47 +1,53 @@
 import { Plugin } from "../Core/Plugin";
-import { cli, CommandResult, gameCommand } from "../Helpers/Commands";
+import { rgb } from "../Helpers/Color";
+import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 
-@cli("cli")
+@cliPlugin("cli")
 export class CliPlugin extends Plugin {
     public name: string = "CliPlugin";
     
-    @gameCommand
+    @cli("echo", "<message: string>", "string")
     private echo(message: string): CommandResult {
         return new CommandResult(true, message, message);
     }
-    @gameCommand
+    @cli("true", undefined, "bool")
     private true(): CommandResult {
         const message = "This is a true command";
         return new CommandResult(true, message, true);
     }
-    @gameCommand
+    @cli("false", undefined, "bool")
     private false(): CommandResult {
         const message = "This is a false command";
         return new CommandResult(true, message, false);
     }
-    @gameCommand
+    @cli("int", "<value: string>", "number")
     private int(value: string): CommandResult{
         const message = `This is an int command with value ${value}`;
         return new CommandResult(true, message, parseInt(value));
     }
-    @gameCommand
+    @cli("float", "<value: string>", "number")
     private float(value: string): CommandResult{
         const message = `This is a float command with value ${value}`;
         return new CommandResult(true, message, parseFloat(value));
     }
-    @gameCommand
+    @cli("randomcolor",undefined, "rgb")
+        private getrandomcolor(): CommandResult {
+        const randomColor = rgb.randomColor2();
+        return new CommandResult(true, `Random color is ${randomColor}`, randomColor);
+    }
+    @cli("help")
     protected override help(): CommandResult {
         let superResult = super.help();
 
         let message = `plugins:\n`;
         for (const plugin of this.gameWorld.getAllPlugins()) {
-            message += `/${(plugin as any).cliGetName()}:help\n`;
+            message += `/${(plugin as any).cliGetName()}\n`;
         }
         message = superResult.message + "\n" + message;
         return new CommandResult(true, message, undefined);
     }
 
-    public executeCommand(command: string): CommandResult {
+    public execute(command: string): CommandResult {
         try{
             return this.parseAndExecuteCommands(command);
         }
@@ -146,6 +152,9 @@ export class CliPlugin extends Plugin {
     }
     
     private executeParsedCommand(plugin: Plugin, command: string, ...args: any[]): CommandResult {
+        if ((plugin as any).constructor["commands"][command] === undefined) {
+            return new CommandResult(false, `Command ${command} not found`, undefined);
+        }
         try {
             let commandToApply = (plugin as any).constructor["commands"][command];
             let result: CommandResult = commandToApply.apply(plugin, args);

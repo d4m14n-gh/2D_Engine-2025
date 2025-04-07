@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
     <title>Game</title>
     <link rel="stylesheet" href="style.css">
-    <script src="./GameEngine/dist/bundle.js" defer></script> 
+    <script type="module" src="./GameEngine/dist/bundle.js" defer></script> 
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
+    <div id="chatWrapper">
+        <input id="chatInput" autocomplete="off" autocorrect="off" spellcheck="false"  tabindex="-1" placeholder=">"/>
+        <div id="chat">
+        </div>
+    </div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const context = canvas.getContext('2d');
@@ -22,10 +28,10 @@
             context.lineJoin = "round";
             context.shadowColor =  'rgba(0, 0, 0, 0.75)';
         }
-
+        
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
-
+        
     </script>
 </body>
 </html>

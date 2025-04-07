@@ -1,7 +1,7 @@
 import { Component } from "./Component";
 import { GameWorld } from "../Core/GameWorld";
 import { EventArgs, ISubscriber } from "./GameEvent";
-import { CommandResult, gameCommand } from "../Helpers/Commands";
+import { cli, CommandResult } from "../Helpers/Commands";
 
 
 //WorldComponent = Plugin
@@ -37,20 +37,20 @@ export abstract class Plugin implements ISubscriber {
     protected cliGetName(): string {
         return this.name;
     }
-    @gameCommand
+    @cli("help")
     protected help(): CommandResult {
         let message = `${this.cliGetName()} commands:\n`;
-        for (const element of Object.keys((this as any).constructor["commands"])) {
+        for (const element of Object.values((this as any).constructor["syntaxes"])) {
             message += `/${this.cliGetName()}:${element}\n`;
         }
         return new CommandResult(true, message, undefined);
     }
-    @gameCommand
+    @cli("enable")
     private cliEnable(): CommandResult {
         this.enabled = true;
         return new CommandResult(true, `${this.name} enabled`, undefined);
     }
-    @gameCommand
+    @cli("disable")
     private cliDisable(): CommandResult {
         this.enabled = false;
         return new CommandResult(true, `${this.name} disabled`, undefined);
