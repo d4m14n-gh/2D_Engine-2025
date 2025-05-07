@@ -1,7 +1,6 @@
 import { Transform } from "../Helpers/Transform";
 export class GameObject {
     transform = new Transform();
-    // private id: number = 0;
     components = new Map();
     enabled = true;
     name = "UnnamedGameObject";
@@ -20,12 +19,10 @@ export class GameObject {
     }
     getComponent(classC) {
         const type = classC.name;
-        //if (!this.components.has(type))
-        // throw new Error(`Component doesn't ${type} exists in the game object`);
         return this.components.get(type);
     }
-    getAllComponents() {
-        return Array.from(this.components.values()).filter(c => c.isEnabled());
+    getAllComponents(onlyEnabled = false) {
+        return Array.from(this.components.values()).filter(c => onlyEnabled ? c.isEnabled() : true);
     }
     destroy() {
         this.gameWorld.destroy(this);

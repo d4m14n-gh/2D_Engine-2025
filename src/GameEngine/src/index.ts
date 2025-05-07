@@ -17,38 +17,25 @@ import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
 import { Plugin } from "./Core/Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
-import { ClientPlugin } from "./Plugins/Server";
-// import http from 'http';
-// import { Server as SocketIOServer } from 'socket.io';
+import { ClientPlugin } from "./Plugins/Client";
+import { ChatPlugin } from "./Plugins/Chat";
+import { CliPlugin } from "./Plugins/CliPlugin";
+
 
 const pressedKeys = new Set<string>();
-
 document.addEventListener("keydown", (event) => {
   pressedKeys.add(event.key.toLowerCase());
 });
-
 document.addEventListener("keyup", (event) => {
   pressedKeys.delete(event.key.toLowerCase());
 });
 
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export async function main (canvas: HTMLCanvasElement) {
-  // const server = http.createServer((req, res) => {
-  //   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  //   res.end('w\n');
-  // });
-  // server.listen(3000, 'localhost', () => {
-  //   console.log('Server is running on http://localhost:3000');
-  // });
-
-
-
+export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputElement, chat: HTMLDivElement) {
   let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
   plugins.push(new ClientPlugin());
+  plugins.push(new ChatPlugin(chatInput, chat));
+  plugins.push(new CliPlugin());
   plugins.push(new KeyboardPlugin(pressedKeys));
   plugins.push(new MousePlugin(canvas));
   plugins.push(new SchedulerPlugin());
@@ -61,14 +48,27 @@ export async function main (canvas: HTMLCanvasElement) {
   plugins.push(new RendererPlugin(canvas.getContext("2d")!));
 
   let world: MyWorld = new MyWorld(...plugins);
-    
-  function x() {
-    requestAnimationFrame(x);
-    world.tick();
+  function fixedTick(){
+    const delta = 15; 
+    setInterval(() => world.fixedTick(), delta);
   }
 
-  x();
+  let last = performance.now();
+  const interval = 20; // ms
+  function tick() {
+    requestAnimationFrame(tick);
+    world.tick();
+    
+    // const now = performance.now();
+    // if (now - last >= interval) {
+      // world.fixedTick();
+      // last = now;
+    // }
+  }
+  
+  tick();
+  // fixedTick();
 }
-main(document.getElementById("gameCanvas") as HTMLCanvasElement);
+main(document.getElementById("gameCanvas") as HTMLCanvasElement, document.getElementById("chatInput") as HTMLInputElement, document.getElementById("chat") as HTMLDivElement);
 
 

@@ -27,8 +27,8 @@ export class GameObject {
         const type=classC.name;
         return this.components.get(type) as T;
     }
-    public getAllComponents(): Component[]{
-        return Array.from(this.components.values()).filter(c=>c.isEnabled());
+    public getAllComponents(onlyEnabled: boolean=false): Component[]{
+        return Array.from(this.components.values()).filter(c=>onlyEnabled ? c.isEnabled() : true);
     }
 
     public destroy(): void{

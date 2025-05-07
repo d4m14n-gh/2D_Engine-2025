@@ -1,6 +1,6 @@
 import { CanonC } from "../Components/Canon";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
-import { RigidBodyC as RigidBodyC } from "../Components/RigidBody";
+import { RigidBodyC } from "../Components/RigidBody";
 import { GameObject } from "../Core/GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { rgb } from "../Helpers/Color";
@@ -9,11 +9,16 @@ import { Plugin } from "../Core/Plugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "./Keyboard";
 import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
+import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
+import { CameraPlugin } from "./Camera";
+import { ChatPlugin } from "./Chat";
+import { CliPlugin } from "./CliPlugin";
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
     public player: GameObject = GameObjectFactory.playerGO();
-    
+    public isIoBlocked: boolean = false;
+
     public getPlayerPosition(): Vector {
         return this.player.getTransform().position.clone();
     }
@@ -26,56 +31,67 @@ export class PlayerPlugin extends Plugin {
         this.player.spawn(this.gameWorld);
         this.player.name="player";
         this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
-        this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "KeyDownEvent");
+        this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
     }
 
     public override event(args: any, alias?: string): void {
-      let keyArgs = args as KeyboardEventArgs;
-      if (keyArgs.key === "r") {
-        if(this.player && this.gameWorld.isSpawned(this.player))  
-          this.gameWorld.destroy(this.player);
-        this.player = GameObjectFactory.playerGO();
-        this.player.spawn(this.gameWorld);
-      }
-      else if (keyArgs.key === "c") {
-        let displayColliders = this.getPlugin(ConfigPlugin)?.get("displayColliders")??false;
-        if (displayColliders !== undefined) 
-          this.getPlugin(ConfigPlugin)?.set("displayColliders", !displayColliders);
+      if (this.isIoBlocked) return;
+      if (alias=== "KeyDownEvent") {
+        let keyArgs = args as KeyboardEventArgs;
+        if (keyArgs.key === "r") {
+          if(this.player && this.gameWorld.isSpawned(this.player))  
+            this.gameWorld.destroy(this.player);
+          this.player = GameObjectFactory.playerGO();
+          this.player.spawn(this.gameWorld);
+        }
+        else if (keyArgs.key === "c") {
+          let displayColliders = this.getPlugin(ConfigPlugin)?.get("displayColliders")??false;
+          if (displayColliders !== undefined) 
+            this.getPlugin(ConfigPlugin)?.set("displayColliders", !displayColliders);
+        }
       }
     }
     
+    // color: rgb = new rgb(53, 110, 58);
+    // target: rgb = new rgb(53, 110, 58);
     protected override update(delta: number): void {
-      if (!this.player.enabled) 
-        return;
+      
+      // if (Math.random() < 0.05){
+      //   this.target=rgb.randomColor2();
+      //   // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");
+      // }
+      // this.color = this.color.blend(this.target, 0.02);
+      // this.player.getComponent(PolygonRendererC).color = this.color;
+
+      this.isIoBlocked = this.getPlugin(ChatPlugin)?.isFocused()??false;
+      if (this.isIoBlocked) return;
+      if (!this.player.enabled) return;
+
+      let camera = this.getPlugin(CameraPlugin);
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
       let gun = this.player.getComponent(CanonC);
-      
-
-
-      gun.targetDirection = mouse.getWorldPosition().sub(this.player.getTransform().position);
-      gun.range = mouse.getWorldPosition().sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
+      if (!gun) 
+        return;
+      camera.targetCameraPositon = this.player.getTransform().position.clone();
+      gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position);
+      gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
       if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
         gun.shoot();
-    }
 
-    override fixedUpdate(delta: number): void {
-      if (!this.player.enabled) 
-        return;
-      let a = 150;
-      const g = -55;
+
+      const g = -25;
+      const a = keyboard.isPressed("shift") ? 120 : 60;
+
       const vmax = 50.0;
-      
-      const keyboard = this.getPlugin(KeyboardPlugin);
       const rotation = this.player.getTransform().rotation;
       const direction = Vector.fromRad(rotation);
-      
       const turnSpeed = 2.5;
+
+
       let rigidBody = this.player.getComponent(RigidBodyC);
       let velocity = rigidBody.velocity;
       // Przyspieszanie
-      if (keyboard.isPressed("shift")) 
-        a = 250;
       if (keyboard.isPressed("w")) {
         rigidBody.acceleration = direction.toUnit().times(a);
         if (keyboard.isPressed("s"))
@@ -96,7 +112,34 @@ export class PlayerPlugin extends Plugin {
         rigidBody.angularVelocity = -turnSpeed;
       else 
         rigidBody.angularVelocity = 0;
-    }}
+    }
+
+  
+  public cliGetName(): string {
+      return "player";
+  }
+
+  @cli("setname", "<name: string>")
+  private setname(newName: string): CommandResult {
+      this.player.name = newName;
+      return new CommandResult(true, `Player name set to ${newName}`, undefined);
+  }
+
+  @cli("setcolor", "<color: string | rgb>")
+  private setcolor(color: string | rgb): CommandResult {
+      try{
+        let newColor = rgb.tryParseCssColor(color.toString());
+        if (newColor)
+          this.player.getComponent(PolygonRendererC).color = newColor;
+      } catch {}
+      return new CommandResult(true, `Player color set`, undefined);
+  }
+
+  @cli("getcolor", undefined, "rgb")
+  private getcolor(): CommandResult {
+    return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC).color}`, this.player.getComponent(PolygonRendererC).color);
+  }
+}
 //     public override fixedUpdate(delta: number): void {
 //         const speed = 18;
 //         let vmax = 30.0;

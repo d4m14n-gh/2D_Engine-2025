@@ -13,7 +13,7 @@ export class PolygonRendererC extends RendererC {
         this.color = color;
     }
     render(context) {
-        const size = [context.canvas.width, context.canvas.height];
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
@@ -23,10 +23,10 @@ export class PolygonRendererC extends RendererC {
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
         const color = this.color.toString();
         const cx = (x - cmx);
-        const cy = -(y - cmy);
+        const cy = (y - cmy);
         context.save();
-        context.translate(size[0] / 2, size[1] / 2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
         context.scale(transformScale.x, transformScale.y);

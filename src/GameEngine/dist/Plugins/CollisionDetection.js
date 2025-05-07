@@ -6,6 +6,7 @@ import { Plugin } from "../Core/Plugin";
 //     onCollisionExit(other: ColliderC): void;
 // }
 export class CollisionDetectionPlugin extends Plugin {
+    name = "CollisionDetectionPlugin";
     cellSize = 5;
     update() {
         this.checkCollisions();

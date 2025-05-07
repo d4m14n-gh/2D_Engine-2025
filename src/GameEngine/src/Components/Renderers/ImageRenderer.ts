@@ -18,7 +18,7 @@ export class ImageRendererC extends RendererC {
 
     public render(context: CanvasRenderingContext2D): void {
      
-        const size = [context.canvas.width, context.canvas.height];
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
@@ -28,7 +28,7 @@ export class ImageRendererC extends RendererC {
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
         const cx: number = (x-cmx);
-        const cy: number = -(y-cmy);
+        const cy: number = (y-cmy);
 
         let a: Vector = this.side;
         if (a.x==0)
@@ -36,19 +36,21 @@ export class ImageRendererC extends RendererC {
         if (a.y==0)
             a.y = this.image.height;
 
-        context.save();
+        // context.save();
         
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
         context.scale(transformScale.x, transformScale.y);
         context.translate(this.offset.x, this.offset.y);
 
         context.shadowBlur = 15;
-       
+        
         context.drawImage(this.image, -a.x/2,  -a.y/2, a.x, a.y);
+        context.shadowBlur = 0;
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        // context.restore();
     }
 }

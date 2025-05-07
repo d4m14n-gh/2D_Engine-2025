@@ -17,7 +17,7 @@ export class PolygonRendererC extends RendererC {
 
     public render(context: CanvasRenderingContext2D): void {
      
-        const size = [context.canvas.width, context.canvas.height];
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
@@ -29,13 +29,27 @@ export class PolygonRendererC extends RendererC {
         const color = this.color.toString();
 
         const cx: number = (x-cmx);
-        const cy: number = -(y-cmy);
+        const cy: number = (y-cmy);
 
 
-        context.save();
-        
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, scale);
+        // context.save();
+        // const sin = Math.sin(r);
+        // const cos = Math.cos(r);
+
+        // const sx = scale.x * transformScale.x;
+        // const sy = scale.y * transformScale.y;
+        // const a2 = cos * sx;
+        // const b = sin * sx;
+        // const c = -sin * sy;
+        // const d = cos * sy;
+        // const e = offset.x + scale.x * (cx * cos - cy * sin);
+        // const f = offset.y + scale.y * (cx * sin + cy * cos);
+
+        // // Ustaw bezpośrednio macierz transformacji
+        // context.setTransform(a2, b, c, d, e, f);
+
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
         context.scale(transformScale.x, transformScale.y);
@@ -57,11 +71,14 @@ export class PolygonRendererC extends RendererC {
         }
         
         context.fillStyle = color;
-        context.shadowBlur = 0;
+        context.shadowBlur = 0; 
         context.fill();
         context.shadowBlur = 50;
         context.stroke();
 
-        context.restore();
+        context.shadowBlur = 0;
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        // context.restore();
     }
 }

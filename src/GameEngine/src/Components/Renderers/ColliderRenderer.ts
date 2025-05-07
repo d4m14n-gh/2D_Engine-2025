@@ -33,27 +33,27 @@ export class ColliderRendererC extends RendererC {
         if(!display)
             return;
         const collider: ColliderC = this.getComponent(ColliderC);
-        const offset = collider.offset;
-        const radius = collider.radius+0.25;
+        const colliderOffset = collider.offset;
+        const radius = collider.radius;
+        const radius2 = collider.radius+0.25;
         const color = this.getColor();
      
-        const size = [context.canvas.width, context.canvas.height];
-        const x = this.getTransform().position.x+offset.x;
-        const y = this.getTransform().position.y+offset.y;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
+        const x = this.getTransform().position.x+colliderOffset.x;
+        const y = this.getTransform().position.y+colliderOffset.y;
         const r = this.getTransform().rotation;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
 
-        const a = radius;
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
 
         const cx: number = (x-cmx);
-        const cy: number = -(y-cmy);
+        const cy: number = (y-cmy);
 
         context.save();
         
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
 
@@ -61,11 +61,18 @@ export class ColliderRendererC extends RendererC {
         context.fillStyle = color.toString();
         context.shadowBlur = 30;
         context.beginPath();
-        context.arc(0, 0, a, 0, 2 * Math.PI);
+        context.arc(0, 0, radius2, 0, 2 * Math.PI);
         context.closePath();
         context.fill();
         context.stroke();
 
+        context.beginPath();
+        context.arc(0, 0, radius, 0, 2 * Math.PI);
+        context.closePath();
+        context.lineWidth = 0.1;
+        context.stroke();
+
+        // context.setTransform(1, 0, 0, 1, 0, 0);
         context.restore();
     }
 }

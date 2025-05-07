@@ -1,9 +1,13 @@
 import { ProfilerPlugin } from "../Plugins/Profiler";
 export class GameWorld {
+    startTime = 0;
+    prevWorldTime = 0;
+    worldTime = 0;
+    tickCount = 0;
     gameObjects = new Set();
     plugins = new Map();
-    tickCount = 0;
-    // private toStart: Array<WeakRef<Component>> = [];
+    events = new Set();
+    componentsToStart = [];
     constructor(...plugins) {
         for (let plugin of plugins) {
             let name = plugin.constructor.name;
@@ -13,30 +17,33 @@ export class GameWorld {
             this.plugins.set(name, plugin);
         }
     }
+    //plugins
     getPlugin(plugin) {
         const name = plugin.name;
-        // if (!this.plugins.has(name))
-        // throw new Error(`Plugin ${name} does'not exist in the game object`);
         return this.plugins.get(name);
+    }
+    getAllPlugins() {
+        return Array.from(this.plugins.values());
     }
     hasPlugin(plugin) {
         const name = plugin.name;
         return this.plugins.has(name);
     }
     //game objects
+    isSpawned(gameObject) {
+        return this.gameObjects.has(gameObject);
+    }
     spawn(gameObject) {
         if (this.gameObjects.has(gameObject))
             throw new Error(`GameObject ${gameObject.name} already exists in the game world`);
-        // gameObject.getAllComponents().forEach(comp => this.toStart.push(new WeakRef(comp)));
         gameObject.gameWorld = this;
         this.gameObjects.add(gameObject);
-        gameObject.getAllComponents().forEach(cmp => cmp.onSpawn());
+        gameObject.getAllComponents().forEach(comp => this.componentsToStart.push(new WeakRef(comp)));
         return gameObject;
     }
     destroy(gameObject) {
         if (!this.gameObjects.has(gameObject))
             throw new Error(`GameObject ${gameObject.name} does'not exist in the game world`);
-        gameObject.getAllComponents().forEach(cmp => cmp.onDestroy());
         gameObject.enabled = false;
         this.gameObjects.delete(gameObject);
     }
@@ -49,46 +56,77 @@ export class GameWorld {
             .filter(go => go.hasComponent(classC) && (go.getComponent(classC).isEnabled() || !onlyEnabled))
             .map(go => go.getComponent(classC));
     }
-    //not optimalized
     getAllComponents(onlyEnabled = true) {
+        //to do optimalization
+        //not optimalized
         return Array.from(this.getAllGameObjects(onlyEnabled)).flatMap(go => go.getAllComponents());
     }
-    //main flow control
-    startTime;
-    prevTotal = 0;
-    totalDelta = 0;
-    getTotal() { return this.totalDelta / 1e3; }
+    //events
+    registerEvent(event) {
+        this.events.add(new WeakRef(event));
+    }
+    //time
+    getWorldTime() {
+        return this.worldTime / 1e3;
+    }
+    //flow control
     tick() {
-        let delta = 0;
-        const fixedDelta = 10;
-        if (this.tickCount == 0) {
-            setInterval(() => { this.worldFixedUpdate(fixedDelta / 1e3); }, fixedDelta);
-            this.startTime = performance.now();
-            this.WorldStart();
-            this.plugins.forEach(plugin => plugin.start());
-        }
-        else {
-            this.totalDelta = performance.now() - this.startTime;
-            delta = this.totalDelta - this.prevTotal;
-            this.prevTotal = this.totalDelta;
-            this.worldUpdate(delta / 1e3);
-            this.plugins.forEach(plugin => {
-                let start = performance.now();
-                plugin.update(delta / 1e3);
-                this.getPlugin(ProfilerPlugin).addRecord(plugin.constructor.name, performance.now() - start);
-            });
-        }
         this.tickCount++;
+        if (this.tickCount == 1)
+            this.startWorld();
+        else
+            this.updateWorld();
+        this.startComponents();
+        this.invokeEvents();
     }
-    WorldStart() {
+    fixedTick() {
+        this.fixedUpdateWorld();
+    }
+    startComponents() {
+        for (let componentRef of this.componentsToStart) {
+            const component = componentRef.deref();
+            if (component)
+                component.start();
+        }
+        this.componentsToStart = [];
+    }
+    startWorld() {
+        this.startTime = performance.now();
         this.Start();
+        this.plugins.forEach(plugin => plugin.start());
     }
-    worldUpdate(delta) {
-        this.Update(delta);
+    updateWorld() {
+        this.worldTime = performance.now() - this.startTime;
+        const delta = this.worldTime - this.prevWorldTime;
+        this.prevWorldTime = this.worldTime;
+        this.Update(delta / 1e3);
+        this.plugins.forEach(plugin => {
+            if (!plugin.isEnabled())
+                return;
+            let start = performance.now();
+            plugin.update(delta / 1e3);
+            this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now() - start);
+        });
     }
-    worldFixedUpdate(delta) {
+    fixedUpdateWorld() {
+        const delta = 10 / 1e3;
         this.FixedUpdate(delta);
-        this.plugins.forEach(plugin => plugin.fixedUpdate(delta));
+        this.plugins.forEach(plugin => {
+            if (!plugin.isEnabled())
+                return;
+            plugin.fixedUpdate(delta);
+        });
+    }
+    invokeEvents() {
+        let start = performance.now();
+        for (const eventRef of this.events) {
+            const event = eventRef.deref();
+            if (event)
+                event.invoke();
+            else
+                this.events.delete(eventRef);
+        }
+        this.getPlugin(ProfilerPlugin).addRecord("Events", performance.now() - start);
     }
     //overridable methods
     Start() { }

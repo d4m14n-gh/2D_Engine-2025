@@ -25,6 +25,10 @@ export class ColliderC extends Component {
         this.avoidObjectes = new Set();
         avoidObjectes.forEach(ao => this.avoidObjectes.add(ao));
     }
+    start() {
+        this.onCollisionEnterEvent.register(this.getGameWorld());
+        this.onCollisionExitEvent.register(this.getGameWorld());
+    }
     getCenter() {
         return this.getTransform().position.add(this.offset);
     }
@@ -35,11 +39,9 @@ export class ColliderC extends Component {
             && !this.avoidObjectes.has(other.getGameObject()) && !other.avoidObjectes.has(this.getGameObject());
     }
     onCollisionEnter(other) {
-        this.onCollisionEnterEvent.addInvokeArgs(new CollisionEventArgs(other));
-        this.onCollisionEnterEvent.invoke();
+        this.onCollisionEnterEvent.emit(new CollisionEventArgs(other));
     }
     onCollisionExit(other) {
-        this.onCollisionExitEvent.addInvokeArgs(new CollisionEventArgs(other));
-        this.onCollisionExitEvent.invoke();
+        this.onCollisionExitEvent.emit(new CollisionEventArgs(other));
     }
 }

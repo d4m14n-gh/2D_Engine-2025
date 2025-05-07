@@ -10,9 +10,8 @@ import { CollisionDetectionPlugin } from "./Plugins/CollisionDetection";
 import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Profiler";
-import { ServerPlugin } from "./Plugins/Server";
-import http from 'http';
-// import { Server as SocketIOServer } from 'socket.io';
+import { ClientPlugin } from "./Plugins/Client";
+import { ChatPlugin } from "./Plugins/Chat";
 const pressedKeys = new Set();
 document.addEventListener("keydown", (event) => {
     pressedKeys.add(event.key.toLowerCase());
@@ -20,20 +19,11 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("keyup", (event) => {
     pressedKeys.delete(event.key.toLowerCase());
 });
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-export async function main(canvas) {
-    const server = http.createServer((req, res) => {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('w\n');
-    });
-    server.listen(3000, 'localhost', () => {
-        console.log('Server is running on http://localhost:3000');
-    });
+export async function main(canvas, chatInput, chat) {
     let plugins = [];
     plugins.push(new ConfigPlugin());
-    plugins.push(new ServerPlugin());
+    plugins.push(new ClientPlugin());
+    plugins.push(new ChatPlugin(chatInput, chat));
     plugins.push(new KeyboardPlugin(pressedKeys));
     plugins.push(new MousePlugin(canvas));
     plugins.push(new SchedulerPlugin());
@@ -45,10 +35,15 @@ export async function main(canvas) {
     plugins.push(new StandaloneComponentPlugin());
     plugins.push(new RendererPlugin(canvas.getContext("2d")));
     let world = new MyWorld(...plugins);
-    function x() {
-        requestAnimationFrame(x);
+    function fixedTick() {
+        const delta = 10;
+        setInterval(() => world.fixedTick(), delta);
+    }
+    function tick() {
+        requestAnimationFrame(tick);
         world.tick();
     }
-    x();
+    tick();
+    fixedTick();
 }
-main(document.getElementById("gameCanvas"));
+main(document.getElementById("gameCanvas"), document.getElementById("chatInput"), document.getElementById("chat"));
