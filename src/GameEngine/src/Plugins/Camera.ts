@@ -10,7 +10,7 @@ export class CameraPlugin extends Plugin {
     public targetCameraPositon: Vector = new Vector(4, 0);
     public cameraScreenOffset: Vector = new Vector(100, 100);
     
-    public followingSpeed: number = 2;
+    public followingSpeed: number = 0.05;
     public isFollowing: boolean = true;
     public scale: Vector = new Vector(20, -20);
     private scaleM: number = 20;
@@ -43,10 +43,12 @@ export class CameraPlugin extends Plugin {
 
     protected override update(delta: number): void {
         if (this.isFollowing) {
-            this.cameraPositon = this.cameraPositon.add(
-                this.targetCameraPositon.sub(this.cameraPositon).times(this.followingSpeed * delta)
-            );
+            const mx = this.targetCameraPositon.sub(this.cameraPositon);
+            const mv = mx.sub(mx.times(Math.pow(this.followingSpeed, delta)));
+            this.cameraPositon = this.cameraPositon.add(mv);
         }
+            //this.cameraPositon = this.cameraPositon.add(this.targetCameraPositon.sub(this.cameraPositon).times(this.followingSpeed*delta));
+
         this.scaleM += (this.targetScale-this.scaleM)*(2.5*delta);
         this.scale = new Vector(this.scaleM, -this.scaleM);
     }

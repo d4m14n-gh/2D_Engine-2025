@@ -45,7 +45,7 @@ export class HealthC extends Component{
             otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)).times(0.5); //toUnit().times(v2);
             thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1-op).times(0.5)); //toUnit().times(v2);
         }
-        otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/15);
+        otherRigidbody.angularVelocity += this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/15);
         try{
             const other = otherGO.getComponent(HealthC);
             const damageValue = Math.min(other.health, this.health);
