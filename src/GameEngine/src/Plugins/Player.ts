@@ -63,17 +63,17 @@ export class PlayerPlugin extends Plugin {
       // this.color = this.color.blend(this.target, 0.02);
       // this.player.getComponent(PolygonRendererC).color = this.color;
 
+      let camera = this.getPlugin(CameraPlugin);
+      camera.targetCameraPositon = this.player.getTransform().position.clone();
       this.isIoBlocked = this.getPlugin(ChatPlugin)?.isFocused()??false;
       if (this.isIoBlocked) return;
       if (!this.player.enabled) return;
 
-      let camera = this.getPlugin(CameraPlugin);
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
       let gun = this.player.getComponent(CanonC);
       if (!gun) 
         return;
-      camera.targetCameraPositon = this.player.getTransform().position.clone();
       gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position);
       gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
       if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 

@@ -8,7 +8,7 @@ export class RigidBodyC extends Component {
     public dampingFactor: number;
     public angularVelocity: number = 0;
     public angularAcceleration: number = 0;
-    public angularDrag: number = 0.01;
+    public angularDrag: number = 0.25;
 
     constructor(mass: number, dampingFactor=0.45){
         super();
@@ -24,8 +24,9 @@ export class RigidBodyC extends Component {
         this.getTransform().position = this.getTransform().position.add(this.velocity.times(delta));
         this.getTransform().position = this.getTransform().position.add(this.acceleration.times(delta*delta/2));
       
+        this.angularVelocity = this.angularVelocity+this.angularAcceleration * delta;
+        this.angularVelocity = this.angularVelocity*Math.pow(this.angularDrag, delta);
         this.getTransform().rotation += this.angularVelocity * delta;
-        this.angularVelocity = (this.angularVelocity+this.angularAcceleration * delta) * (1 - this.angularDrag);
     }
     public fixedUpdate(delta: number): void {
     }
