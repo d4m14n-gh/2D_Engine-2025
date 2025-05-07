@@ -1,13 +1,9 @@
 export class Component {
     enabled = true;
     gameObject;
-    onSpawn() {
-    }
-    onDestroy() {
-    }
-    onEvent(key, args) {
-        console.log("Event received", args);
-    }
+    //overideable methods
+    start() { }
+    event(args, alias) { }
     getGameWorld() {
         return this.gameObject.getGameWorld();
     }
@@ -25,6 +21,9 @@ export class Component {
     }
     getGameObject() {
         return this.gameObject;
+    }
+    getPlugin(plugin) {
+        return this.getGameWorld().getPlugin(plugin);
     }
     isEnabled() {
         return this.gameObject.enabled && this.enabled;

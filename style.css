@@ -5,8 +5,55 @@ body {
     align-items: center;
     background-color: #1f1f28;
 }
+#chatWrapper{
+    color: rgb(187, 199, 199);
+    font-weight: bold;
+    font-size: 30px;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    position: absolute;
+    height: 300px;
+    width: 400px;
+    right: 40px;
+    bottom: 40px;
+    padding: 10px 0px;
+    cursor: none;
+    pointer-events: none;
+    overflow: hidden;
+}
+#chatWrapper *{
+    color: rgb(187, 199, 199);
+    font-weight: bold;
+    font-size: 20px;
+}
+#chat {
+    padding: 5px 20px;
+    width: 100%;
+    overflow: hidden;
+}
+#chat > div {
+    padding: 0;
+    font-family: 'Arial', Courier, monospace;
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+#chatInput{
+    --stroke-color: rgb(43,43,44);
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 5px 20px;
+    border: none;
+    outline: none;
+}
+#chatInput::selection {
+    background-color: #546855;
+    color: white;
+}
 canvas {
     display: block;
     width: 100vw;
     height: 100vh;
 }
+

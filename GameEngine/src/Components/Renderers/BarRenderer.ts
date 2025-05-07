@@ -1,7 +1,4 @@
 import { rgb } from "../../Helpers/Color";
-import { Component } from "../../Core/Component";
-import { RendererPlugin } from "../../Plugins/Renderer";
-import { GameObject } from "../../Core/GameObject";
 import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { RendererC } from "./Renderer";
@@ -27,29 +24,28 @@ export class BarRendererC extends RendererC {
         if(fill>=1||fill<=0)
             return;
 
-        const size = [context.canvas.width, context.canvas.height];
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const transformScale = this.getTransform().scale;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
         const color = rgb.getHeatmapColor(fill).toString();
 
         const cx: number = (x-cmx);
-        const cy: number = -(y-cmy);
+        const cy: number = (y-cmy);
         const radius = 0.25;
 
 
-        context.save();
         
-        context.translate(size[0]/2, size[1]/2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         // context.rotate(r);
         context.scale(transformScale.x, transformScale.y);
-        context.translate(this.offset.x, -this.offset.y);
+        context.translate(this.offset.x, this.offset.y);
 
         
         context.fillStyle = color;
@@ -79,6 +75,6 @@ export class BarRendererC extends RendererC {
         context.shadowBlur = 0;
         context.stroke();
 
-        context.restore();
+        context.setTransform(1, 0, 0, 1, 0, 0);
     }
 }

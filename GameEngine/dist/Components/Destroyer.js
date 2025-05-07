@@ -11,8 +11,8 @@ export class DestroyerC extends Component {
         // this.getComponent(ColliderC)?.enable(false);
         this.getComponent(AnimationC)?.startShrink();
     }
-    onSpawn() {
-        let destroyTime = this.getGameWorld().getTotal() + this.lifeTime;
+    start() {
+        let destroyTime = this.getGameWorld().getWorldTime() + this.lifeTime;
         this.getGameWorld().getPlugin(SchedulerPlugin).addInvoke(this, destroyTime, "destroy");
     }
 }

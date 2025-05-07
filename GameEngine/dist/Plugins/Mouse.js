@@ -1,33 +1,33 @@
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
-import { CameraPlugin } from "./Camera";
+import { EventArgs, GameEvent } from "../Core/GameEvent";
+export class MouseScrollEventArgs extends EventArgs {
+    delta;
+    constructor(delta) {
+        super();
+        this.delta = delta;
+    }
+}
 export class MousePlugin extends Plugin {
+    name = "MousePlugin";
+    mouseScrollYEvent = new GameEvent();
     pressedKeys = new Set();
     canvas;
-    // private readonly canvasSize: Vector;
     position = Vector.zero();
-    // private worldPosition: Vector = Vector.zero();
     constructor(canvas) {
         super();
         this.canvas = canvas;
         this.trackMouse(canvas);
     }
-    scroll(delta) {
-        let camera = this.getPlugin(CameraPlugin);
-        delta = Math.sign(delta);
-        if (delta > 0 && camera.targetScale * 0.9 > 5)
-            camera.targetScale = 0.9 * camera.targetScale;
-        if (delta < 0 && camera.targetScale * 1.1 < 100)
-            camera.targetScale = 1.1 * camera.targetScale;
+    start() {
+        this.mouseScrollYEvent.register(this.gameWorld);
     }
     isKeyDown(key = 0) {
         return this.pressedKeys.has(key);
     }
-    getWorldPosition() {
-        let scale = this.getPlugin(CameraPlugin).scale;
-        let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
+    getMouseScreenPosition() {
         const canvasSize = new Vector(this.canvas.width, this.canvas.height);
-        let worldPosition = new Vector((this.position.x - canvasSize.x / 2) / scale, (-this.position.y + canvasSize.y / 2) / scale).add(cameraPosition);
+        let worldPosition = new Vector((this.position.x), (this.position.y));
         return worldPosition;
     }
     trackMouse(canvas) {
@@ -44,7 +44,7 @@ export class MousePlugin extends Plugin {
             this.pressedKeys.delete(event.button);
         });
         canvas.addEventListener("wheel", (event) => {
-            this.scroll(event.deltaY);
+            this.mouseScrollYEvent.emit(new MouseScrollEventArgs(event.deltaY));
         });
     }
 }

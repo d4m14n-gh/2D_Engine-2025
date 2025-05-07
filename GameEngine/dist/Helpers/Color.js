@@ -22,7 +22,7 @@ export class rgb {
         return new rgb(this.r, this.g, this.b, alpha);
     }
     blend(color, alpha) {
-        return new rgb(this.r * (1 - alpha) + color.r * alpha, this.g * (1 - alpha) + color.g * alpha, this.b * (1 - alpha) + color.b * alpha);
+        return new rgb(this.r * (1 - alpha) + color.r * alpha, this.g * (1 - alpha) + color.g * alpha, this.b * (1 - alpha) + color.b * alpha, this.a * (1 - alpha) + color.a * alpha);
     }
     static randomColor() {
         return new rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255);
@@ -49,6 +49,20 @@ export class rgb {
         let g = Math.min(255, Math.max(0, Math.floor(255 * value * 2)));
         let r = Math.min(255, Math.max(0, Math.floor(255 * (2 - value * 2))));
         return new rgb(r / 1.5, g / 1.5, 0, 255);
+    }
+    static tryParseCssColor(color) {
+        let tempElem = document.body;
+        let lastColor = tempElem.style.color;
+        tempElem.style.color = color;
+        let computedColor = getComputedStyle(tempElem).color;
+        tempElem.style.color = lastColor;
+        return this.getRgbFromComputedStyle(computedColor);
+    }
+    static getRgbFromComputedStyle(style) {
+        let match = style.match(/^rgb(a?)\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
+        if (!match)
+            return undefined;
+        return new rgb(parseInt(match[2]), parseInt(match[3]), parseInt(match[4]), parseFloat(match[5] ?? 1));
     }
     clone() {
         return new rgb(this.r, this.g, this.b, this.a);

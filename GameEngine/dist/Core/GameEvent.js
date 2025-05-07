@@ -1,40 +1,32 @@
 export class EventArgs {
     constructor() { }
 }
-export class EventSubsKey {
-    event;
-    sub;
-    constructor(event, sub) {
-        this.event = new WeakRef(event);
-        this.sub = new WeakRef(sub);
-    }
-    equals(other) {
-        return other !== undefined && this.event.deref() !== undefined && this.sub.deref() !== undefined && this.event.deref() === other.event.deref() && this.sub.deref() === other.sub.deref();
-    }
-}
 export class GameEvent {
-    subs = new Set();
+    subs = new Map();
     args = [];
-    subscribe(sub) {
-        this.subs.add(new WeakRef(sub));
-        const eventSubKey = new EventSubsKey(this, sub);
-        return eventSubKey;
+    subscribe(sub, alias) {
+        this.subs.set(new WeakRef(sub), alias);
     }
     unsubscribe(sub) {
         this.subs.delete(new WeakRef(sub));
     }
-    addInvokeArgs(args) {
+    emit(args) {
         this.args.push(args);
     }
+    register(gameWorld) {
+        gameWorld.registerEvent(this);
+    }
     invoke() {
-        for (const sub of this.subs) {
-            for (const args of this.args) {
-                const derefSub = sub.deref();
-                if (derefSub)
-                    derefSub.onEvent(new EventSubsKey(this, derefSub), args);
-                else
-                    this.subs.delete(sub);
+        if (this.args.length == 0)
+            return;
+        for (const [sub, alias] of this.subs) {
+            const derefSub = sub.deref();
+            if (!derefSub) {
+                this.subs.delete(sub);
+                continue;
             }
+            for (const args of this.args)
+                derefSub.event(args, alias);
         }
         this.args = [];
     }

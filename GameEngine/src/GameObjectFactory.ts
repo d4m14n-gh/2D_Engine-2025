@@ -22,7 +22,7 @@ import { TracesRendererC } from "./Components/Renderers/TracesRenderer";
 export class GameObjectFactory {
     public static polygonGO(radius: number = 2, n: number = 3, ...components: Component[]): GameObject {
         let polygonGO: GameObject = new GameObject(
-            new RigidBodyC(0.1, 0.01),
+            new RigidBodyC(0.1),
             new PolygonRendererC(radius, n, 0, rgb.randomColor2().toArgb(0.75)),
             new BarRendererC(0.1),
             new ColliderC(GMath.getColliderRadius(n, radius)),
@@ -43,7 +43,7 @@ export class GameObjectFactory {
             new PolygonRendererC(radius, 8, zindex),
             new BarRendererC(zindex+0.1),
             new ChasisRendererC(zindex-0.2),
-            new RigidBodyC(30, 0.01),
+            new RigidBodyC(30),
             new ColliderC(radius, false),
             new ColliderRendererC(zindex-0.15),
             new HealthC(1500),
@@ -61,7 +61,7 @@ export class GameObjectFactory {
 
     public static bulletGO(owner: GameObject, hp=30, radius: number = 0.65, lifeTime: number=1, zindex=-1, ...components: Component[]): GameObject {
         let bulletGO: GameObject = new GameObject(
-            new RigidBodyC(0.05 ,0.0),
+            new RigidBodyC(0.05, 1.0),
             new PolygonRendererC(radius, 10, zindex, new rgb(173, 87, 87)),
             new ColliderC(radius, false),
             new ColliderRendererC(),
@@ -86,7 +86,7 @@ export class GameObjectFactory {
             new ColliderRendererC(zindex-0.15),
             new BarRendererC(zindex+0.1),
             new CanonRendererC(zindex-0.1),
-            new RigidBodyC(30, 0.05),
+            new RigidBodyC(30, 0.025),
             new ColliderC(radius, false),
             new HealthC(1000),
             new AnimationC(),

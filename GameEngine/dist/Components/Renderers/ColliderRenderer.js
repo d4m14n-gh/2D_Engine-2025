@@ -8,15 +8,14 @@ export class ColliderRendererC extends RendererC {
     staticColor = new rgb(95, 64, 36, 0.125);
     dynamicColor = new rgb(57, 127, 31, 0.125);
     disabledColor = new rgb(36, 24, 36, 0.125);
-    constructor() {
+    constructor(zindex = -1) {
         super();
-        this.zindex = -1;
-        this.enable(ConfigPlugin.get("displayColliders") ?? false);
+        this.zindex = zindex;
     }
     getColor() {
         let color = this.dynamicColor;
         let collider = this.getComponent(ColliderC);
-        if (!collider.isEnabled)
+        if (!collider.isEnabled())
             color = this.disabledColor;
         else if (collider.isActive)
             color = this.activeColor;
@@ -25,13 +24,16 @@ export class ColliderRendererC extends RendererC {
         return color;
     }
     render(context) {
+        let display = this.getPlugin(ConfigPlugin)?.get("displayColliders") ?? false;
+        if (!display)
+            return;
         const collider = this.getComponent(ColliderC);
-        const offset = collider.offset;
+        const colliderOffset = collider.offset;
         const radius = collider.radius + 0.25;
         const color = this.getColor();
-        const size = [context.canvas.width, context.canvas.height];
-        const x = this.getTransform().position.x + offset.x;
-        const y = this.getTransform().position.y + offset.y;
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
+        const x = this.getTransform().position.x + colliderOffset.x;
+        const y = this.getTransform().position.y + colliderOffset.y;
         const r = this.getTransform().rotation;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
         const a = radius;
@@ -40,8 +42,8 @@ export class ColliderRendererC extends RendererC {
         const cx = (x - cmx);
         const cy = -(y - cmy);
         context.save();
-        context.translate(size[0] / 2, size[1] / 2);
-        context.scale(scale, scale);
+        context.translate(offset.x, offset.y);
+        context.scale(scale.x, scale.y);
         context.translate(cx, cy);
         context.rotate(r);
         context.strokeStyle = color.toRgb().toString();

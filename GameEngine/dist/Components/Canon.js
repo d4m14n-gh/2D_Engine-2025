@@ -1,6 +1,6 @@
-import { GameObjectFactory } from "../GameObjectFactory";
 import { GMath } from "../Helpers/Math";
 import { Vector } from "../Helpers/Vector";
+import { BulletC } from "./Bullet";
 import { ColliderC } from "./Collider";
 import { CanonRendererC } from "./Renderers/CanonRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
@@ -26,7 +26,7 @@ export class CanonC extends StandaloneComponent {
         this.offset = new Vector(length - width / 2, 0);
     }
     getShotDelta() {
-        let totalTime = this.getGameWorld().getTotal();
+        let totalTime = this.getGameWorld().getWorldTime();
         return totalTime - this.lastShootTime;
     }
     update(delta) {
@@ -47,7 +47,7 @@ export class CanonC extends StandaloneComponent {
         if (this.getShotDelta() >= this.cooldown) {
             const sW = 0.125;
             const zindex = this.getComponent(CanonRendererC).zindex - 0.01;
-            let bullet = GameObjectFactory.bulletGO(this.getGameObject(), this.damage, this.width / 2 + GMath.symRand(sW), this.getBulletLifetime(), zindex);
+            let bullet = BulletC.bulletGO(this.getGameObject(), this.damage, this.width / 2 + GMath.symRand(sW), this.getBulletLifetime(), zindex);
             let rigidBody = bullet.getComponent(RigidBodyC);
             let collider = bullet.getComponent(ColliderC);
             let renderer = bullet.getComponent(PolygonRendererC);
@@ -58,7 +58,7 @@ export class CanonC extends StandaloneComponent {
             rigidBody.velocity = this.direction.toUnit().add(spread).times(this.bulletSpeed);
             // rigidBody.velocity = rigidBody.velocity .add(this.getComponent(RigidBodyC).velocity.times(0.25)); 
             bullet.spawn(this.getGameWorld());
-            this.lastShootTime = this.getGameWorld().getTotal();
+            this.lastShootTime = this.getGameWorld().getWorldTime();
         }
     }
 }

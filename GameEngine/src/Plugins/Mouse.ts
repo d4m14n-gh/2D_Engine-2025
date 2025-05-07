@@ -1,14 +1,21 @@
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
-import { CameraPlugin } from "./Camera";
+import { EventArgs, GameEvent } from "../Core/GameEvent";
+
+export class MouseScrollEventArgs extends EventArgs{
+    public delta: number;
+    constructor(delta: number){
+        super();
+        this.delta = delta;
+    }
+}
 
 export class MousePlugin extends Plugin {
     public name: string = "MousePlugin";
+    public mouseScrollYEvent = new GameEvent();
     private readonly pressedKeys = new Set<number>();
     private readonly canvas: HTMLCanvasElement;
-    // private readonly canvasSize: Vector;
     private position: Vector = Vector.zero();
-    // private worldPosition: Vector = Vector.zero();
 
     constructor(canvas: HTMLCanvasElement) {
         super();
@@ -16,24 +23,17 @@ export class MousePlugin extends Plugin {
         this.trackMouse(canvas);
     }
     
-
-    
-    public scroll(delta: number): void{
-        let camera = this.getPlugin(CameraPlugin);
-        delta = Math.sign(delta);
-        if(delta>0&&camera.targetScale*0.9>5)
-            camera.targetScale=0.9*camera.targetScale;
-        if(delta<0&&camera.targetScale*1.1<100)
-            camera.targetScale=1.1*camera.targetScale;
-    }
+    protected override start(): void {
+        this.mouseScrollYEvent.register(this.gameWorld);
+    } 
+   
     public isKeyDown(key: number=0): boolean {
         return this.pressedKeys.has(key);
     }
-    public getWorldPosition(): Vector{
-        let scale = this.getPlugin(CameraPlugin).scale;
-        let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
+
+    public getMouseScreenPosition(): Vector{
         const canvasSize = new Vector(this.canvas.width, this.canvas.height);
-        let worldPosition = new Vector((this.position.x-canvasSize.x/2)/scale, (-this.position.y+canvasSize.y/2)/scale).add(cameraPosition);
+        let worldPosition = new Vector((this.position.x), (this.position.y));
         return worldPosition;
     }
 
@@ -51,7 +51,7 @@ export class MousePlugin extends Plugin {
             this.pressedKeys.delete(event.button);
         });    
         canvas.addEventListener("wheel", (event) => {
-            this.scroll(event.deltaY)
+            this.mouseScrollYEvent.emit(new MouseScrollEventArgs(event.deltaY))
         });
     }
 }

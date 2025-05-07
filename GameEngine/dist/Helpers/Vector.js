@@ -16,6 +16,9 @@ export class Vector {
     times(a) {
         return new Vector(this.x * a, this.y * a);
     }
+    timesV(other) {
+        return new Vector(this.x * other.x, this.y * other.y);
+    }
     //other operators 
     distance(other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));

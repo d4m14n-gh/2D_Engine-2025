@@ -7,6 +7,7 @@ import { GameEvent } from "./GameEvent";
 export class GameWorld {
     private startTime: number=0;
     private prevWorldTime: number=0;
+    private prevFixedWorldTime: number=0;
     private worldTime: number=0;
     private tickCount: number = 0;
 
@@ -21,7 +22,7 @@ export class GameWorld {
             if (this.plugins.has(name))
                 throw new Error(`Plugin ${name} already exists in the game object`);
                     
-            plugin.gameWorld = this;
+            (plugin as any).gameWorld = this;
             this.plugins.set(name, plugin);
         }
     }
@@ -29,6 +30,9 @@ export class GameWorld {
     public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
         const name = plugin.name;
         return this.plugins.get(name) as T;
+    }
+    public getAllPlugins(): Plugin[]{
+        return Array.from(this.plugins.values());
     }
     public hasPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): boolean{
         const name = plugin.name;
@@ -94,6 +98,9 @@ export class GameWorld {
         this.startComponents();
         this.invokeEvents();
     }
+    public fixedTick(): void {
+        this.fixedUpdateWorld();
+    }
 
 
     private startComponents(): void{
@@ -105,30 +112,44 @@ export class GameWorld {
         this.componentsToStart = [];
     }
     private startWorld(): void{
-        const fixedDelta: number = 10;
         this.startTime = performance.now();
         this.Start();
         this.plugins.forEach(plugin => (plugin as any).start());
-        setInterval(() => 
-            {
-                this.FixedUpdate(fixedDelta/1e3); 
-                this.plugins.forEach(plugin => (plugin as any).fixedUpdate(fixedDelta/1e3));
-            }, 
-            fixedDelta
-        );
     }
     private updateWorld(): void{
         this.worldTime = performance.now() - this.startTime;
-        let delta = this.worldTime - this.prevWorldTime;
+        const delta = this.worldTime - this.prevWorldTime;
         this.prevWorldTime = this.worldTime;
+        const fps = 1e3 / delta;
+        this.getPlugin(ProfilerPlugin).addRecord("FPS", fps);
+
 
         this.Update(delta / 1e3);
         this.plugins.forEach(plugin => {
+            if (!plugin.isEnabled())
+                return;
             let start = performance.now(); 
             (plugin as any).update(delta/1e3);
             this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now()-start);
         });
     }
+    private fixedUpdateWorld(): void {
+        this.worldTime = performance.now() - this.startTime;
+        let delta = (this.worldTime - this.prevFixedWorldTime) / 1e3;
+        this.prevFixedWorldTime = this.worldTime;
+
+        // console.log(delta*1e3);
+        delta = 15/1e3;
+
+
+        this.FixedUpdate(delta);
+        this.plugins.forEach(plugin => {
+            if (!plugin.isEnabled()) 
+                return;
+            // (plugin as any).fixedUpdate(delta);
+        });
+    }
+
     private invokeEvents(): void{
         let start = performance.now();
         for (const eventRef of this.events) {
@@ -141,7 +162,6 @@ export class GameWorld {
         this.getPlugin(ProfilerPlugin).addRecord("Events", performance.now()-start);
     }
 
-    
     //overridable methods
     protected Start(): void { }
     protected Update(delta: number): void { }

@@ -1,10 +1,8 @@
 import { Component } from "../Core/Component";
-import { GameObject } from "../Core/GameObject";
 import { AnimationC } from "./Animation";
 import { ColliderC, CollisionEventArgs } from "./Collider";
 import { RigidBodyC } from "./RigidBody";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
-import { GMath } from "../Helpers/Math";
 import { EventArgs, GameEvent} from "../Core/GameEvent";
 
 export class DamageEventArgs extends EventArgs{
@@ -72,7 +70,7 @@ export class HealthC extends Component{
        
         if(this.health==0){
             this.getComponent(ColliderC)?.enable(false);
-            this.getComponent(RigidBodyC).drag=0.025;
+            this.getComponent(RigidBodyC).dampingFactor=0.6;
             this.getComponent(AnimationC)?.startShrink();
             
             if(participant.hasComponent(PolygonRendererC)){
@@ -80,7 +78,7 @@ export class HealthC extends Component{
                 let newColor = myColor.blend(
                     participant.getComponent(PolygonRendererC).color.toRgb(),
                     0.5
-                );
+                ).toRgb();
                 this.getComponent(PolygonRendererC).color = newColor;
                 participant.getComponent(PolygonRendererC).color = newColor;
             }

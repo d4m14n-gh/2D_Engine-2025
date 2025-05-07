@@ -1,0 +1,5 @@
+resolve depencency cycles
+add ScreenPlugin
+mode: "production"
+add plugin for commands
+madge  --circular -i dep.svg .

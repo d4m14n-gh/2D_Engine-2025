@@ -19,26 +19,20 @@ export class NpcC extends StandaloneComponent {
     minDistance = 100;
     maxDistance = 1000;
     maxSpeed = 10;
-    constructor() {
-        super();
+    start() {
+        let health = this.getComponent(HealthC);
+        health.damageEvent.subscribe(this);
     }
-    onEvent(key, args) {
-        if (key.equals(this.damageKey)) {
-            let damageArgs = args;
-            const other = damageArgs.participant;
-            if (other.hasComponent(BulletC) && other.getComponent(BulletC).getOwner())
-                this.attack(other.getComponent(BulletC).getOwner());
-        }
+    event(args) {
+        let damageArgs = args;
+        const other = damageArgs.participant;
+        if (other.hasComponent(BulletC) && other.getComponent(BulletC).getOwner())
+            this.attack(other.getComponent(BulletC).getOwner());
     }
     attack(gameObject) {
         this.isAttacing = true;
         this.target = new WeakRef(gameObject);
         this.isFollowing = true;
-    }
-    damageKey;
-    start() {
-        let health = this.getComponent(HealthC);
-        this.damageKey = health.damageEvent.subscribe(this);
     }
     update(delta) {
         if (!this.target || !this.target.deref()) {

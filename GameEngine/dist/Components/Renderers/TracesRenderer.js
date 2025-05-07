@@ -15,7 +15,7 @@ export class TracesRendererC extends RendererC {
         this.color = color;
     }
     render(context) {
-        const size = [context.canvas.width, context.canvas.height];
+        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraOffset;
         // const transformScale = this.getTransform().scale;
         const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
@@ -27,20 +27,20 @@ export class TracesRendererC extends RendererC {
             this.traces.push({
                 position: currentPosition,
                 rotation: currentRotation,
-                startTime: this.getGameWorld().getTotal(),
+                startTime: this.getGameWorld().getWorldTime(),
             });
             this.lastPosition = this.getTransform().position.clone(); //.position.add(new Vector(1, 2)); 
         }
         ////////////////////
-        while (this.traces.length > 0 && this.traces[0].startTime + this.duration < this.getGameWorld().getTotal())
+        while (this.traces.length > 0 && this.traces[0].startTime + this.duration < this.getGameWorld().getWorldTime())
             this.traces.shift();
         for (const trace of this.traces) {
             const cx = trace.position.x - cmx;
             const cy = trace.position.y - cmy;
-            const lifeTime = 1 - (this.getGameWorld().getTotal() - trace.startTime) / this.duration;
+            const lifeTime = 1 - (this.getGameWorld().getWorldTime() - trace.startTime) / this.duration;
             context.save();
-            context.translate(size[0] / 2, size[1] / 2);
-            context.scale(scale, -scale);
+            context.translate(offset.x, offset.y);
+            context.scale(scale.x, scale.y);
             context.translate(cx, cy);
             context.rotate(trace.rotation);
             // context.scale(transformScale.x, transformScale.y);

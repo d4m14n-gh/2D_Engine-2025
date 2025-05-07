@@ -23,15 +23,13 @@ export class HealthC extends Component {
         this.maxHealth = maxHealth;
         this.damageEvent = new GameEvent();
     }
-    collisionEnterKey;
-    onSpawn() {
-        this.collisionEnterKey = this.getComponent(ColliderC).onCollisionEnterEvent.subscribe(this);
+    start() {
+        this.damageEvent.register(this.getGameWorld());
+        this.getComponent(ColliderC).onCollisionEnterEvent.subscribe(this, "onCollisionEnter");
     }
-    onEvent(key, args) {
-        if (key.equals(this.collisionEnterKey)) {
-            let cargs = args;
-            this.onCollisionEnter(cargs.collider);
-        }
+    event(args) {
+        let cargs = args;
+        this.onCollisionEnter(cargs.collider);
     }
     onCollisionEnter(other) {
         let otherGO = other.getGameObject();
@@ -39,10 +37,10 @@ export class HealthC extends Component {
         let thisRigidbody = this.getComponent(RigidBodyC);
         let op = thisRigidbody.mass / (otherRigidbody.mass + thisRigidbody.mass);
         if (thisRigidbody.mass < otherRigidbody.mass) {
-            otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)); //toUnit().times(v2);
-            thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1 - op)); //toUnit().times(v2);
+            otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)).times(0.5); //toUnit().times(v2);
+            thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1 - op).times(0.5)); //toUnit().times(v2);
         }
-        otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity) * (op / 10);
+        otherRigidbody.angularVelocity -= this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity) * (op / 15);
         try {
             const other = otherGO.getComponent(HealthC);
             const damageValue = Math.min(other.health, this.health);
@@ -53,8 +51,6 @@ export class HealthC extends Component {
         }
         catch { }
     }
-    onCollisionExit(other) {
-    }
     getHealth() {
         return this.health / this.maxHealth;
     }
@@ -63,27 +59,19 @@ export class HealthC extends Component {
     }
     onDamage(value, participant) {
         this.health -= value;
-        this.damageEvent.addInvokeArgs(new DamageEventArgs(value, participant));
-        this.damageEvent.invoke();
+        this.damageEvent.emit(new DamageEventArgs(value, participant));
         if (this.health == 0) {
-            this.getComponent(ColliderC).enable(false);
+            this.getComponent(ColliderC)?.enable(false);
             this.getComponent(RigidBodyC).drag = 0.025;
+            this.getComponent(AnimationC)?.startShrink();
             if (participant.hasComponent(PolygonRendererC)) {
                 let myColor = this.getComponent(PolygonRendererC).color;
-                let newColor = myColor.blend(participant.getComponent(PolygonRendererC).color.toRgb(), 0.5);
+                let newColor = myColor.blend(participant.getComponent(PolygonRendererC).color.toRgb(), 0.5).toRgb();
                 this.getComponent(PolygonRendererC).color = newColor;
                 participant.getComponent(PolygonRendererC).color = newColor;
             }
-            try {
-                this.getComponent(AnimationC).startShrink();
-            }
-            catch { }
         }
-        else {
-            try {
-                this.getComponent(AnimationC).startZoom();
-            }
-            catch { }
-        }
+        else
+            this.getComponent(AnimationC)?.startZoom();
     }
 }
