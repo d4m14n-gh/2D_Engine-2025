@@ -70,7 +70,7 @@ export class HealthC extends Component{
        
         if(this.health==0){
             this.getComponent(ColliderC)?.enable(false);
-            this.getComponent(RigidBodyC).drag=0.025;
+            this.getComponent(RigidBodyC).dampingFactor=0.6;
             this.getComponent(AnimationC)?.startShrink();
             
             if(participant.hasComponent(PolygonRendererC)){

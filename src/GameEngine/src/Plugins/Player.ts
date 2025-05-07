@@ -1,6 +1,6 @@
 import { CanonC } from "../Components/Canon";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
-import { RigidBodyC as RigidBodyC } from "../Components/RigidBody";
+import { RigidBodyC } from "../Components/RigidBody";
 import { GameObject } from "../Core/GameObject";
 import { GameObjectFactory } from "../GameObjectFactory";
 import { rgb } from "../Helpers/Color";
@@ -52,16 +52,16 @@ export class PlayerPlugin extends Plugin {
       }
     }
     
-    color: rgb = new rgb(53, 110, 58);
-    target: rgb = new rgb(53, 110, 58);
+    // color: rgb = new rgb(53, 110, 58);
+    // target: rgb = new rgb(53, 110, 58);
     protected override update(delta: number): void {
       
-      if (Math.random() < 0.05){
-        this.target=rgb.randomColor2();
-        // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");
-      }
-      this.color = this.color.blend(this.target, 0.02);
-      this.player.getComponent(PolygonRendererC).color = this.color;
+      // if (Math.random() < 0.05){
+      //   this.target=rgb.randomColor2();
+      //   // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");
+      // }
+      // this.color = this.color.blend(this.target, 0.02);
+      // this.player.getComponent(PolygonRendererC).color = this.color;
 
       this.isIoBlocked = this.getPlugin(ChatPlugin)?.isFocused()??false;
       if (this.isIoBlocked) return;
@@ -80,17 +80,18 @@ export class PlayerPlugin extends Plugin {
         gun.shoot();
 
 
-      let a = 150;
-      const g = -55;
+      const g = -25;
+      const a = keyboard.isPressed("shift") ? 120 : 60;
+
       const vmax = 50.0;
       const rotation = this.player.getTransform().rotation;
       const direction = Vector.fromRad(rotation);
       const turnSpeed = 2.5;
+
+
       let rigidBody = this.player.getComponent(RigidBodyC);
       let velocity = rigidBody.velocity;
       // Przyspieszanie
-      if (keyboard.isPressed("shift")) 
-        a = 250;
       if (keyboard.isPressed("w")) {
         rigidBody.acceleration = direction.toUnit().times(a);
         if (keyboard.isPressed("s"))
