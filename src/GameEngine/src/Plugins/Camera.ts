@@ -1,8 +1,10 @@
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
-import { MousePlugin, MouseScrollEventArgs } from "./Mouse";
+import { MouseClickEventArgs, MousePlugin, MouseScrollEventArgs } from "./Mouse";
 import { EventArgs } from "../Core/GameEvent";
 import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
+import { CollisionDetectionPlugin } from "./CollisionDetection";
+import { GameObject } from "../Core/GameObject";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {
@@ -14,16 +16,44 @@ export class CameraPlugin extends Plugin {
     public isFollowing: boolean = true;
     public scale: Vector = new Vector(20, -20);
     private scaleM: number = 20;
+    private target?: WeakRef<GameObject> = undefined; //todo: delete this
     public targetScale: number = 40;
     public name: string = "CameraPlugin";
 
     override start(): void {
         this.getPlugin(MousePlugin).mouseScrollYEvent.subscribe(this, "scroll");
+        this.getPlugin(MousePlugin).mouseDownEvent.subscribe(this, "down");
+        this.getPlugin(MousePlugin).mouseUpEvent.subscribe(this, "up");
     }
     
     override event(args: EventArgs, alias?: string): void {
-        const mouseArgs = args as MouseScrollEventArgs;
-        this.zoom(mouseArgs.delta);
+        if (alias == "scroll") {
+            const mouseArgs = args as MouseScrollEventArgs;
+            this.zoom(mouseArgs.delta);
+        }
+        //todo: delete this
+        else if (alias == "down") {
+            const mouseArgs = args as MouseClickEventArgs;
+            if (mouseArgs.button != 1) 
+                return;
+            if (this.target?.deref()){
+                this.target = undefined;
+                return;
+            }
+            const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
+            const mousePositon = this.getWorldPosition(mousePositonScreen);
+            let gameObject = this.getPlugin(CollisionDetectionPlugin).overlapPoint(mousePositon)[0]?.getGameObject();
+            if (gameObject)
+                this.target = new WeakRef(gameObject);
+        }
+        // else if (alias == "up") {
+        //     const mouseArgs = args as MouseClickEventArgs;
+        //     if (mouseArgs.button != 1) 
+        //         return;
+        //     this.target = undefined;
+        // }
+
+
     }
 
     public zoom(delta: number): void {
@@ -41,16 +71,22 @@ export class CameraPlugin extends Plugin {
         return worldPosition;
     }
 
+
     protected override update(delta: number): void {
-        if (this.isFollowing) {
-            const mx = this.targetCameraPositon.sub(this.cameraPositon);
-            const mv = mx.sub(mx.times(Math.pow(this.followingSpeed, delta)));
-            this.cameraPositon = this.cameraPositon.add(mv);
-        }
-            //this.cameraPositon = this.cameraPositon.add(this.targetCameraPositon.sub(this.cameraPositon).times(this.followingSpeed*delta));
+        if (this.isFollowing) 
+            this.cameraPositon = this.cameraPositon.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, delta));
+
 
         this.scaleM += (this.targetScale-this.scaleM)*(2.5*delta);
         this.scale = new Vector(this.scaleM, -this.scaleM);
+
+        //todo: delete this
+        const target = this.target?.deref();
+        if (target){
+            const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
+            const mousePositon = this.getWorldPosition(mousePositonScreen);
+            target.getTransform().position = target.getTransform().position.interpolate(mousePositon, Math.pow(0.001, delta));
+        }
     }
     override fixedUpdate(delta: number): void {
         this.cameraPositon = this.cameraPositon.add(this.targetCameraPositon.sub(this.cameraPositon).times(0.02));
