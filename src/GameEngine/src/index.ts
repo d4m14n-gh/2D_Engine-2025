@@ -57,7 +57,7 @@ export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputEleme
   const interval = 20; // ms
   function tick() {
     world.tick();
-    // requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
   }
   
 
