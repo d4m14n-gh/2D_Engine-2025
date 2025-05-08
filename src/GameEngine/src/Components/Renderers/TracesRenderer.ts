@@ -14,7 +14,7 @@ export class TracesRendererC extends RendererC {
     public tracesSpace: number = 0.5;
 
     private traces: Trace[] = [];
-    private lastPosition: Vector = Vector.zero();
+    private lastPosition?: Vector = undefined;
     private transparency: number = 2;
     private duration: number = 1;
     private length: number = 2;
@@ -39,6 +39,8 @@ export class TracesRendererC extends RendererC {
         const currentPosition = this.getTransform().position.clone();
         const currentRotation = this.getTransform().rotation;
 
+        if (this.lastPosition===undefined)
+            this.lastPosition = currentPosition.clone();
         let mv = currentPosition.sub(this.lastPosition);
         while(mv.magnitude()>this.tracesSpace){
             this.traces.push(
