@@ -92,7 +92,7 @@ onmessage = async (event) => {
     if (!ctx) return;
 
     let args: any = event.data.args;
-    // await drawDotGrid(ctx, args[0], 0.1, args[2], args[3]);
-    await drawGrid(ctx, args[0], 0.075, args[2], args[3]);
+    await drawDotGrid(ctx, args[0], 0.1, args[2], args[3]);
+    // await drawGrid(ctx, args[0], 0.075, args[2], args[3]);
     // await drawHexGrid(ctx, args[0], 0.05, args[2], args[3]);
 };

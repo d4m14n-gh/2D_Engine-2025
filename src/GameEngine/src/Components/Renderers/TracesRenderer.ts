@@ -11,6 +11,8 @@ type Trace = {
 
 export class TracesRendererC extends RendererC {
     public color: rgb;
+    public tracesSpace: number = 0.5;
+
     private traces: Trace[] = [];
     private lastPosition: Vector = Vector.zero();
     private transparency: number = 2;
@@ -36,15 +38,18 @@ export class TracesRendererC extends RendererC {
 
         const currentPosition = this.getTransform().position.clone();
         const currentRotation = this.getTransform().rotation;
-        if(this.lastPosition.distance(currentPosition)>0.5){
+
+        let mv = currentPosition.sub(this.lastPosition);
+        while(mv.magnitude()>this.tracesSpace){
             this.traces.push(
                 {
-                    position: currentPosition,
+                    position: this.lastPosition,
                     rotation: currentRotation,
                     startTime: this.getGameWorld().getWorldTime(),
                 }
             );
-            this.lastPosition = this.getTransform().position.clone();
+            this.lastPosition = this.lastPosition.add(mv.toUnit().times(this.tracesSpace));
+            mv = currentPosition.sub(this.lastPosition);
         }
 
         ////////////////////

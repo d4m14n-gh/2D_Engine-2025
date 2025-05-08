@@ -10,7 +10,7 @@ export class CameraPlugin extends Plugin {
     public targetCameraPositon: Vector = new Vector(4, 0);
     public cameraScreenOffset: Vector = new Vector(100, 100);
     
-    public followingSpeed: number = 0.05;
+    public followingSpeed: number = 0.02;
     public isFollowing: boolean = true;
     public scale: Vector = new Vector(20, -20);
     private scaleM: number = 20;
