@@ -56,16 +56,11 @@ export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputEleme
   let last = performance.now();
   const interval = 20; // ms
   function tick() {
-    requestAnimationFrame(tick);
     world.tick();
-    
-    // const now = performance.now();
-    // if (now - last >= interval) {
-      // world.fixedTick();
-      // last = now;
-    // }
+    requestAnimationFrame(tick);
   }
   
+
   tick();
   // fixedTick();
 }

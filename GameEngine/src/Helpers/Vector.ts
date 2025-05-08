@@ -67,6 +67,11 @@ export class Vector {
             sy=1/this.y;
         return new Vector(sx, sy);
     }
+    interpolate(target: Vector, k: number): Vector{
+        const mx = target.sub(this);
+        const mv = mx.sub(mx.times( Math.min(1, Math.max(0, k)) ));
+        return this.add(mv);
+    }
     static fromRad(rad: number){
         return new Vector(
             Math.cos(rad), 
