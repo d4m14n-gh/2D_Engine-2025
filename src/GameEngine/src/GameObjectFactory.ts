@@ -18,6 +18,7 @@ import { BulletC } from "./Components/Bullet";
 import { Vector } from "./Helpers/Vector";
 import { ChasisRendererC } from "./Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "./Components/Renderers/TracesRenderer";
+import { TagsC } from "./Components/Tags";
 
 export class GameObjectFactory {
     public static polygonGO(radius: number = 2, n: number = 3, ...components: Component[]): GameObject {
@@ -29,6 +30,7 @@ export class GameObjectFactory {
             new ColliderRendererC(),
             new HealthC(25*n),
             new AnimationC(),
+            new TagsC("Dragable"),
             ...components
         );
         polygonGO.getTransform().rotation = Math.random()*2*Math.PI;

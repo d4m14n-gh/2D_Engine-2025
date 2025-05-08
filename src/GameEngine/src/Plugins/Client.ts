@@ -5,7 +5,7 @@ import { ChatEventArgs, ChatPlugin } from "./Chat";
 
 
 export class ClientPlugin extends Plugin {
-    public name: string = "SlientPlugin";
+    public name: string = "ClientPlugin";
     private socket!: Socket;
 
     protected override start(): void {
