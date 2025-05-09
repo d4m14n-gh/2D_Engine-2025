@@ -5,7 +5,7 @@ body {
     align-items: center;
     background-color: #1f1f28;
 }
-#chatWrapper{
+/* #chatWrapper{
     color: rgb(187, 199, 199);
     font-weight: bold;
     font-size: 30px;
@@ -50,7 +50,7 @@ body {
 #chatInput::selection {
     background-color: #546855;
     color: white;
-}
+} */
 canvas {
     display: block;
     width: 100vw;

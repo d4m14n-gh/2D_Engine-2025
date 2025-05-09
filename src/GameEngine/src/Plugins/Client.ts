@@ -1,6 +1,7 @@
 import { Plugin } from "../Core/Plugin";
 import { Socket, io } from "socket.io-client";
-import { ChatEventArgs, ChatPlugin } from "./Chat";
+import { ConsoleEventArgs } from "./Hud/Console";
+// import { ChatEventArgs, ChatPlugin } from "./Chat";
 
 
 
@@ -18,7 +19,7 @@ export class ClientPlugin extends Plugin {
     }
 
     protected override event(args: any, alias?: string): void {
-        let chatArgs = args as ChatEventArgs;
+        let chatArgs = args as ConsoleEventArgs;
         this.sendChatMessage(chatArgs.message);
     }
 
@@ -32,7 +33,7 @@ export class ClientPlugin extends Plugin {
 
     private onChatMessage(message: string): void {
         console.log(`Received chat message: ${message}`);
-        this.getPlugin(ChatPlugin)?.sendChatMessage(message, false);
+        // this.getPlugin(ChatPlugin)?.sendChatMessage(message, false);
     }
   
     public sendChatMessage(message: string): void {

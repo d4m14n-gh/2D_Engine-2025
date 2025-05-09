@@ -11,8 +11,8 @@ import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 import { CameraPlugin } from "./Camera";
-import { ChatPlugin } from "./Chat";
 import { CliPlugin } from "./CliPlugin";
+import { ConsolePlugin } from "./Hud/Console";
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
@@ -65,7 +65,7 @@ export class PlayerPlugin extends Plugin {
 
       let camera = this.getPlugin(CameraPlugin);
       camera.targetCameraPositon = this.player.getTransform().position.clone();
-      this.isIoBlocked = this.getPlugin(ChatPlugin)?.isFocused()??false;
+      this.isIoBlocked = this.getPlugin(ConsolePlugin)?.isFocused()??false;
       if (this.isIoBlocked) return;
       if (!this.player.enabled) return;
 

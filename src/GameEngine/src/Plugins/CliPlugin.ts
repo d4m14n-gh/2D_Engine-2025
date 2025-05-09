@@ -10,6 +10,20 @@ export class CliPlugin extends Plugin {
     private echo(message: string): CommandResult {
         return new CommandResult(true, message, message);
     }
+    @cli("loop", "<iterations: int> <command: string>", "string")
+    private loop(iters: number, command: string): CommandResult {
+        let ret = [];
+        let message = "";
+        for (let i = 0; i < iters; i++) {
+            const result = this.parseAndExecuteCommands(command);
+            if (!result.status) {
+                return new CommandResult(false, `Error executing command: ${result.message}`, undefined);
+            }
+            ret.push(result.data);
+            message += `${result.message}\n`;
+        }
+        return new CommandResult(true, message, ret);
+    }
     @cli("true", undefined, "bool")
     private true(): CommandResult {
         const message = "This is a true command";

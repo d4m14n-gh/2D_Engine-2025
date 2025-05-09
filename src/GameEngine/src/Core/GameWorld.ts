@@ -1,6 +1,6 @@
 import { Component } from "./Component";
 import { GameObject } from "../Core/GameObject";
-import { ProfilerPlugin } from "../Plugins/Profiler";
+import { ProfilerPlugin } from "../Plugins/Hud/Profiler";
 import { Plugin } from "./Plugin";
 import { GameEvent } from "./GameEvent";
 
@@ -98,9 +98,9 @@ export class GameWorld {
         this.startComponents();
         this.invokeEvents();
     }
-    public fixedTick(): void {
-        this.fixedUpdateWorld();
-    }
+    // public fixedTick(): void {
+    //     this.fixedUpdateWorld();
+    // }
 
 
     private startComponents(): void{
@@ -120,10 +120,7 @@ export class GameWorld {
         this.worldTime = performance.now() - this.startTime;
         const delta = this.worldTime - this.prevWorldTime;
         this.prevWorldTime = this.worldTime;
-        const fps = 1e3 / delta;
-        this.getPlugin(ProfilerPlugin).addRecord("FPS", fps);
-
-
+       
         this.Update(delta / 1e3);
         this.plugins.forEach(plugin => {
             if (!plugin.isEnabled())
@@ -133,22 +130,22 @@ export class GameWorld {
             this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now()-start);
         });
     }
-    private fixedUpdateWorld(): void {
-        this.worldTime = performance.now() - this.startTime;
-        let delta = (this.worldTime - this.prevFixedWorldTime) / 1e3;
-        this.prevFixedWorldTime = this.worldTime;
+    // private fixedUpdateWorld(): void {
+    //     this.worldTime = performance.now() - this.startTime;
+    //     let delta = (this.worldTime - this.prevFixedWorldTime) / 1e3;
+    //     this.prevFixedWorldTime = this.worldTime;
 
-        // console.log(delta*1e3);
-        delta = 15/1e3;
+    //     // console.log(delta*1e3);
+    //     delta = 15/1e3;
 
 
-        this.FixedUpdate(delta);
-        this.plugins.forEach(plugin => {
-            if (!plugin.isEnabled()) 
-                return;
-            // (plugin as any).fixedUpdate(delta);
-        });
-    }
+    //     this.FixedUpdate(delta);
+    //     this.plugins.forEach(plugin => {
+    //         if (!plugin.isEnabled()) 
+    //             return;
+    //         // (plugin as any).fixedUpdate(delta);
+    //     });
+    // }
 
     private invokeEvents(): void{
         let start = performance.now();
@@ -165,5 +162,5 @@ export class GameWorld {
     //overridable methods
     protected Start(): void { }
     protected Update(delta: number): void { }
-    protected FixedUpdate(delta: number): void { }
+    // protected FixedUpdate(delta: number): void { }
 }
