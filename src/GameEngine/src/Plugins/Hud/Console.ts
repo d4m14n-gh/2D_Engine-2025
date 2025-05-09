@@ -4,6 +4,7 @@ import { EventArgs } from "../../Core/GameEvent";
 import { CliPlugin } from "../CliPlugin";
 import { cli, CommandResult } from "../../Helpers/Commands";
 import { sep } from "path";
+import { rgb } from "../../Helpers/Color";
 
 export class ConsoleEventArgs extends EventArgs {
     public message: string;
@@ -108,15 +109,29 @@ export class ConsolePlugin extends Plugin {
             const result = this.getPlugin(CliPlugin).execute(message.slice(1));
             if (result.message != "")
                 this.buffer += result.message + "\r\n";
+            if (result.status)
+                this.setStatus("forestgreen");
+            else
+                this.setStatus("crimson");
         }
         else{
             this.buffer += message + "\r\n";
+            this.setStatus("white");
         }
         this.history[0] = message;
         this.history.unshift("");
         this.historyIndex = 0;
         // this.buffer += "<hr class='console-item-separator'/>";
         this.updateConsole();
+    }
+
+    private setStatus(status: rgb | string): void {
+        try {
+            const statusBar = this.consoleWrapper.querySelector(".console-status") as HTMLInputElement;
+            if (statusBar == null) 
+                return;
+            statusBar.style.backgroundColor = status.toString();
+        } catch {}
     }
 
     private updateConsole(): void {
@@ -164,9 +179,16 @@ export class ConsolePlugin extends Plugin {
                     pointer-events: none;
                     overflow: hidden;
                 }
+                .console-status{
+                    margin: 15px 0;
+                    height: 10px;
+                    background-color: white;
+                    opacity: 0.5;
+                }
                 .console-header{
                     font-size: 20px;
                     font-weight: bold;
+                    height: 40px;
                     color: white;
                     margin-bottom: 10px;
                     user-select: none;
@@ -199,6 +221,7 @@ export class ConsolePlugin extends Plugin {
                     // border: 1px solid rgba(240, 240, 240, 0.25);
                 }
                 .console-content{
+                    word-wrap: break-word;
                     position: absolute;
                     width: 100%;
                     line-height: 20px;
@@ -212,7 +235,10 @@ export class ConsolePlugin extends Plugin {
             </style>
 
             <div class="console">
-                
+                <div class="console-header">
+                    <h2 style="margin: 0">Console <span style="opacity: 0.5">[T]</span></h2>
+                </div>
+                <div class="console-status"></div>
                 <div class="console-content-wrapper">
                     <div class="console-content"></div>
                 </div>
