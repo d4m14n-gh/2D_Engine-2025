@@ -17,21 +17,13 @@ import { CliPlugin } from "./Plugins/CliPlugin";
 import { ConsolePlugin } from "./Plugins/Hud/Console";
 
 
-const pressedKeys = new Set<string>();
-document.addEventListener("keydown", (event) => {
-  pressedKeys.add(event.key.toLowerCase());
-});
-document.addEventListener("keyup", (event) => {
-  pressedKeys.delete(event.key.toLowerCase());
-});
-
 export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputElement, chat: HTMLDivElement) {
   let plugins: Plugin[] = [];
   plugins.push(new ConfigPlugin());
   plugins.push(new ClientPlugin());
   // plugins.push(new ChatPlugin(chatInput, chat));
   plugins.push(new CliPlugin());
-  plugins.push(new KeyboardPlugin(pressedKeys));
+  plugins.push(new KeyboardPlugin());
   plugins.push(new MousePlugin(canvas));
   plugins.push(new SchedulerPlugin());
   plugins.push(new PlayerPlugin());

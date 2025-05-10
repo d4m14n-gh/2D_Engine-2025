@@ -56,11 +56,12 @@ export abstract class Plugin implements ISubscriber {
     // }
     @cli("help")
     protected help(): CommandResult {
-        const GRAY = "\x1b[90m";
+        const BLUE = "\x1b[36m";
+        const RESET = "\x1b[0m";
 
-        let message = `${this.cliGetName()} commands:\n`;
+        let message = `${BLUE}${this.cliGetName()}${RESET} commands:\n`;
         for (const element of Object.values((this as any).constructor["syntaxes"])) {
-            message += `  ${GRAY}/${this.cliGetName()}:${element}${GRAY}\n`;
+            message += `  /${this.cliGetName()}:${element}\n`;
         }
         return new CommandResult(true, message, undefined);
     }

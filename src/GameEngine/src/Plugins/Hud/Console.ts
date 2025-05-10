@@ -31,78 +31,66 @@ export class ConsolePlugin extends Plugin {
 
     override start(): void {
         this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "keydown");
-        try {
-            const input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
-            if (input == null) 
-                return;
-            document.onkeydown = (e) => {
-                const key = e.key.toLowerCase();
-                if (!this.isFocused())
-                    return;
-                if (key == "arrowup") {
-                    if (this.historyIndex < this.history.length-1) {
-                        this.historyIndex++;
-                        input.value = this.history[this.historyIndex];
-                    }
-                }
-                if (key == "arrowdown") {
-                    if (this.historyIndex > 0) {
-                        this.historyIndex--;
-                        console.log(this.historyIndex);
-                        console.log(this.history);
-                        input.value = this.history[this.historyIndex];
-                    }
-                }
-                if (key == "escape") {
-                    input.blur();
-                    input.value = "";
-                }
-                if (key == "enter") {
-                    const value = input.value.trim();
-                    if (value !== "") {
-                        input.value = "";
-                        console.log("Sending:", value);
-                        this.messageEntered(value);
-                    }
-                    input.blur();
-                }
-            }   
-        } catch {}
+        this.getPlugin(KeyboardPlugin).BlockedKeyDownEvent.subscribe(this, "keydown");
     }
 
-   
-    override update(delta: number): void {
-        this.getPlugin(KeyboardPlugin).enable(!this.isFocused());
-    }
-    
     protected override event(args: EventArgs, alias?: string): void {
-        if (alias == "keydown"){
-            const kargs = args as KeyboardEventArgs;
-            try {
-                const input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
-                if (input == null) 
-                    return;
-                if(!this.isFocused()){
-                    if (kargs.key == "enter"&&this.isVisible) {
-                        input.focus();
-                    }
-                    if (kargs.key == "t") {
-                        try{
-                            if (this.isVisible){
-                                document.body.removeChild(this.consoleWrapper);
-                                input.blur();
-                            }
-                            else
-                                document.body.appendChild(this.consoleWrapper);
-                            this.isVisible = !this.isVisible;
-                        }
-                        catch (error) {
-                            console.log("Error: ", error, this.consoleWrapper);
-                        }
-                    }
+        const key = (args as KeyboardEventArgs).key;
+        let input
+        try {
+            input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
+        } catch {}
+        if (!input) return;
+        
+        if(this.isFocused()){
+            if (key == "arrowup") {
+                if (this.historyIndex < this.history.length-1) {
+                    this.historyIndex++;
+                    input.value = this.history[this.historyIndex];
                 }
-            } catch {}
+            }
+            if (key == "arrowdown") {
+                if (this.historyIndex > 0) {
+                    this.historyIndex--;
+                    console.log(this.historyIndex);
+                    console.log(this.history);
+                    input.value = this.history[this.historyIndex];
+                }
+            }
+            if (key == "escape") {
+                input.blur();
+                input.value = "";
+            }
+            if (key == "enter") {
+                const value = input.value.trim();
+                if (value !== "") {
+                    input.value = "";
+                    console.log("Sending:", value);
+                    this.messageEntered(value);
+                }
+                input.blur();
+            }
         }
+        else { 
+            if (key == "enter"&&this.isVisible) {
+                input.focus();
+            }
+            if (key == "t") {
+                try{
+                    if (this.isVisible){
+                        document.body.removeChild(this.consoleWrapper);
+                        input.blur();
+                    }
+                    else
+                    document.body.appendChild(this.consoleWrapper);
+                    this.isVisible = !this.isVisible;
+                }
+                catch (error) {
+                    console.log("Error: ", error);
+                }
+            }
+        }
+        this.getPlugin(KeyboardPlugin).block = this.isFocused();
     }
 
     public isFocused(): boolean {
