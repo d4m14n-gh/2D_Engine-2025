@@ -10,15 +10,15 @@ import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 import { RigidBodyC } from "./RigidBody";
 
 export class BulletC extends Component {
-    private owner: WeakRef<GameObject>;
+    private ownerId: string;
 
     constructor(owner: GameObject){
         super();
-        this.owner = new WeakRef(owner);
+        this.ownerId = owner.getId();
     }
 
     public getOwner(): GameObject | undefined{
-        return this.owner.deref();
+        return this.getGameWorld().getGameObject(this.ownerId);
     }
 
     
