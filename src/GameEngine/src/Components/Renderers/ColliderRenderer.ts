@@ -42,7 +42,7 @@ export class ColliderRendererC extends RendererC {
         const x = this.getTransform().position.x+colliderOffset.x;
         const y = this.getTransform().position.y+colliderOffset.y;
         const r = this.getTransform().rotation;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
+        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;

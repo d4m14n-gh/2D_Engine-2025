@@ -14,8 +14,8 @@ export class CameraPlugin extends Plugin {
     
     public followingSpeed: number = 0.02;
     public isFollowing: boolean = true;
-    public scale: Vector = new Vector(20, -20);
-    private scaleM: number = 20;
+    public scaleV: Vector = new Vector(20, -20);
+    private scale: number = 20;
     private target?: WeakRef<GameObject> = undefined; //todo: delete this
     public targetScale: number = 40;
     public name: string = "CameraPlugin";
@@ -65,7 +65,7 @@ export class CameraPlugin extends Plugin {
     }
 
     public getWorldPosition(screenPositon: Vector): Vector{
-        let scale = this.getPlugin(CameraPlugin).scale;
+        let scale = this.getPlugin(CameraPlugin).scaleV;
         let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
         let worldPosition = new Vector((screenPositon.x-this.cameraScreenOffset.x)/scale.x, (screenPositon.y-this.cameraScreenOffset.y)/scale.y).add(cameraPosition);
         return worldPosition;
@@ -77,8 +77,9 @@ export class CameraPlugin extends Plugin {
             this.cameraPositon = this.cameraPositon.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, delta));
 
 
-        this.scaleM += (this.targetScale-this.scaleM)*(2.5*delta);
-        this.scale = new Vector(this.scaleM, -this.scaleM);
+        // this.scale += (this.targetScale-this.scale)*(2.5*delta);
+        this.scale += (this.targetScale-this.scale)*(1-Math.pow(0.002, delta));// (this.targetScale-this.scale)*(2.5*delta);
+        this.scaleV = new Vector(this.scale, -this.scale);
 
         //todo: delete this
         const target = this.target?.deref();
@@ -88,13 +89,10 @@ export class CameraPlugin extends Plugin {
             target.getTransform().position = target.getTransform().position.interpolate(mousePositon, Math.pow(0.001, delta));
         }
     }
-    override fixedUpdate(delta: number): void {
-        this.cameraPositon = this.cameraPositon.add(this.targetCameraPositon.sub(this.cameraPositon).times(0.02));
-    }
 
     @cli("getscale", undefined, "number")
     private getscale(): CommandResult{
-        return new CommandResult(true, this.scale.toString(), this.scale);
+        return new CommandResult(true, this.scaleV.toString(), this.scaleV);
     }
 
     @cli("follow", "<following: boolean>")

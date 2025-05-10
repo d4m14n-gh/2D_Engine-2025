@@ -2,8 +2,7 @@ import { Plugin } from "../../Core/Plugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "../Keyboard";
 import { EventArgs } from "../../Core/GameEvent";
 import { CliPlugin } from "../CliPlugin";
-import { cli, CommandResult } from "../../Helpers/Commands";
-import { sep } from "path";
+import { cli, cliPlugin, CommandResult } from "../../Helpers/Commands";
 import { rgb } from "../../Helpers/Color";
 
 export class ConsoleEventArgs extends EventArgs {
@@ -14,6 +13,7 @@ export class ConsoleEventArgs extends EventArgs {
     }
 }
 
+@cliPlugin("console")
 export class ConsolePlugin extends Plugin {
     public name: string = "ConsolePlugin";
     private isVisible: boolean = true;
@@ -24,12 +24,12 @@ export class ConsolePlugin extends Plugin {
 
     constructor() {
         super();
+        document.body.appendChild(this.consoleWrapper);
+        this.consoleWrapper.innerHTML = this.getInnerHtml();
     }
 
     override start(): void {
         this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "keydown");
-        document.body.appendChild(this.consoleWrapper);
-        this.consoleWrapper.innerHTML = this.getInnerHtml();
         // try {
         //     const input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
         //     if (input == null) 
@@ -102,6 +102,12 @@ export class ConsolePlugin extends Plugin {
         }     
     }
 
+    public writeLine(message: string): void {
+        this.buffer += message + "\r\n";
+        this.setStatus("white");
+        this.updateConsole();
+    }
+
     private messageEntered(message: string): void {
         // this.chatMessageEvent.emit(new ChatEventArgs(message));
         if (message.startsWith("/")){
@@ -170,7 +176,7 @@ export class ConsolePlugin extends Plugin {
                     top: 20px;
                     right: 20px;
                     
-                    width: fit-content;
+                    width: 400px;
                     padding: 20px;
                     border-radius: 20px;
                     background-color: rgba(42, 43, 46, 0.382);
@@ -180,10 +186,11 @@ export class ConsolePlugin extends Plugin {
                     overflow: hidden;
                 }
                 .console-status{
-                    margin: 15px 0;
-                    height: 10px;
+                    margin: 7px 0;
+                    height: 6px;
                     background-color: white;
                     opacity: 0.5;
+                    border-radius: 999px;
                 }
                 .console-header{
                     font-size: 20px;
@@ -229,9 +236,10 @@ export class ConsolePlugin extends Plugin {
                 }
                 .console-item-separator{
                     border: none;
-                    border-top: 1px dashed rgba(240, 240, 240, 0.33);
+                    border-top: 1px dashed gray;
+                    opacity: 0.75;
                     margin: 9.5px 0;
-                }
+                }t
             </style>
 
             <div class="console">
@@ -251,10 +259,6 @@ export class ConsolePlugin extends Plugin {
         return profiler;
     }
 
-    override cliGetName(): string {
-        return "console";
-    }
-    
     @cli("clear")
     public clearConsole(): CommandResult {
         this.buffer = "";

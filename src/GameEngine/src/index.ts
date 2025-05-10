@@ -45,8 +45,6 @@ export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputEleme
 
   let world: MyWorld = new MyWorld(...plugins);
 
-  let last = performance.now();
-  const interval = 20; // ms
   function tick() {
     world.tick();
     requestAnimationFrame(tick);

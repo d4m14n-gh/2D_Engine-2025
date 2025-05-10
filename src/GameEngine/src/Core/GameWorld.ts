@@ -7,7 +7,6 @@ import { GameEvent } from "./GameEvent";
 export class GameWorld {
     private startTime: number=0;
     private prevWorldTime: number=0;
-    private prevFixedWorldTime: number=0;
     private worldTime: number=0;
     private tickCount: number = 0;
 
@@ -27,8 +26,13 @@ export class GameWorld {
         }
     }
     //plugins
-    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
+    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T {
         const name = plugin.name;
+        return this.getPluginByName(name);
+    }
+    public getPluginByName<T extends Plugin>(name: string): T {
+        if (!this.plugins.has(name))
+            throw new Error(`Plugin ${name} does not exist in the game world`);
         return this.plugins.get(name) as T;
     }
     public getAllPlugins(): Plugin[]{
@@ -98,9 +102,6 @@ export class GameWorld {
         this.startComponents();
         this.invokeEvents();
     }
-    // public fixedTick(): void {
-    //     this.fixedUpdateWorld();
-    // }
 
 
     private startComponents(): void{
@@ -130,22 +131,6 @@ export class GameWorld {
             this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now()-start);
         });
     }
-    // private fixedUpdateWorld(): void {
-    //     this.worldTime = performance.now() - this.startTime;
-    //     let delta = (this.worldTime - this.prevFixedWorldTime) / 1e3;
-    //     this.prevFixedWorldTime = this.worldTime;
-
-    //     // console.log(delta*1e3);
-    //     delta = 15/1e3;
-
-
-    //     this.FixedUpdate(delta);
-    //     this.plugins.forEach(plugin => {
-    //         if (!plugin.isEnabled()) 
-    //             return;
-    //         // (plugin as any).fixedUpdate(delta);
-    //     });
-    // }
 
     private invokeEvents(): void{
         let start = performance.now();
@@ -162,5 +147,4 @@ export class GameWorld {
     //overridable methods
     protected Start(): void { }
     protected Update(delta: number): void { }
-    // protected FixedUpdate(delta: number): void { }
 }

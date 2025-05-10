@@ -65,7 +65,7 @@ export class RendererPlugin extends Plugin {
         const width = this.context.canvas.width;
         const height = this.context.canvas.height;
         
-        const scale = this.getPlugin(CameraPlugin).scale;
+        const scale = this.getPlugin(CameraPlugin).scaleV;
         const cameraPositon = this.getPlugin(CameraPlugin).cameraPositon;
         const xClip = Math.abs(width/2/scale.x);  
         const yClip = Math.abs(height/2/scale.y);
@@ -88,7 +88,7 @@ export class RendererPlugin extends Plugin {
         let gx = 2;
         let gy = 2;
         const offset = this.getPlugin(CameraPlugin).cameraScreenOffset;
-        const scale = this.getPlugin(CameraPlugin).scale;
+        const scale = this.getPlugin(CameraPlugin).scaleV;
         const cpos = this.getPlugin(CameraPlugin).cameraPositon;
         let i = Math.max(0, Math.min(9, Math.round(scale.x/10)));
         let c = i * 5 + 5;

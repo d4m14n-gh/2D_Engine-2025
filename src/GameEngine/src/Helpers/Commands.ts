@@ -31,7 +31,7 @@ export function cli(name?: string, argsSyntax?: string, returnType?: string): (t
             if (!Object.prototype.hasOwnProperty.call(ctor, "syntaxes")) {
                 ctor.syntaxes = Object.assign({}, ctor.syntaxes || {});
             }
-            console.log("Adding syntax: ", name, argsSyntax);
+            console.log("Adding syntax:", argsSyntax);
             ctor.syntaxes[name] = argsSyntax;
         }
     };

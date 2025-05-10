@@ -20,8 +20,10 @@
         const context = canvas.getContext('2d');
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const scale = window.devicePixelRatio || 1;
+
+            canvas.width = window.innerWidth*scale;
+            canvas.height = window.innerHeight*scale;
             context.imageSmoothingEnabled = true;
             context.strokeStyle = "rgb(43,43,44)";
             context.lineWidth = 0.175;

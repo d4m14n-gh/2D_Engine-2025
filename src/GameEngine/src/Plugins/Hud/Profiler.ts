@@ -116,7 +116,7 @@ export class ProfilerPlugin extends Plugin {
                     top: 20px;
                     left: 20px;
                     
-                    width: fit-content;
+                    width: 400px;
                     padding: 20px;
                     border-radius: 20px;
                     background-color: rgba(42, 43, 46, 0.382);
@@ -144,7 +144,8 @@ export class ProfilerPlugin extends Plugin {
                 }
                 .profiler-item-separator{
                     border: none;
-                    border-top: 1px dashed rgba(240, 240, 240, 0.33);
+                    border-top: 1px dashed gray;
+                    opacity: 0.75;
                     margin: 2px 0;
                 }
                 .profiler-chart{

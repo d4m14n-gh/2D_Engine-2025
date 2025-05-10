@@ -1,11 +1,15 @@
+import { Console } from "console";
 import { Plugin } from "../Core/Plugin";
 import { rgb } from "../Helpers/Color";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
+import { ConsolePlugin } from "./Hud/Console";
 
 @cliPlugin("cli")
 export class CliPlugin extends Plugin {
     public name: string = "CliPlugin";
-    
+    private globalCommands: Map<string, string | undefined> = new Map<string, string | undefined>();
+
+
     @cli("echo", "<message: string>", "string")
     private echo(message: string): CommandResult {
         return new CommandResult(true, message, message);
@@ -69,6 +73,20 @@ export class CliPlugin extends Plugin {
             return new CommandResult(false, "Command execution failed", undefined);
         }
     }
+
+    override start(): void {
+        this.gameWorld.getAllPlugins().forEach(plugin => {
+            const pluginName = plugin.constructor.name;
+            try{
+                for(let command of Object.keys((plugin as any).constructor["commands"])){
+                    if (this.globalCommands.has(command)) 
+                        this.globalCommands.set(command, undefined);
+                    else
+                    this.globalCommands.set(command, pluginName);
+                }
+            } catch {}
+        });
+    };
 
     private parseAndExecuteCommands(input: string, depth: number = 0): CommandResult {
         console.log(("---".repeat(depth))+"Parsing: "+input);
@@ -158,7 +176,18 @@ export class CliPlugin extends Plugin {
             return this.executeParsedCommand(plugin, fullCommand[1], ...args.slice(1));
         }
         else if (fullCommand.length === 1) {
-            return this.executeParsedCommand(this, fullCommand[0], ...args.slice(1));
+            try{
+                if (!this.globalCommands.has(fullCommand[0]))
+                    return new CommandResult(false, `Command ${fullCommand[0]} not found`, undefined);
+                const pluginName = this.globalCommands.get(fullCommand[0]);
+                if (!pluginName)
+                    return new CommandResult(false, `More than one command found, use "/plugin:command" instead.`, undefined);
+                const plugin = this.gameWorld.getPluginByName(pluginName);
+                return this.executeParsedCommand(plugin, fullCommand[0], ...args.slice(1));
+            }
+            catch{
+                return new CommandResult(false, "Command not found or wrong syntax", undefined);
+            }
         }
         else {
             return new CommandResult(false, "No command found", undefined);
