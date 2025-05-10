@@ -21,5 +21,7 @@ server_address = (host, port)
 
 print(f"Server working on http://{host}:{port} -> {serve_dir}")
 httpd = HTTPServer(server_address, NoCacheHandler)
-httpd.serve_forever()
-
+try:
+    httpd.serve_forever()
+except KeyboardInterrupt:
+    print(" Closing server...")
