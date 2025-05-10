@@ -16,7 +16,7 @@ export class CameraPlugin extends Plugin {
     public isFollowing: boolean = true;
     public scaleV: Vector = new Vector(20, -20);
     private scale: number = 20;
-    private target?: WeakRef<GameObject> = undefined; //todo: delete this
+    private targetId: string = "None"; //todo: delete this
     public targetScale: number = 40;
     public name: string = "CameraPlugin";
 
@@ -36,15 +36,16 @@ export class CameraPlugin extends Plugin {
             const mouseArgs = args as MouseClickEventArgs;
             if (mouseArgs.button != 1) 
                 return;
-            if (this.target?.deref()){
-                this.target = undefined;
+            const target = this.gameWorld.getGameObject(this.targetId);
+            if (target){
+                this.targetId = "None";
                 return;
             }
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
             let gameObject = this.getPlugin(CollisionDetectionPlugin).overlapPoint(mousePositon)[0]?.getGameObject();
             if (gameObject)
-                this.target = new WeakRef(gameObject);
+                this.targetId = gameObject.getId();
         }
         // else if (alias == "up") {
         //     const mouseArgs = args as MouseClickEventArgs;
@@ -82,7 +83,7 @@ export class CameraPlugin extends Plugin {
         this.scaleV = new Vector(this.scale, -this.scale);
 
         //todo: delete this
-        const target = this.target?.deref();
+        const target = this.gameWorld.getGameObject(this.targetId);
         if (target){
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);

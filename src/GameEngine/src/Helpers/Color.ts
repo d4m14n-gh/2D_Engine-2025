@@ -43,8 +43,8 @@ export class rgb{
     }
     public static randomColor2(): rgb {
       const hue = Math.floor(Math.random() * 360);
-      const saturation = Math.floor(Math.random() * 35) + 15;
-      const lightness = Math.floor(Math.random() * 25) + 30;
+      const saturation = Math.floor(Math.random() * 30) + 15;
+      const lightness = Math.floor(Math.random() * 20) + 30;
     
       return rgb.hslToRgb(hue, saturation, lightness);
     }

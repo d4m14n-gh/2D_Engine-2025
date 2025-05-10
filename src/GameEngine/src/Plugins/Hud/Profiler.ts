@@ -121,7 +121,7 @@ export class ProfilerPlugin extends Plugin {
                     border-radius: 20px;
                     background-color: rgba(42, 43, 46, 0.382);
                     color: white;
-                    font-family: Roboto, sans-serif;
+                    font-family: monospace;
                     pointer-events: none;
                 }
                 .profiler-header{

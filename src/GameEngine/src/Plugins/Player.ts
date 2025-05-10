@@ -11,14 +11,11 @@ import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 import { CameraPlugin } from "./Camera";
-import { CliPlugin } from "./CliPlugin";
-import { ConsolePlugin } from "./Hud/Console";
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
     private playerName: string = "player";
     public player: GameObject = GameObjectFactory.playerGO();
-    public isIoBlocked: boolean = false;
 
     public getPlayerPosition(): Vector {
         return this.player.getTransform().position.clone();
@@ -35,7 +32,6 @@ export class PlayerPlugin extends Plugin {
     }
 
     public override event(args: any, alias?: string): void {
-      if (this.isIoBlocked) return;
       if (alias=== "KeyDownEvent") {
         let keyArgs = args as KeyboardEventArgs;
         if (keyArgs.key === "r") {
@@ -65,8 +61,6 @@ export class PlayerPlugin extends Plugin {
 
       let camera = this.getPlugin(CameraPlugin);
       camera.targetCameraPositon = this.player.getTransform().position.clone();
-      this.isIoBlocked = this.getPlugin(ConsolePlugin)?.isFocused()??false;
-      if (this.isIoBlocked) return;
       if (!this.player.enabled) return;
 
       let mouse = this.getPlugin(MousePlugin);
@@ -151,37 +145,3 @@ export class PlayerPlugin extends Plugin {
     return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC).color}`, this.player.getComponent(PolygonRendererC).color);
   }
 }
-//     public override fixedUpdate(delta: number): void {
-//         const speed = 18;
-//         let vmax = 30.0;
-//         let keyboard = this.getPlugin(KeyboardPlugin);
-//         let rigidBody = this.player.getComponent(RigidBodyC);
-//         let vx = rigidBody.velocity.x;
-//         let vy = rigidBody.velocity.y;
-
-//         if (keyboard.isKeyDown("w")) {
-//           vy += speed*delta;
-//           vy = speed;
-//         }
-//         if (keyboard.isKeyDown("s")) {
-//           vy += -speed*delta;
-//           vy = -speed;
-//         }
-//         if (keyboard.isKeyDown("a")) {
-//           vx += -speed*delta;
-//           vx = -speed;
-//         }
-//         if (keyboard.isKeyDown("d")) {
-//           vx += speed*delta;
-//           vx = speed;
-//         }
-
-
-//         let newVelocity = new Vector(vx, vy);
-//         if(newVelocity.magnitude()>vmax)
-//             newVelocity = newVelocity.toUnit().times(vmax);
-//         rigidBody.velocity = newVelocity;
-//         if (newVelocity.magnitude()!=0)
-//           this.player.getTransform().rotation = newVelocity.toRad();
-//     }
-// }

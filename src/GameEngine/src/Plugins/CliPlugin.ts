@@ -65,6 +65,45 @@ export class CliPlugin extends Plugin {
         return new CommandResult(true, message, undefined);
     }
 
+    @cli("art")
+    protected art(): CommandResult {
+        
+        const asciiArt = `
+        \x1b[31m██████╗░░█████╗░██████╗░███████╗
+        \x1b[32m██╔══██╗██╔══██╗██╔══██╗╚════██║
+        \x1b[33m██║░░██║██║░░██║██████╔╝░░░░██╔╝
+        \x1b[34m██║░░██║██║░░██║██╔═══╝░░░░██╔╝░
+        \x1b[35m██████╔╝╚█████╔╝██║░░░░░░░██║░░░
+        \x1b[36m╚═════╝░░╚════╝░╚═╝░░░░░░░╚═╝░░░\x1b[0m
+        `;
+        const ansiArt = `
+\x1b[38;5;160m         ██████         \x1b[0m
+\x1b[38;5;160m       ██████████       \x1b[0m
+\x1b[38;5;160m      ████    ████      \x1b[0m
+\x1b[38;5;82m    ████        ████    \x1b[0m
+\x1b[38;5;82m   ████          ████   \x1b[0m
+\x1b[38;5;82m  ████            ████  \x1b[0m
+\x1b[38;5;82m  ████    ████    ████  \x1b[0m
+\x1b[38;5;82m  ████████████████████  \x1b[0m
+\x1b[38;5;226m   ██████████████████   \x1b[0m
+\x1b[38;5;226m     ████████████████     \x1b[0m
+\x1b[38;5;226m      ████    ██████      \x1b[0m
+\x1b[38;5;196m      ████    ██████      \x1b[0m
+\x1b[38;5;196m     ██████████████████     \x1b[0m
+\x1b[38;5;196m    ████████████████████    \x1b[0m
+\x1b[38;5;196m   ██████████████████████   \x1b[0m
+\x1b[38;5;196m  ████████████████████████  \x1b[0m
+\x1b[38;5;160m      ██████████████      \x1b[0m
+\x1b[38;5;160m       ████████████       \x1b[0m
+        `;
+
+        console.log(ansiArt);
+
+        return new CommandResult(true, ansiArt, undefined);
+    }
+
+
+
     public execute(command: string): CommandResult {
         try{
             return this.parseAndExecuteCommands(command);
@@ -181,7 +220,7 @@ export class CliPlugin extends Plugin {
                     return new CommandResult(false, `Command ${fullCommand[0]} not found`, undefined);
                 const pluginName = this.globalCommands.get(fullCommand[0]);
                 if (!pluginName)
-                    return new CommandResult(false, `More than one command found, use "/plugin:command" instead.`, undefined);
+                    return new CommandResult(false, `More than one command found, use "/<plugin>:<command>" (fe /cli:help) instead.`, undefined);
                 const plugin = this.gameWorld.getPluginByName(pluginName);
                 return this.executeParsedCommand(plugin, fullCommand[0], ...args.slice(1));
             }

@@ -36,22 +36,50 @@ export abstract class Plugin implements ISubscriber {
     protected cliGetName(): string {
         return this.name;
     }
+    // @cli("help")
+    // protected help(): CommandResult {
+    //     let message = `${this.cliGetName()} commands:\n`;
+    //     for (const element of Object.values((this as any).constructor["syntaxes"])) {
+    //         message += `/${this.cliGetName()}:${element}\n`;
+    //     }
+    //     return new CommandResult(true, message, undefined);
+    // }
+    // @cli("enable")
+    // private cliEnable(): CommandResult {
+    //     this.enabled = true;
+    //     return new CommandResult(true, `${this.name} enabled`, undefined);
+    // }
+    // @cli("disable")
+    // private cliDisable(): CommandResult {
+    //     this.enabled = false;
+    //     return new CommandResult(true, `${this.name} disabled`, undefined);
+    // }
     @cli("help")
     protected help(): CommandResult {
+        const GRAY = "\x1b[90m";
+
         let message = `${this.cliGetName()} commands:\n`;
         for (const element of Object.values((this as any).constructor["syntaxes"])) {
-            message += `/${this.cliGetName()}:${element}\n`;
+            message += `  ${GRAY}/${this.cliGetName()}:${element}${GRAY}\n`;
         }
         return new CommandResult(true, message, undefined);
     }
+
     @cli("enable")
     private cliEnable(): CommandResult {
+        const GREEN = "\x1b[32m";
+        const RESET = "\x1b[0m";
+
         this.enabled = true;
-        return new CommandResult(true, `${this.name} enabled`, undefined);
+        return new CommandResult(true, `${this.name} ${GREEN}enabled${RESET}`, undefined);
     }
+
     @cli("disable")
     private cliDisable(): CommandResult {
+        const RED = "\x1b[31m";
+        const RESET = "\x1b[0m";
+
         this.enabled = false;
-        return new CommandResult(true, `${this.name} disabled`, undefined);
+        return new CommandResult(true, `${this.name} ${RED}disabled${RESET}`, undefined);
     }
 }

@@ -4,6 +4,7 @@ import { EventArgs } from "../../Core/GameEvent";
 import { CliPlugin } from "../CliPlugin";
 import { cli, cliPlugin, CommandResult } from "../../Helpers/Commands";
 import { rgb } from "../../Helpers/Color";
+import { AnsiUp }  from 'ansi-up';
 
 export class ConsoleEventArgs extends EventArgs {
     public message: string;
@@ -30,61 +31,74 @@ export class ConsolePlugin extends Plugin {
 
     override start(): void {
         this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "keydown");
-        // try {
-        //     const input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
-        //     if (input == null) 
-        //         return;
-        //     input.addEventListener("blur", () => {
-        //         setTimeout(() => input.focus(), 0);
-        //     });
-        // } catch {}
+        try {
+            const input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
+            if (input == null) 
+                return;
+            document.onkeydown = (e) => {
+                const key = e.key.toLowerCase();
+                if (!this.isFocused())
+                    return;
+                if (key == "arrowup") {
+                    if (this.historyIndex < this.history.length-1) {
+                        this.historyIndex++;
+                        input.value = this.history[this.historyIndex];
+                    }
+                }
+                if (key == "arrowdown") {
+                    if (this.historyIndex > 0) {
+                        this.historyIndex--;
+                        console.log(this.historyIndex);
+                        console.log(this.history);
+                        input.value = this.history[this.historyIndex];
+                    }
+                }
+                if (key == "escape") {
+                    input.blur();
+                    input.value = "";
+                }
+                if (key == "enter") {
+                    const value = input.value.trim();
+                    if (value !== "") {
+                        input.value = "";
+                        console.log("Sending:", value);
+                        this.messageEntered(value);
+                    }
+                    input.blur();
+                }
+            }   
+        } catch {}
     }
 
    
     override update(delta: number): void {
+        this.getPlugin(KeyboardPlugin).enable(!this.isFocused());
     }
     
     protected override event(args: EventArgs, alias?: string): void {
         if (alias == "keydown"){
             const kargs = args as KeyboardEventArgs;
-            if (kargs.key == "t")
-                this.isVisible = !this.isVisible;
             try {
                 const input = this.consoleWrapper.querySelector(".console-input") as HTMLInputElement;
                 if (input == null) 
                     return;
-                if(this.isFocused()){
-
-                    if (kargs.key == "arrowup") {
-                        if (this.historyIndex < this.history.length-1) {
-                            this.historyIndex++;
-                            input.value = this.history[this.historyIndex];
-                        }
-                    }
-                    if (kargs.key == "arrowdown") {
-                        if (this.historyIndex > 0) {
-                            this.historyIndex--;
-                            console.log(this.historyIndex);
-                            console.log(this.history);
-                            input.value = this.history[this.historyIndex];
-                        }
-                    }
-                    if (kargs.key == "escape") {
-                        input.blur();
-                        input.value = "";
-                    }
-                }
-                if (kargs.key == "enter") {
-                    if (!this.isFocused())
+                if(!this.isFocused()){
+                    if (kargs.key == "enter"&&this.isVisible) {
                         input.focus();
-                    else {
-                        const value = input.value.trim();
-                        if (value !== "") {
-                            input.value = "";
-                            console.log("Sending:", value);
-                            this.messageEntered(value);
+                    }
+                    if (kargs.key == "t") {
+                        try{
+                            if (this.isVisible){
+                                document.body.removeChild(this.consoleWrapper);
+                                input.blur();
+                            }
+                            else
+                                document.body.appendChild(this.consoleWrapper);
+                            this.isVisible = !this.isVisible;
                         }
-                        input.blur();
+                        catch (error) {
+                            console.log("Error: ", error, this.consoleWrapper);
+                        }
                     }
                 }
             } catch {}
@@ -116,9 +130,9 @@ export class ConsolePlugin extends Plugin {
             if (result.message != "")
                 this.buffer += result.message + "\r\n";
             if (result.status)
-                this.setStatus("forestgreen");
+                this.setStatus("#485b49");
             else
-                this.setStatus("crimson");
+                this.setStatus("#59312c");
         }
         else{
             this.buffer += message + "\r\n";
@@ -153,9 +167,13 @@ export class ConsolePlugin extends Plugin {
             const lines = buffer.split("\n");
             for (let i = 0; i < lines.length-1; i++) {
                 const line = lines[i];
-               
+
+                const convert = new AnsiUp();
+                const html = convert.ansi_to_html(line);
+
                 let span = document.createElement("span");
-                span.textContent = line;
+                // span.textContent = line;
+                span.innerHTML = html;
                 content.appendChild(span);
                 const separator = document.createElement("hr");
                 separator.className = "console-item-separator"
@@ -181,7 +199,7 @@ export class ConsolePlugin extends Plugin {
                     border-radius: 20px;
                     background-color: rgba(42, 43, 46, 0.382);
                     color: white;
-                    font-family: Roboto, sans-serif;
+                    font-family: monospace;
                     pointer-events: none;
                     overflow: hidden;
                 }
@@ -189,7 +207,7 @@ export class ConsolePlugin extends Plugin {
                     margin: 7px 0;
                     height: 6px;
                     background-color: white;
-                    opacity: 0.5;
+                    opacity: 1;
                     border-radius: 999px;
                 }
                 .console-header{
@@ -210,7 +228,7 @@ export class ConsolePlugin extends Plugin {
                     background-color: transparent; 
                     color: white;
                     font-size: 20px;   
-                    font-family: Roboto, sans-serif; 
+                    font-family: monospace;
                 }
                 .console *::selection {
                     background-color: #546855;
@@ -225,13 +243,14 @@ export class ConsolePlugin extends Plugin {
                     height: 600px;
                     width: 100%;
                     overflow: hidden;
-                    // border: 1px solid rgba(240, 240, 240, 0.25);
                 }
                 .console-content{
+                    white-space: pre-wrap;
                     word-wrap: break-word;
                     position: absolute;
                     width: 100%;
                     line-height: 20px;
+                    margin: 0;
                     bottom: 0;
                 }
                 .console-item-separator{
@@ -248,9 +267,9 @@ export class ConsolePlugin extends Plugin {
                 </div>
                 <div class="console-status"></div>
                 <div class="console-content-wrapper">
-                    <div class="console-content"></div>
+                    <pre class="console-content"></pre>
                 </div>
-                <input class="console-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" tabindex="-1" placeholder="Type your command here..." />
+                    <input class="console-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" tabindex="-1" placeholder="Type your command here..." />
             </div>
             `
         // <div class="console-header">

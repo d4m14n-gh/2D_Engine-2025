@@ -13,14 +13,14 @@ export class KeyboardPlugin extends Plugin {
     public name: string = "KeyboardPlugin";
     private prevPressedKeys = new Set<string>();
     private readonly pressedKeys = new Set<string>();
-    public KeyDownEvent: GameEvent = new GameEvent(); 
+    public KeyDownEvent: GameEvent = new GameEvent();
     
     constructor(pressedKeys: Set<string>) {
         super();
         this.pressedKeys = pressedKeys;
     }
     public isPressed(key: string): boolean {
-        return this.pressedKeys.has(key);
+        return this.isEnabled()&&this.pressedKeys.has(key);
     }
 
 
