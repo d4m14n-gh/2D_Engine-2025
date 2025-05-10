@@ -16,6 +16,7 @@ import { ConsolePlugin } from "./Hud/Console";
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
+    private playerName: string = "player";
     public player: GameObject = GameObjectFactory.playerGO();
     public isIoBlocked: boolean = false;
 
@@ -28,10 +29,9 @@ export class PlayerPlugin extends Plugin {
 
 
     public override start(): void {
-        this.player.spawn(this.gameWorld);
-        this.player.name="player";
-        this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
-        this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
+      this.respawn();  
+      this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
+      this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
     }
 
     public override event(args: any, alias?: string): void {
@@ -39,10 +39,7 @@ export class PlayerPlugin extends Plugin {
       if (alias=== "KeyDownEvent") {
         let keyArgs = args as KeyboardEventArgs;
         if (keyArgs.key === "r") {
-          if(this.player && this.gameWorld.isSpawned(this.player))  
-            this.gameWorld.destroy(this.player);
-          this.player = GameObjectFactory.playerGO();
-          this.player.spawn(this.gameWorld);
+          this.respawn();  
         }
         else if (keyArgs.key === "c") {
           let displayColliders = this.getPlugin(ConfigPlugin)?.get("displayColliders")??false;
@@ -54,6 +51,9 @@ export class PlayerPlugin extends Plugin {
     
     // color: rgb = new rgb(53, 110, 58);
     // target: rgb = new rgb(53, 110, 58);
+
+
+
     protected override update(delta: number): void {
       
       // if (Math.random() < 0.05){
@@ -121,6 +121,7 @@ export class PlayerPlugin extends Plugin {
 
   @cli("setname", "<name: string>")
   private setname(newName: string): CommandResult {
+      this.playerName = newName;
       this.player.name = newName;
       return new CommandResult(true, `Player name set to ${newName}`, undefined);
   }
@@ -133,6 +134,16 @@ export class PlayerPlugin extends Plugin {
           this.player.getComponent(PolygonRendererC).color = newColor;
       } catch {}
       return new CommandResult(true, `Player color set`, undefined);
+  }
+
+  @cli("respawn")  
+  private respawn(): CommandResult {
+    if(this.player && this.gameWorld.isSpawned(this.player))  
+      this.gameWorld.destroy(this.player);
+    this.player = GameObjectFactory.playerGO();
+    this.player.name=this.playerName;
+    this.player.spawn(this.gameWorld);
+    return new CommandResult(true, `Player respawned`, undefined);
   }
 
   @cli("getcolor", undefined, "rgb")

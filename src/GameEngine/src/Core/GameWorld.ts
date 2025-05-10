@@ -10,7 +10,7 @@ export class GameWorld {
     private worldTime: number=0;
     private tickCount: number = 0;
 
-    private gameObjects: Set<GameObject> = new Set<GameObject>();
+    private gameObjects: Map<string, GameObject> = new Map<string, GameObject>();
     private plugins: Map<string, Plugin> = new Map<string, Plugin>();
     private events: Set<WeakRef<GameEvent>> = new Set<WeakRef<GameEvent>>();
     private componentsToStart: Array<WeakRef<Component>> = [];
@@ -46,27 +46,30 @@ export class GameWorld {
 
     //game objects
     public isSpawned(gameObject: GameObject): boolean{
-        return this.gameObjects.has(gameObject);
+        return  this.gameObjects.has(gameObject.getId());
     }
     public spawn(gameObject: GameObject): GameObject{
-        if (this.gameObjects.has(gameObject))
+        if (this.gameObjects.has(gameObject.getId()))
             throw new Error(`GameObject ${gameObject.name} already exists in the game world`);
 
         (gameObject as any).gameWorld = this;
-        this.gameObjects.add(gameObject);
+        this.gameObjects.set(gameObject.getId(), gameObject);
 
         gameObject.getAllComponents().forEach(comp => this.componentsToStart.push(new WeakRef(comp)));
         return gameObject;
     }
     public destroy(gameObject: GameObject): void{
-        if (!this.gameObjects.has(gameObject))
+        if (!this.gameObjects.has(gameObject.getId()))
             throw new Error(`GameObject ${gameObject.name} does'not exist in the game world`);
         
         gameObject.enabled=false;
-        this.gameObjects.delete(gameObject);
+        this.gameObjects.delete(gameObject.getId());
+    }
+    public getGameObject(id: string): GameObject | undefined {
+        return this.gameObjects.get(id);
     }
     public getAllGameObjects(onlyEnabled: boolean=true): GameObject[]{
-        return Array.from(this.gameObjects).filter(go=>go.enabled||!onlyEnabled);
+        return Array.from(this.gameObjects.values()).filter(go=>go.enabled||!onlyEnabled);
     }
 
     //components
@@ -76,7 +79,7 @@ export class GameWorld {
         .map(go => go.getComponent(classC));
     }
     public getAllComponents(onlyEnabled: boolean=true): Component[]{
-        //to do optimalization
+        //todo optimalization
         //not optimalized
         return Array.from(this.getAllGameObjects(onlyEnabled)).flatMap(go => go.getAllComponents());
     }
@@ -102,8 +105,6 @@ export class GameWorld {
         this.startComponents();
         this.invokeEvents();
     }
-
-
     private startComponents(): void{
         for (let componentRef of this.componentsToStart) {
             const component = componentRef.deref();
@@ -143,7 +144,6 @@ export class GameWorld {
         }
         this.getPlugin(ProfilerPlugin).addRecord("Events", performance.now()-start);
     }
-
     //overridable methods
     protected Start(): void { }
     protected Update(delta: number): void { }
