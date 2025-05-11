@@ -53,7 +53,6 @@ export class GameObjectFactory {
             ...components
         );
         circleGO.getTransform().rotation = GMath.symRand(Math.PI);
-        circleGO.getComponent(RigidBodyC).angularDrag = 1;
         circleGO.getComponent(CanonC).targetDirection = Vector.fromRad(GMath.symRand(Math.PI));
         circleGO.name = "Enemy";
         

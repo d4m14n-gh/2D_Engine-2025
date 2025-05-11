@@ -120,7 +120,7 @@ export class ConsolePlugin extends Plugin {
             if (result.status)
                 this.setStatus("#485b49");
             else
-                this.setStatus("#59312c");
+                this.setStatus("#813136");
         }
         else{
             this.buffer += message + "\r\n";
@@ -187,7 +187,7 @@ export class ConsolePlugin extends Plugin {
                     border-radius: 20px;
                     background-color: rgba(42, 43, 46, 0.382);
                     color: white;
-                    font-family: monospace;
+                    font-family: "IBM Plex Mono", monospace;
                     pointer-events: none;
                     overflow: hidden;
                 }
@@ -216,7 +216,6 @@ export class ConsolePlugin extends Plugin {
                     background-color: transparent; 
                     color: white;
                     font-size: 20px;   
-                    font-family: monospace;
                 }
                 .console *::selection {
                     background-color: #546855;
@@ -238,6 +237,7 @@ export class ConsolePlugin extends Plugin {
                     position: absolute;
                     width: 100%;
                     line-height: 20px;
+                    font-size: 20px;
                     margin: 0;
                     bottom: 0;
                 }
