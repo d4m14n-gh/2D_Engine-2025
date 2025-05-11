@@ -4,7 +4,6 @@ import { MouseClickEventArgs, MousePlugin, MouseScrollEventArgs } from "./Mouse"
 import { EventArgs } from "../Core/GameEvent";
 import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
 import { CollisionDetectionPlugin } from "./CollisionDetection";
-import { GameObject } from "../Core/GameObject";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {
@@ -14,9 +13,9 @@ export class CameraPlugin extends Plugin {
     
     public followingSpeed: number = 0.02;
     public isFollowing: boolean = true;
-    public scale: Vector = new Vector(20, -20);
-    private scaleM: number = 20;
-    private target?: WeakRef<GameObject> = undefined; //todo: delete this
+    public scaleV: Vector = new Vector(20, -20);
+    private scale: number = 20;
+    private targetId: string = "None"; //todo: delete this
     public targetScale: number = 40;
     public name: string = "CameraPlugin";
 
@@ -36,15 +35,16 @@ export class CameraPlugin extends Plugin {
             const mouseArgs = args as MouseClickEventArgs;
             if (mouseArgs.button != 1) 
                 return;
-            if (this.target?.deref()){
-                this.target = undefined;
+            const target = this.gameWorld.getGameObject(this.targetId);
+            if (target){
+                this.targetId = "None";
                 return;
             }
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
             let gameObject = this.getPlugin(CollisionDetectionPlugin).overlapPoint(mousePositon)[0]?.getGameObject();
             if (gameObject)
-                this.target = new WeakRef(gameObject);
+                this.targetId = gameObject.getId();
         }
         // else if (alias == "up") {
         //     const mouseArgs = args as MouseClickEventArgs;
@@ -65,7 +65,7 @@ export class CameraPlugin extends Plugin {
     }
 
     public getWorldPosition(screenPositon: Vector): Vector{
-        let scale = this.getPlugin(CameraPlugin).scale;
+        let scale = this.getPlugin(CameraPlugin).scaleV;
         let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
         let worldPosition = new Vector((screenPositon.x-this.cameraScreenOffset.x)/scale.x, (screenPositon.y-this.cameraScreenOffset.y)/scale.y).add(cameraPosition);
         return worldPosition;
@@ -77,24 +77,22 @@ export class CameraPlugin extends Plugin {
             this.cameraPositon = this.cameraPositon.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, delta));
 
 
-        this.scaleM += (this.targetScale-this.scaleM)*(2.5*delta);
-        this.scale = new Vector(this.scaleM, -this.scaleM);
+        // this.scale += (this.targetScale-this.scale)*(2.5*delta);
+        this.scale += (this.targetScale-this.scale)*(1-Math.pow(0.002, delta));// (this.targetScale-this.scale)*(2.5*delta);
+        this.scaleV = new Vector(this.scale, -this.scale);
 
         //todo: delete this
-        const target = this.target?.deref();
+        const target = this.gameWorld.getGameObject(this.targetId);
         if (target){
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
             target.getTransform().position = target.getTransform().position.interpolate(mousePositon, Math.pow(0.001, delta));
         }
     }
-    override fixedUpdate(delta: number): void {
-        this.cameraPositon = this.cameraPositon.add(this.targetCameraPositon.sub(this.cameraPositon).times(0.02));
-    }
 
     @cli("getscale", undefined, "number")
     private getscale(): CommandResult{
-        return new CommandResult(true, this.scale.toString(), this.scale);
+        return new CommandResult(true, this.scaleV.toString(), this.scaleV);
     }
 
     @cli("follow", "<following: boolean>")

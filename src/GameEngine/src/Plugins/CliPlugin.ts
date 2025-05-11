@@ -5,10 +5,26 @@ import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 @cliPlugin("cli")
 export class CliPlugin extends Plugin {
     public name: string = "CliPlugin";
-    
+    private globalCommands: Map<string, string | undefined> = new Map<string, string | undefined>();
+
+
     @cli("echo", "<message: string>", "string")
     private echo(message: string): CommandResult {
         return new CommandResult(true, message, message);
+    }
+    @cli("loop", "<iterations: int> <command: string>", "string")
+    private loop(iters: number, command: string): CommandResult {
+        let ret = [];
+        let message = "";
+        for (let i = 0; i < iters; i++) {
+            const result = this.parseAndExecuteCommands(command);
+            if (!result.status) {
+                return new CommandResult(false, `Error executing command: ${result.message}`, undefined);
+            }
+            ret.push(result.data);
+            message += `${result.message}\n`;
+        }
+        return new CommandResult(true, message, ret);
     }
     @cli("true", undefined, "bool")
     private true(): CommandResult {
@@ -47,6 +63,45 @@ export class CliPlugin extends Plugin {
         return new CommandResult(true, message, undefined);
     }
 
+    @cli("art")
+    protected art(): CommandResult {
+        
+        const asciiArt = `
+        \x1b[31m██████╗░░█████╗░██████╗░███████╗
+        \x1b[32m██╔══██╗██╔══██╗██╔══██╗╚════██║
+        \x1b[33m██║░░██║██║░░██║██████╔╝░░░░██╔╝
+        \x1b[34m██║░░██║██║░░██║██╔═══╝░░░░██╔╝░
+        \x1b[35m██████╔╝╚█████╔╝██║░░░░░░░██║░░░
+        \x1b[36m╚═════╝░░╚════╝░╚═╝░░░░░░░╚═╝░░░\x1b[0m
+        `;
+        const ansiArt = `
+\x1b[38;5;160m         ██████         \x1b[0m
+\x1b[38;5;160m       ██████████       \x1b[0m
+\x1b[38;5;160m      ████    ████      \x1b[0m
+\x1b[38;5;82m    ████        ████    \x1b[0m
+\x1b[38;5;82m   ████          ████   \x1b[0m
+\x1b[38;5;82m  ████            ████  \x1b[0m
+\x1b[38;5;82m  ████    ████    ████  \x1b[0m
+\x1b[38;5;82m  ████████████████████  \x1b[0m
+\x1b[38;5;226m   ██████████████████   \x1b[0m
+\x1b[38;5;226m     ████████████████     \x1b[0m
+\x1b[38;5;226m      ████    ██████      \x1b[0m
+\x1b[38;5;196m      ████    ██████      \x1b[0m
+\x1b[38;5;196m     ██████████████████     \x1b[0m
+\x1b[38;5;196m    ████████████████████    \x1b[0m
+\x1b[38;5;196m   ██████████████████████   \x1b[0m
+\x1b[38;5;196m  ████████████████████████  \x1b[0m
+\x1b[38;5;160m      ██████████████      \x1b[0m
+\x1b[38;5;160m       ████████████       \x1b[0m
+        `;
+
+        console.log(ansiArt);
+
+        return new CommandResult(true, ansiArt, undefined);
+    }
+
+
+
     public execute(command: string): CommandResult {
         try{
             return this.parseAndExecuteCommands(command);
@@ -55,6 +110,20 @@ export class CliPlugin extends Plugin {
             return new CommandResult(false, "Command execution failed", undefined);
         }
     }
+
+    override start(): void {
+        this.gameWorld.getAllPlugins().forEach(plugin => {
+            const pluginName = plugin.constructor.name;
+            try{
+                for(let command of Object.keys((plugin as any).constructor["commands"])){
+                    if (this.globalCommands.has(command)) 
+                        this.globalCommands.set(command, undefined);
+                    else
+                    this.globalCommands.set(command, pluginName);
+                }
+            } catch {}
+        });
+    };
 
     private parseAndExecuteCommands(input: string, depth: number = 0): CommandResult {
         console.log(("---".repeat(depth))+"Parsing: "+input);
@@ -144,7 +213,18 @@ export class CliPlugin extends Plugin {
             return this.executeParsedCommand(plugin, fullCommand[1], ...args.slice(1));
         }
         else if (fullCommand.length === 1) {
-            return this.executeParsedCommand(this, fullCommand[0], ...args.slice(1));
+            try{
+                if (!this.globalCommands.has(fullCommand[0]))
+                    return new CommandResult(false, `Command ${fullCommand[0]} not found`, undefined);
+                const pluginName = this.globalCommands.get(fullCommand[0]);
+                if (!pluginName)
+                    return new CommandResult(false, `More than one command found, use "/<plugin>:<command>" (fe /cli:help) instead.`, undefined);
+                const plugin = this.gameWorld.getPluginByName(pluginName);
+                return this.executeParsedCommand(plugin, fullCommand[0], ...args.slice(1));
+            }
+            catch{
+                return new CommandResult(false, "Command not found or wrong syntax", undefined);
+            }
         }
         else {
             return new CommandResult(false, "No command found", undefined);

@@ -44,9 +44,10 @@ export class MousePlugin extends Plugin {
     }
 
     public getMouseScreenPosition(): Vector{
-        const canvasSize = new Vector(this.canvas.width, this.canvas.height);
-        let worldPosition = new Vector((this.position.x), (this.position.y));
-        return worldPosition;
+        const scale = window.devicePixelRatio || 1;
+        // const canvasSize = new Vector(this.canvas.width, this.canvas.height);
+        let screenPosition = new Vector((this.position.x*scale), (this.position.y*scale));
+        return screenPosition;
     }
 
     public trackMouse(canvas: HTMLCanvasElement): void {

@@ -11,13 +11,11 @@ import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
 import { Vector } from "../Helpers/Vector";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
-import { timingSafeEqual } from "crypto";
 
 
 export class RendererPlugin extends Plugin {
     public name: string = "RendererPlugin";
     private readonly context: CanvasRenderingContext2D;
-    public hud: Hud = new Hud();
     public renderDistance: number = 150;
     
     
@@ -66,7 +64,7 @@ export class RendererPlugin extends Plugin {
         const width = this.context.canvas.width;
         const height = this.context.canvas.height;
         
-        const scale = this.getPlugin(CameraPlugin).scale;
+        const scale = this.getPlugin(CameraPlugin).scaleV;
         const cameraPositon = this.getPlugin(CameraPlugin).cameraPositon;
         const xClip = Math.abs(width/2/scale.x);  
         const yClip = Math.abs(height/2/scale.y);
@@ -89,7 +87,7 @@ export class RendererPlugin extends Plugin {
         let gx = 2;
         let gy = 2;
         const offset = this.getPlugin(CameraPlugin).cameraScreenOffset;
-        const scale = this.getPlugin(CameraPlugin).scale;
+        const scale = this.getPlugin(CameraPlugin).scaleV;
         const cpos = this.getPlugin(CameraPlugin).cameraPositon;
         let i = Math.max(0, Math.min(9, Math.round(scale.x/10)));
         let c = i * 5 + 5;
@@ -114,42 +112,6 @@ export class RendererPlugin extends Plugin {
         .filter(renderer => !this.clip(renderer.getTransform().position))
         .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context));
         // this.gameWorld.getAllComponents<RendererC>(RendererC.name).forEach(renderer => renderer.render(this.context));
-        this.hud.draw(this.context);
         this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.35)');
     }
-}
-
-export class Hud{
-    private texts: Map<string, {pos: Vector, text: string}> = new Map();
-
-    public setLabel(key: string, pos: Vector, text: string): void{
-        this.texts.set(key, {pos, text});
-    }
-    
-    public removeLabel(key: string): void{
-        this.texts.delete(key);
-    }
-
-    public draw(context: CanvasRenderingContext2D){
-        for (const element of this.texts.values())
-            this.drawText(element.text, element.pos, context);
-    }
-    private drawText(text: string, position: Vector, context: CanvasRenderingContext2D): void{
-        // context.save();
-
-        context.translate(position.x, position.y);
-
-        const textHeight = 30.0;
-        context.font = "bold "+textHeight+"px Arial";
-        context.fillStyle = "azure";
-        context.lineWidth = 0.175*30;
-        const offset = 0;
-        
-        context.strokeText(text, -offset, textHeight/4);
-        context.fillText(text, -offset, textHeight/4);
-
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.lineWidth = 0.175;
-        // context.restore();
-    } 
 }

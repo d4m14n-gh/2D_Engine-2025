@@ -11,25 +11,41 @@ export class KeyboardEventArgs extends EventArgs {
 
 export class KeyboardPlugin extends Plugin {
     public name: string = "KeyboardPlugin";
-    private prevPressedKeys = new Set<string>();
+    public KeyDownEvent: GameEvent = new GameEvent();
+    public BlockedKeyDownEvent: GameEvent = new GameEvent();
+    public block: boolean = false;
+
+    private NowPressedKeys = new Set<string>();
     private readonly pressedKeys = new Set<string>();
-    public KeyDownEvent: GameEvent = new GameEvent(); 
-    
-    constructor(pressedKeys: Set<string>) {
+
+    constructor() {
         super();
-        this.pressedKeys = pressedKeys;
+        this.pressedKeys = new Set();
+        document.onkeydown = (event: KeyboardEvent) => {
+            const key = event.key.toLowerCase();
+            this.pressedKeys.add(key);
+            this.NowPressedKeys.add(key);
+        }
+        document.onkeyup = (event: KeyboardEvent) => {
+            const key = event.key.toLowerCase();
+            this.pressedKeys.delete(key);
+        }
     }
+    
     public isPressed(key: string): boolean {
-        return this.pressedKeys.has(key);
+        return this.isEnabled() && !this.block && this.pressedKeys.has(key);
     }
-
-
     protected override start(): void {
         this.KeyDownEvent.register(this.gameWorld);
+        this.BlockedKeyDownEvent.register(this.gameWorld);
     }
     protected override update(delta: number): void {
-        this.pressedKeys.difference(this.prevPressedKeys).forEach(key => this.KeyDownEvent.emit(new KeyboardEventArgs(key)));
-        this.prevPressedKeys.clear();
-        this.pressedKeys.forEach(key => this.prevPressedKeys.add(key));
+        this.NowPressedKeys.forEach(key => {
+            if (this.block)
+                this.BlockedKeyDownEvent.emit(new KeyboardEventArgs(key));
+            else
+                this.KeyDownEvent.emit(new KeyboardEventArgs(key));
+        });
+        this.NowPressedKeys.clear();
     }
 }

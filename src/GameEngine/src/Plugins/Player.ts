@@ -11,13 +11,11 @@ import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 import { CameraPlugin } from "./Camera";
-import { ChatPlugin } from "./Chat";
-import { CliPlugin } from "./CliPlugin";
 
 export class PlayerPlugin extends Plugin {
     public name: string = "PlayerPlugin";
+    private playerName: string = "player";
     public player: GameObject = GameObjectFactory.playerGO();
-    public isIoBlocked: boolean = false;
 
     public getPlayerPosition(): Vector {
         return this.player.getTransform().position.clone();
@@ -28,21 +26,16 @@ export class PlayerPlugin extends Plugin {
 
 
     public override start(): void {
-        this.player.spawn(this.gameWorld);
-        this.player.name="player";
-        this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
-        this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
+      this.respawn();  
+      this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
+      this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
     }
 
     public override event(args: any, alias?: string): void {
-      if (this.isIoBlocked) return;
       if (alias=== "KeyDownEvent") {
         let keyArgs = args as KeyboardEventArgs;
         if (keyArgs.key === "r") {
-          if(this.player && this.gameWorld.isSpawned(this.player))  
-            this.gameWorld.destroy(this.player);
-          this.player = GameObjectFactory.playerGO();
-          this.player.spawn(this.gameWorld);
+          this.respawn();  
         }
         else if (keyArgs.key === "c") {
           let displayColliders = this.getPlugin(ConfigPlugin)?.get("displayColliders")??false;
@@ -54,6 +47,9 @@ export class PlayerPlugin extends Plugin {
     
     // color: rgb = new rgb(53, 110, 58);
     // target: rgb = new rgb(53, 110, 58);
+
+
+
     protected override update(delta: number): void {
       
       // if (Math.random() < 0.05){
@@ -65,8 +61,6 @@ export class PlayerPlugin extends Plugin {
 
       let camera = this.getPlugin(CameraPlugin);
       camera.targetCameraPositon = this.player.getTransform().position.clone();
-      this.isIoBlocked = this.getPlugin(ChatPlugin)?.isFocused()??false;
-      if (this.isIoBlocked) return;
       if (!this.player.enabled) return;
 
       let mouse = this.getPlugin(MousePlugin);
@@ -121,6 +115,7 @@ export class PlayerPlugin extends Plugin {
 
   @cli("setname", "<name: string>")
   private setname(newName: string): CommandResult {
+      this.playerName = newName;
       this.player.name = newName;
       return new CommandResult(true, `Player name set to ${newName}`, undefined);
   }
@@ -135,42 +130,18 @@ export class PlayerPlugin extends Plugin {
       return new CommandResult(true, `Player color set`, undefined);
   }
 
+  @cli("respawn")  
+  private respawn(): CommandResult {
+    if(this.player && this.gameWorld.isSpawned(this.player))  
+      this.gameWorld.destroy(this.player);
+    this.player = GameObjectFactory.playerGO();
+    this.player.name=this.playerName;
+    this.player.spawn(this.gameWorld);
+    return new CommandResult(true, `Player respawned`, undefined);
+  }
+
   @cli("getcolor", undefined, "rgb")
   private getcolor(): CommandResult {
     return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC).color}`, this.player.getComponent(PolygonRendererC).color);
   }
 }
-//     public override fixedUpdate(delta: number): void {
-//         const speed = 18;
-//         let vmax = 30.0;
-//         let keyboard = this.getPlugin(KeyboardPlugin);
-//         let rigidBody = this.player.getComponent(RigidBodyC);
-//         let vx = rigidBody.velocity.x;
-//         let vy = rigidBody.velocity.y;
-
-//         if (keyboard.isKeyDown("w")) {
-//           vy += speed*delta;
-//           vy = speed;
-//         }
-//         if (keyboard.isKeyDown("s")) {
-//           vy += -speed*delta;
-//           vy = -speed;
-//         }
-//         if (keyboard.isKeyDown("a")) {
-//           vx += -speed*delta;
-//           vx = -speed;
-//         }
-//         if (keyboard.isKeyDown("d")) {
-//           vx += speed*delta;
-//           vx = speed;
-//         }
-
-
-//         let newVelocity = new Vector(vx, vy);
-//         if(newVelocity.magnitude()>vmax)
-//             newVelocity = newVelocity.toUnit().times(vmax);
-//         rigidBody.velocity = newVelocity;
-//         if (newVelocity.magnitude()!=0)
-//           this.player.getTransform().rotation = newVelocity.toRad();
-//     }
-// }

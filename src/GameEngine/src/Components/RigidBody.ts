@@ -28,6 +28,4 @@ export class RigidBodyC extends Component {
         this.angularVelocity = this.angularVelocity*Math.pow(this.angularDrag, delta);
         this.getTransform().rotation += this.angularVelocity * delta;
     }
-    public fixedUpdate(delta: number): void {
-    }
 }
