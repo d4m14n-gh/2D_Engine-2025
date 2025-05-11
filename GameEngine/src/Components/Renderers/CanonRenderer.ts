@@ -22,7 +22,7 @@ export class CanonRendererC extends RendererC {
         const x = this.getTransform().position.x;
         const y = this.getTransform().position.y;
         const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
+        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
         const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
 
 

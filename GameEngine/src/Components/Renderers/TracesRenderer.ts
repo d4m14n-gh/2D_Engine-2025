@@ -29,7 +29,7 @@ export class TracesRendererC extends RendererC {
     public render(context: CanvasRenderingContext2D): void {
      
         const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
+        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;

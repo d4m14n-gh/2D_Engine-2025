@@ -1,13 +1,15 @@
 import { Component } from "./Component";
 import { GameWorld } from "./GameWorld";
 import { Transform } from "../Helpers/Transform";
+import { v4 as uuidv4 } from 'uuid';
 
 export class GameObject {
-    private transform: Transform = new Transform();
-    private components: Map<string, Component> = new Map<string, Component>();
-    
     public enabled: boolean = true;
     public name: string = "UnnamedGameObject";
+    
+    private transform: Transform = new Transform();
+    private components: Map<string, Component> = new Map<string, Component>();
+    private id: string = uuidv4(); 
     private gameWorld!: GameWorld;
 
     constructor (...components: Component[]) {
@@ -36,6 +38,9 @@ export class GameObject {
     }
     public spawn(gameWorld: GameWorld): GameObject{
         return gameWorld.spawn(this);
+    }
+    public getId(): string{
+        return this.id;
     }
     public getTransform(): Transform{
         return this.transform;

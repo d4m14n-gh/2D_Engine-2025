@@ -1,4 +1,3 @@
-import { Component } from "../Core/Component";
 import { Plugin } from "../Core/Plugin";
 
 export interface IInvokable {

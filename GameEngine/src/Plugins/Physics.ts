@@ -8,9 +8,4 @@ export class PhysicsPlugin extends Plugin {
         const totalDelta: number = this.gameWorld.getWorldTime();
         this.gameWorld.getComponents(RigidBodyC).forEach(rigidBody => rigidBody.update(delta));
     }
-   
-    public override fixedUpdate(delta: number): void {
-        const totalDelta: number = this.gameWorld.getWorldTime();
-        this.gameWorld.getComponents(RigidBodyC).forEach(rigidBody => rigidBody.fixedUpdate(delta));
-    }
 }

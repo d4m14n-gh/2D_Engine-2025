@@ -1,7 +1,5 @@
-import { Component } from "../Core/Component";
 import { GameObject } from "../Core/GameObject";
 import { Vector } from "../Helpers/Vector";
-import { PlayerPlugin } from "../Plugins/Player";
 import { CanonC } from "./Canon";
 import { StandaloneComponent } from "./StandaloneComponent";
 import { BulletC } from "./Bullet";
@@ -19,7 +17,7 @@ export enum NpcType{
 export class NpcC extends StandaloneComponent{
     public type: NpcType = NpcType.aggresive;
     public isAttacing: boolean = false;
-    private target?: WeakRef<GameObject>;
+    private targetId: string = "None";
     isFollowing: boolean = false;
     minDistance: number = 35;
     maxDistance: number = 1000;
@@ -40,18 +38,19 @@ export class NpcC extends StandaloneComponent{
 
     private attack(gameObject: GameObject): void{
         this.isAttacing = true;
-        this.target = new WeakRef(gameObject);
+        this.targetId = gameObject.getId();
         this.isFollowing = true;
     }
     override update(delta: number): void {
-        if(!this.target||!this.target.deref()){
+        let target = this.getGameWorld().getGameObject(this.targetId);
+        
+        if (!target){
             this.isAttacing=false;
             return;
-        }
+        } 
         
         if(this.isAttacing){
             let turret = this.getComponent(CanonC);
-            let target = this.target.deref()!;
             let direction = target.getTransform().position.sub(this.getTransform().position);
             turret.targetDirection = direction; 
             let distance = direction.magnitude();
@@ -67,7 +66,6 @@ export class NpcC extends StandaloneComponent{
 
                 let rigidBody = this.getComponent(RigidBodyC);
                 rigidBody.velocity = Vector.fromRad(angle).times(this.maxSpeed);
-
             }
     
         }

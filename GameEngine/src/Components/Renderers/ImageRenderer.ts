@@ -23,7 +23,7 @@ export class ImageRendererC extends RendererC {
         const y = this.getTransform().position.y;
         const r = this.getTransform().rotation;
         const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scale;
+        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
 
         const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
         const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;

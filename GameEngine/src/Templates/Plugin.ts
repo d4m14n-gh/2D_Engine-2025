@@ -13,8 +13,4 @@ export class TemplatePlugin extends Plugin {
     protected override event(args: EventArgs, alias?: string): void {
         
     }
-
-    protected override fixedUpdate(delta: number): void {
-    
-    }
 }
