@@ -1,8 +1,6 @@
 import { Component } from "../Core/Component";
 import { IInvokable, SchedulerPlugin } from "../Plugins/Scheduler";
 import { AnimationC } from "./Animation";
-import { ColliderC } from "./Collider";
-import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 
 export class DestroyerC extends Component implements IInvokable {
     

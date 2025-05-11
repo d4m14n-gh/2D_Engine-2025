@@ -4,7 +4,6 @@ import { MouseClickEventArgs, MousePlugin, MouseScrollEventArgs } from "./Mouse"
 import { EventArgs } from "../Core/GameEvent";
 import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
 import { CollisionDetectionPlugin } from "./CollisionDetection";
-import { GameObject } from "../Core/GameObject";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {

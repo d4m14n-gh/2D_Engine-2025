@@ -1,7 +1,6 @@
 import { Plugin } from "../Core/Plugin";
 import { Socket, io } from "socket.io-client";
 import { ConsoleEventArgs } from "./Hud/Console";
-// import { ChatEventArgs, ChatPlugin } from "./Chat";
 
 
 
@@ -37,6 +36,6 @@ export class ClientPlugin extends Plugin {
     }
   
     public sendChatMessage(message: string): void {
-        this.socket.emit('chat_message', message);
+        // this.socket.emit('chat_message', message);
     }
 }

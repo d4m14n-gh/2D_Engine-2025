@@ -1,8 +1,6 @@
-import { Console } from "console";
 import { Plugin } from "../Core/Plugin";
 import { rgb } from "../Helpers/Color";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
-import { ConsolePlugin } from "./Hud/Console";
 
 @cliPlugin("cli")
 export class CliPlugin extends Plugin {

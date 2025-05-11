@@ -1,7 +1,5 @@
-import { Component } from "../Core/Component";
 import { GameObject } from "../Core/GameObject";
 import { Vector } from "../Helpers/Vector";
-import { PlayerPlugin } from "../Plugins/Player";
 import { CanonC } from "./Canon";
 import { StandaloneComponent } from "./StandaloneComponent";
 import { BulletC } from "./Bullet";

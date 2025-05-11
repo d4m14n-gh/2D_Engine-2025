@@ -8,34 +8,32 @@ import { CameraPlugin } from "./Plugins/Camera";
 import { ConfigPlugin } from "./Plugins/Config";
 import { CollisionDetectionPlugin } from "./Plugins/CollisionDetection";
 import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
-import { Plugin } from "./Core/Plugin";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Hud/Profiler";
 import { ClientPlugin } from "./Plugins/Client";
-// import { ChatPlugin } from "./Plugins/Chat";
 import { CliPlugin } from "./Plugins/CliPlugin";
 import { ConsolePlugin } from "./Plugins/Hud/Console";
 
 
-export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputElement, chat: HTMLDivElement) {
-  let plugins: Plugin[] = [];
-  plugins.push(new ConfigPlugin());
-  plugins.push(new ClientPlugin());
-  // plugins.push(new ChatPlugin(chatInput, chat));
-  plugins.push(new CliPlugin());
-  plugins.push(new KeyboardPlugin());
-  plugins.push(new MousePlugin(canvas));
-  plugins.push(new SchedulerPlugin());
-  plugins.push(new PlayerPlugin());
-  plugins.push(new PhysicsPlugin());
-  plugins.push(new CameraPlugin());
-  plugins.push(new ConsolePlugin());
-  plugins.push(new ProfilerPlugin());
-  plugins.push(new CollisionDetectionPlugin());
-  plugins.push(new StandaloneComponentPlugin());
-  plugins.push(new RendererPlugin(canvas.getContext("2d")!));
+export async function main (canvas: HTMLCanvasElement) {
+  const world: MyWorld = new MyWorld(
+    new ConfigPlugin(),
+    new ClientPlugin(),
+    new CliPlugin(),
+    new KeyboardPlugin(),
+    new MousePlugin(canvas),
+    new SchedulerPlugin(),
+    new PlayerPlugin(),
+    new PhysicsPlugin(),
+    new CameraPlugin(),
+    new ConsolePlugin(),
+    new ProfilerPlugin(),
+    new CollisionDetectionPlugin(),
+    new StandaloneComponentPlugin(),
+    new RendererPlugin(canvas.getContext("2d")!),
+  );
 
-  let world: MyWorld = new MyWorld(...plugins);
+  console.log(world.getAllPlugins());
 
   function tick() {
     world.tick();
@@ -44,6 +42,6 @@ export async function main (canvas: HTMLCanvasElement, chatInput: HTMLInputEleme
   
   tick();
 }
-main(document.getElementById("gameCanvas") as HTMLCanvasElement, document.getElementById("chatInput") as HTMLInputElement, document.getElementById("chat") as HTMLDivElement);
+main(document.getElementById("gameCanvas") as HTMLCanvasElement);
 
 

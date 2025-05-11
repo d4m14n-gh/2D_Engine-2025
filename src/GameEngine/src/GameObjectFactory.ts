@@ -4,7 +4,6 @@ import { GameObject } from "./Core/GameObject";
 import { TextRendererC } from "./Components/Renderers/TextRenderer";
 import { ColliderC as ColliderC } from "./Components/Collider";
 import { ColliderRendererC } from "./Components/Renderers/ColliderRenderer";
-import { ConfigPlugin } from "./Plugins/Config";
 import { BarRendererC } from "./Components/Renderers/BarRenderer";
 import { HealthC } from "./Components/Health";
 import { Component } from "./Core/Component";

@@ -1,13 +1,6 @@
-import { main } from "..";
 import { ColliderC } from "../Components/Collider";
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
-import { PlayerPlugin } from "./Player";
-
-// export interface ICollision {
-//     onCollisionEnter(other: ColliderC): void;
-//     onCollisionExit(other: ColliderC): void;
-// }
 
 export class CollisionDetectionPlugin extends Plugin {
     public name: string = "CollisionDetectionPlugin";
