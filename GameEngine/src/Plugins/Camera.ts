@@ -4,6 +4,7 @@ import { MouseClickEventArgs, MousePlugin, MouseScrollEventArgs } from "./Mouse"
 import { EventArgs } from "../Core/GameEvent";
 import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
 import { CollisionDetectionPlugin } from "./CollisionDetection";
+import { KeyboardPlugin } from "./Keyboard";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {
@@ -87,6 +88,12 @@ export class CameraPlugin extends Plugin {
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
             target.getTransform().position = target.getTransform().position.interpolate(mousePositon, Math.pow(0.001, delta));
+            if (this.getPlugin(KeyboardPlugin).isPressed("2")){
+                target.getTransform().rotation += 0.5*3.14*delta;
+            }
+            if (this.getPlugin(KeyboardPlugin).isPressed("1")){
+                target.getTransform().rotation -= 0.5*3.14*delta;
+            }
         }
     }
 

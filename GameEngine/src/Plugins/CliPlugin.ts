@@ -46,6 +46,12 @@ export class CliPlugin extends Plugin {
         const message = `This is a float command with value ${value}`;
         return new CommandResult(true, message, parseFloat(value));
     }
+    @cli("refresh")
+    private refresh(): CommandResult {
+        const message = "This is a refresh command";
+        location.reload();
+        return new CommandResult(true, message, undefined);
+    }
     @cli("randomcolor",undefined, "rgb")
         private getrandomcolor(): CommandResult {
         const randomColor = rgb.randomColor2();
