@@ -1,7 +1,7 @@
 import { Plugin } from "../../Core/Plugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "../Keyboard";
 import { EventArgs } from "../../Core/GameEvent";
-import { CliPlugin } from "../CliPlugin";
+import { CliPlugin } from "../Cli";
 import { cli, cliPlugin, CommandResult } from "../../Helpers/Commands";
 import { rgb } from "../../Helpers/Color";
 import { AnsiUp }  from 'ansi-up';

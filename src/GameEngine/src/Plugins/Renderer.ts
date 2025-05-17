@@ -1,16 +1,17 @@
-import { ColliderRendererC } from "../Components/Renderers/ColliderRenderer";
+// import { ColliderRendererC } from "../Components/Renderers/ColliderRenderer";
 import { RendererC } from "../Components/Renderers/Renderer";
-import { BarRendererC } from "../Components/Renderers/BarRenderer";
-import { TextRendererC } from "../Components/Renderers/TextRenderer";
 import { rgb } from "../Helpers/Color";
 import { Plugin } from "../Core/Plugin";
 import { CameraPlugin } from "./Camera";
-import { ImageRendererC } from "../Components/Renderers/ImageRenderer";
+// import { ImageRendererC } from "../Components/Renderers/ImageRenderer";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
-import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
+// import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
 import { Vector } from "../Helpers/Vector";
+import { GOManagerPlugin } from "./GOManager";
+import { TextRendererC } from "../Components/Renderers/TextRenderer";
+import { BarRendererC } from "../Components/Renderers/BarRenderer";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
-import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
+// import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
 
 
 export class RendererPlugin extends Plugin {
@@ -65,7 +66,7 @@ export class RendererPlugin extends Plugin {
         const height = this.context.canvas.height;
         
         const scale = this.getPlugin(CameraPlugin).scaleV;
-        const cameraPositon = this.getPlugin(CameraPlugin).cameraPositon;
+        const cameraPositon = this.getPlugin(CameraPlugin).cameraPosition;
         const xClip = Math.abs(width/2/scale.x);  
         const yClip = Math.abs(height/2/scale.y);
           
@@ -88,7 +89,7 @@ export class RendererPlugin extends Plugin {
         let gy = 2;
         const offset = this.getPlugin(CameraPlugin).cameraScreenOffset;
         const scale = this.getPlugin(CameraPlugin).scaleV;
-        const cpos = this.getPlugin(CameraPlugin).cameraPositon;
+        const cpos = this.getPlugin(CameraPlugin).cameraPosition;
         let i = Math.max(0, Math.min(9, Math.round(scale.x/10)));
         let c = i * 5 + 5;
         this.context.translate(offset.x, offset.y);
@@ -100,16 +101,16 @@ export class RendererPlugin extends Plugin {
 
         
         
-        (this.gameWorld.getComponents(TextRendererC) as RendererC[])
-        .concat(this.gameWorld.getComponents(ColliderRendererC) as RendererC[])
-        .concat(this.gameWorld.getComponents(BarRendererC)as RendererC[])
-        .concat(this.gameWorld.getComponents(PolygonRendererC)as RendererC[])
-        .concat(this.gameWorld.getComponents(ImageRendererC)as RendererC[])
-        .filter(renderer => !this.clip(renderer.getTransform().position))
-        .concat(this.gameWorld.getComponents(CanonRendererC)as RendererC[])
-        .concat(this.gameWorld.getComponents(TracesRendererC)as RendererC[])
-        .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
-        .filter(renderer => !this.clip(renderer.getTransform().position))
+        (this.getPlugin(GOManagerPlugin).getComponents(TextRendererC) as RendererC[])
+        // .concat(this.app.getComponents(ColliderRendererC) as RendererC[])
+        .concat(this.getPlugin(GOManagerPlugin).getComponents(PolygonRendererC) as RendererC[])
+        .concat(this.getPlugin(GOManagerPlugin).getComponents(BarRendererC)as RendererC[])
+        // .concat(this.app.getComponents(ImageRendererC)as RendererC[])
+        .filter(renderer => !this.clip(renderer.gameObject!.getBody()!.getPosition()))
+        // .concat(this.app.getComponents(CanonRendererC)as RendererC[])
+        // .concat(this.app.getComponents(TracesRendererC)as RendererC[])
+        .concat(this.getPlugin(GOManagerPlugin).getComponents(ChasisRendererC)as RendererC[])
+        .filter(renderer => !this.clip(renderer.gameObject!.getBody()!.getPosition()))
         .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context));
         // this.gameWorld.getAllComponents<RendererC>(RendererC.name).forEach(renderer => renderer.render(this.context));
         this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.35)');

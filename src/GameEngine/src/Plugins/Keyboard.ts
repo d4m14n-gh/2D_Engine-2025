@@ -33,7 +33,7 @@ export class KeyboardPlugin extends Plugin {
     }
     
     public isPressed(key: string): boolean {
-        return this.isEnabled() && !this.block && this.pressedKeys.has(key);
+        return this.enabled && !this.block && this.pressedKeys.has(key);
     }
     protected override start(): void {
         this.KeyDownEvent.register(this.gameWorld);

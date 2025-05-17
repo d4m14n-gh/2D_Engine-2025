@@ -62,7 +62,7 @@ export class CliPlugin extends Plugin {
         let superResult = super.help();
 
         let message = `plugins:\n`;
-        for (const plugin of this.gameWorld.getAllPlugins()) {
+        for (const plugin of this.gameWorld?.getAllPlugins()??[]) {
             message += `/${(plugin as any).cliGetName()}\n`;
         }
         message = superResult.message + "\n" + message;
@@ -118,7 +118,7 @@ export class CliPlugin extends Plugin {
     }
 
     override start(): void {
-        this.gameWorld.getAllPlugins().forEach(plugin => {
+        this.gameWorld?.getAllPlugins().forEach(plugin => {
             const pluginName = plugin.constructor.name;
             try{
                 for(let command of Object.keys((plugin as any).constructor["commands"])){
@@ -213,7 +213,7 @@ export class CliPlugin extends Plugin {
         const fullCommand = args[0].split(':');
         if (fullCommand.length === 2) {
             const pluginName = fullCommand[0];
-            const plugin = this.gameWorld.getAllPlugins().find(p => (p as any).cliGetName() === pluginName);
+            const plugin = this.gameWorld?.getAllPlugins().find(p => (p as any).cliGetName() === pluginName);
             if (!plugin)
                 return new CommandResult(false, `Plugin ${pluginName} not found`, undefined);
             return this.executeParsedCommand(plugin, fullCommand[1], ...args.slice(1));
@@ -225,8 +225,8 @@ export class CliPlugin extends Plugin {
                 const pluginName = this.globalCommands.get(fullCommand[0]);
                 if (!pluginName)
                     return new CommandResult(false, `More than one command found, use "/<plugin>:<command>" (fe /cli:help) instead.`, undefined);
-                const plugin = this.gameWorld.getPluginByName(pluginName);
-                return this.executeParsedCommand(plugin, fullCommand[0], ...args.slice(1));
+                const plugin = this.gameWorld?.getPluginByName(pluginName);
+                return this.executeParsedCommand(plugin!, fullCommand[0], ...args.slice(1));
             }
             catch{
                 return new CommandResult(false, "Command not found or wrong syntax", undefined);

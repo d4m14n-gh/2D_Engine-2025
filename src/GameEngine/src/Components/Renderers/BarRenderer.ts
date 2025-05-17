@@ -13,25 +13,39 @@ export class BarRendererC extends RendererC {
     constructor(zindex=0){
         super(zindex);
     }
+//  const offset = this.getPlugin(CameraPlugin)!.cameraScreenOffset;
+//         const x = ;
+//         const y = this.gameObject!.getBody()!.getPosition().y;
+//         const r = this.gameObject!.getBody()!.getPosition().x;
+//         const transformScale = Vector.one();//this.getTransform().scale;
+//         const scale = this.getPlugin(CameraPlugin)!.scaleV;
 
+//         const cmx = this.getPlugin(CameraPlugin)!.cameraPositon.x;
+//         const cmy = this.getPlugin(CameraPlugin)!.cameraPositon.y;
+//         const color = this.color.toString();
+
+//         const cx: number = (x-cmx);
+//         const cy: number = (y-cmy);
     public render(context: CanvasRenderingContext2D): void {
         let width = this.width;
         let fill = this.fill;
         try {
-            fill = this.getComponent(HealthC).getHealth();
-            width = 2+this.getComponent(HealthC).maxHealth/250.0;
+            fill = this.getComponent(HealthC)!.getHealth();
+            width = 2+this.getComponent(HealthC)!.maxHealth/250.0;
         } catch {}
         if(fill>=1||fill<=0)
             return;
 
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
+        const camera = this.getPlugin(CameraPlugin)!;
+        const body = this.gameObject!.getBody()!;
+        const x = body.getPosition().x;
+        const y = body.getPosition().y;
+        const transformScale = new Vector(1, 1); //this.getTransform().scale;
+        const scale = camera.scaleV;
+        const offset = camera.cameraScreenOffset;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+        const cmx = camera.cameraPosition.x;
+        const cmy = camera.cameraPosition.y;
         const color = rgb.getHeatmapColor(fill).toString();
 
         const cx: number = (x-cmx);

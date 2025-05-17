@@ -3,13 +3,16 @@ import { Plugin } from "../Core/Plugin";
 import { MouseClickEventArgs, MousePlugin, MouseScrollEventArgs } from "./Mouse";
 import { EventArgs } from "../Core/GameEvent";
 import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
-import { CollisionDetectionPlugin } from "./CollisionDetection";
+// import { CollisionDetectionPlugin } from "./CollisionDetection";
 import { KeyboardPlugin } from "./Keyboard";
+import { GOManagerPlugin } from "./GOManager";
+import { Body } from "planck-js";
+import { BodyC } from "../Components/Body";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {
-    public cameraPositon: Vector = new Vector(4, 0);
-    public targetCameraPositon: Vector = new Vector(4, 0);
+    public cameraPosition: Vector = new Vector(4, 0);
+    public targetCameraPosition: Vector = new Vector(4, 0);
     public cameraScreenOffset: Vector = new Vector(100, 100);
     
     public followingSpeed: number = 0.02;
@@ -36,16 +39,16 @@ export class CameraPlugin extends Plugin {
             const mouseArgs = args as MouseClickEventArgs;
             if (mouseArgs.button != 1) 
                 return;
-            const target = this.gameWorld.getGameObject(this.targetId);
+            const target = this.getPlugin(GOManagerPlugin).getGameObject(this.targetId);
             if (target){
                 this.targetId = "None";
                 return;
             }
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
-            let gameObject = this.getPlugin(CollisionDetectionPlugin).overlapPoint(mousePositon)[0]?.getGameObject();
-            if (gameObject)
-                this.targetId = gameObject.getId();
+            // let gameObject = this.getPlugin(CollisionDetectionPlugin).overlapPoint(mousePositon)[0]?.getGameObject();
+            // if (gameObject)
+            //     this.targetId = gameObject.getId();
         }
         // else if (alias == "up") {
         //     const mouseArgs = args as MouseClickEventArgs;
@@ -67,7 +70,7 @@ export class CameraPlugin extends Plugin {
 
     public getWorldPosition(screenPositon: Vector): Vector{
         let scale = this.getPlugin(CameraPlugin).scaleV;
-        let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
+        let cameraPosition = this.getPlugin(CameraPlugin).cameraPosition;
         let worldPosition = new Vector((screenPositon.x-this.cameraScreenOffset.x)/scale.x, (screenPositon.y-this.cameraScreenOffset.y)/scale.y).add(cameraPosition);
         return worldPosition;
     }
@@ -75,7 +78,7 @@ export class CameraPlugin extends Plugin {
 
     protected override update(delta: number): void {
         if (this.isFollowing) 
-            this.cameraPositon = this.cameraPositon.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, delta));
+            this.cameraPosition = this.cameraPosition.interpolate(this.targetCameraPosition, Math.pow(this.followingSpeed, delta));
 
 
         // this.scale += (this.targetScale-this.scale)*(2.5*delta);
@@ -83,17 +86,20 @@ export class CameraPlugin extends Plugin {
         this.scaleV = new Vector(this.scale, -this.scale);
 
         //todo: delete this
-        const target = this.gameWorld.getGameObject(this.targetId);
+        const target = this.getPlugin(GOManagerPlugin).getGameObject(this.targetId);
         if (target){
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
-            target.getTransform().position = target.getTransform().position.interpolate(mousePositon, Math.pow(0.001, delta));
-            if (this.getPlugin(KeyboardPlugin).isPressed("2")){
-                target.getTransform().rotation += 0.5*3.14*delta;
-            }
-            if (this.getPlugin(KeyboardPlugin).isPressed("1")){
-                target.getTransform().rotation -= 0.5*3.14*delta;
-            }
+            
+            target.getComponent(BodyC)?.setPosition(
+                target.getComponent(BodyC)!.getPosition().interpolate(mousePositon, Math.pow(0.001, delta))
+            );
+            // if (this.getPlugin(KeyboardPlugin).isPressed("2")){
+            //     target.getTransform().rotation += 0.5*3.14*delta;
+            // }
+            // if (this.getPlugin(KeyboardPlugin).isPressed("1")){ 
+            //     target.getTransform().rotation -= 0.5*3.14*delta;
+            // }
         }
     }
 

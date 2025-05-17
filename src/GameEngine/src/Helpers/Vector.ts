@@ -1,11 +1,10 @@
 import { GMath } from "./Math";
+// import * as pl from "planck-js";
+import * as rpr from "@dimforge/rapier2d";
 
-export class Vector {
-    x : number = 0;
-    y : number = 0;
+export class Vector extends rpr.Vector2{
     constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
     }
 
     //standard operators
@@ -15,7 +14,7 @@ export class Vector {
     sub(a: Vector) : Vector{
         return new Vector(this.x-a.x, this.y-a.y);
     }
-    times(a: number) : Vector{
+    mul(a: number) : Vector{
         return new Vector(this.x*a, this.y*a);
     }
     timesV(other: Vector) : Vector{
@@ -23,14 +22,14 @@ export class Vector {
     }
 
     //other operators 
+    length(): number{
+        return Math.sqrt(this.x*this.x+this.y*this.y);
+    }
     distance(other: Vector){
       return Math.sqrt(Math.pow(this.x-other.x, 2) + Math.pow(this.y-other.y, 2));
     }
     static distance(a: Vector, b: Vector){
       return Math.sqrt(Math.pow(a.x-b.x, 2) + Math.pow(a.y-b.y, 2));
-    }
-    magnitude(){
-      return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
     cross(): Vector{
         return  new Vector(this.y, -this.x).toUnit();
@@ -42,15 +41,15 @@ export class Vector {
         return this.x*v.y-this.y*v.x;
     }
     perpendicular(n: Vector){
-        return this.sub(n.cross().times((n.scalarProduct(this))/(n.magnitude()*n.magnitude())));
+        return this.sub(n.cross().mul((n.scalarProduct(this))/(n.length()*n.length())));
     }
     toUnit(): Vector{
-      if(this.magnitude()!=0)
-        return new Vector(this.x, this.y).times(1/this.magnitude());
+      if(this.length()!=0)
+        return new Vector(this.x, this.y).mul(1/this.length());
       else return new Vector(1, 0);
     }
     setLength(length: number): Vector{
-        return this.toUnit().times(length);
+        return this.toUnit().mul(length);
     }
     toString(): string{
         return "{"+this.x+":"+this.y+"}";
@@ -69,7 +68,7 @@ export class Vector {
     }
     interpolate(target: Vector, k: number): Vector{
         const mx = target.sub(this);
-        const mv = mx.sub(mx.times( Math.min(1, Math.max(0, k)) ));
+        const mv = mx.sub(mx.mul( Math.min(1, Math.max(0, k)) ));
         return this.add(mv);
     }
     static fromRad(rad: number){
@@ -78,13 +77,16 @@ export class Vector {
             Math.sin(rad)
         );
     }
+    static fromVec2(vec: rpr.Vector2){
+        return new Vector(vec.x, vec.y);
+    }
     static randomPos(range: number): Vector{
       return new Vector(GMath.symRand(range), GMath.symRand(range));
     }
     static randomPos2(range: number): Vector{
         let angle = GMath.symRand(Math.PI);
         let distance = Math.random()*range;
-        return Vector.fromRad(angle).times(distance);
+        return Vector.fromRad(angle).mul(distance);
     }
     clone(){
         return new Vector(this.x, this.y);

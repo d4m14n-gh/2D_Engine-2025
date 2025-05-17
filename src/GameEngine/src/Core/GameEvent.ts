@@ -22,8 +22,8 @@ export class GameEvent{
     public emit(args: EventArgs): void{
         this.args.push(args);
     }
-    public register(gameWorld: GameWorld): void{
-        gameWorld.registerEvent(this);
+    public register(gameWorld: GameWorld | undefined): void{
+        gameWorld?.registerEvent(this);
     }
 
     private invoke(): void{

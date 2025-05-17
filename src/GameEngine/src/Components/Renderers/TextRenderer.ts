@@ -1,4 +1,5 @@
 import { rgb } from "../../Helpers/Color";
+import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { RendererC } from "./Renderer";
 
@@ -15,16 +16,17 @@ export class TextRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-     
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const r = this.getTransform().rotation;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
+        const camera = this.getPlugin(CameraPlugin)!;
+        const body = this.gameObject!.getBody()!;
+        const offset = camera.cameraScreenOffset;
+        const x = body.getPosition().x;
+        const y = body.getPosition().y;
+        const r = body.getRotation();
+        const transformScale = new Vector(1, 1); //body.getScale();
+        const scale = camera.scaleV;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+        const cmx = camera.cameraPosition.x;
+        const cmy = camera.cameraPosition.y;
         const color = this.color.toString();
         
         const cx: number = (x-cmx);
@@ -50,7 +52,7 @@ export class TextRendererC extends RendererC {
     
         
         
-        const text = this.displayName?this.getGameObject().name:this.text;
+        const text = this.displayName?this.gameObject!.name:this.text;
         const textHeight = 1.0;
         context.font = "bold "+textHeight+"px Arial";
         context.fillStyle = "azure";

@@ -1,46 +1,39 @@
-import { RigidBodyC } from "../Components/RigidBody";
 import { EventArgs, ISubscriber } from "./GameEvent";
+import { Plugin } from "./Plugin";
+import { v4 as uuidv4 } from 'uuid';
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
-import { Transform } from "../Helpers/Transform";
-import { Plugin } from "./Plugin";
+import { BodyC } from "../Components/Body";
+import { GOManagerPlugin } from "../Plugins/GOManager";
+// import { BodyC } from "../Components/Body";
 
 export abstract class Component implements ISubscriber {
-    private enabled: boolean = true;
-    private gameObject!: GameObject;
+    public enabled: boolean = true;
+    public readonly id: string = uuidv4();
+    public readonly gameObject?: GameObject;
     
     //overideable methods
+    protected spawn(): void{ }
     protected start(): void{ }
     protected event(args: EventArgs, alias?: string): void{ }
+    protected destroy(): void{ }
 
-    
-    public getGameWorld(): GameWorld{
-        return this.gameObject.getGameWorld();
-    }
-    public hasComponent<T extends Component>(classC: new (...args: any[]) => T): boolean{
-        return this.gameObject.hasComponent(classC);
-    }
-    public getComponent<T extends Component>(classC: new (...args: any[]) => T): T{
-        return this.gameObject.getComponent(classC);
+    public getComponent<T extends Component>(classC: new (...args: any[]) => T): T | undefined{
+        return this.gameObject?.getComponent(classC);
     }
     public getAllComponents(): Component[]{
-        return this.gameObject.getAllComponents();
+        return this.gameObject?.getAllComponents()??[];
     }
-
-
-    public getTransform(): Transform{
-        return this.gameObject.getTransform();
+    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T | undefined {
+        return this.gameObject?.manager?.getPlugin(plugin);
     }
-    public getGameObject(): GameObject{
-        return this.gameObject;
+    public getGameWorld(): GameWorld | undefined {
+        return this.gameObject?.manager?.gameWorld;
     }
-    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
-        return this.getGameWorld().getPlugin(plugin);
+    public getManager(): GOManagerPlugin | undefined {
+        return this.gameObject?.manager;
     }
-    public isEnabled(): boolean{
-        return this.gameObject.enabled&&this.enabled;
+    public getBody(): BodyC | undefined {
+        return this.gameObject?.getComponent(BodyC);
     }
-    public enable(value=true): void{
-        this.enabled=value;
-    }
-}
+}   

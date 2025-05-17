@@ -11,8 +11,9 @@ import { StandaloneComponentPlugin } from "./Plugins/StandaloneComponent";
 import { SchedulerPlugin } from "./Plugins/Scheduler";
 import { ProfilerPlugin } from "./Plugins/Hud/Profiler";
 import { ClientPlugin } from "./Plugins/Client";
-import { CliPlugin } from "./Plugins/CliPlugin";
+import { CliPlugin } from "./Plugins/Cli";
 import { ConsolePlugin } from "./Plugins/Hud/Console";
+import { GOManagerPlugin } from "./Plugins/GOManager";
 
 
 export async function main (canvas: HTMLCanvasElement) {
@@ -23,6 +24,7 @@ export async function main (canvas: HTMLCanvasElement) {
     new KeyboardPlugin(),
     new MousePlugin(canvas),
     new SchedulerPlugin(),
+    new GOManagerPlugin(),
     new PlayerPlugin(),
     new PhysicsPlugin(),
     new CameraPlugin(),

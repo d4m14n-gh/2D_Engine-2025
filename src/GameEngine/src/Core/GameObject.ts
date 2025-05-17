@@ -1,52 +1,58 @@
-import { Component } from "./Component";
 import { GameWorld } from "./GameWorld";
-import { Transform } from "../Helpers/Transform";
 import { v4 as uuidv4 } from 'uuid';
+import { Component } from "./Component";
+import { GOManagerPlugin } from "../Plugins/GOManager";
+import { BodyC } from "../Components/Body";
 
 export class GameObject {
     public enabled: boolean = true;
-    public name: string = "UnnamedGameObject";
-    
-    private transform: Transform = new Transform();
-    private components: Map<string, Component> = new Map<string, Component>();
-    private id: string = uuidv4(); 
-    private gameWorld!: GameWorld;
+    public name: string = "GameObject";
+    public readonly id: string = uuidv4(); 
+    public readonly manager?: GOManagerPlugin = undefined;
+    public readonly components: Map<string, Component> = new Map<string, Component>();
 
     constructor (...components: Component[]) {
         for(let component of components){
-            let name = component.constructor.name;
-            if (this.components.has(name))
-                throw new Error(`Component ${name} already exists in the game object`);
+            const id = component.id;
+            if (this.components.has(id))
+                throw new Error(`Component with id: ${id} already exists in the game object`);
             
             (component as any).gameObject = this;
-            this.components.set(name, component);
+            this.components.set(id, component);
         }
     }
-    public hasComponent<T extends Component>(classC: new (...args: any[]) => T): boolean{
-        return this.components.has(classC.name);
+    public getComponent<T extends Component>(classC: new (...args: any[]) => T): T | undefined{
+        return this.components.values().find(c => c instanceof classC) as T | undefined;
     }
-    public getComponent<T extends Component>(classC: new (...args: any[]) => T): T{
-        const type=classC.name;
-        return this.components.get(type) as T;
+    public getComponents<T extends Component>(classC: new (...args: any[]) => T): T[]{
+        return Array.from(this.components.values()).filter(c => c instanceof classC) as T[];
     }
-    public getAllComponents(onlyEnabled: boolean=false): Component[]{
-        return Array.from(this.components.values()).filter(c=>onlyEnabled ? c.isEnabled() : true);
+    public getAllComponents(): Component[]{
+        return Array.from(this.components.values());
+    }
+    public getBody(): BodyC | undefined {
+        return this.getComponent(BodyC);
     }
 
-    public destroy(): void{
-        this.gameWorld.destroy(this);
+    private spawn(): void {
+        for(let component of this.components.values())
+            if (component.enabled)
+                (component as any).spawn();
     }
-    public spawn(gameWorld: GameWorld): GameObject{
-        return gameWorld.spawn(this);
+    private start(): void {
+        for(let component of this.components.values())
+            if (component.enabled)
+                (component as any).start();
     }
-    public getId(): string{
-        return this.id;
+    private update(): void {
+        for(let component of this.components.values())
+            if (component.enabled)
+                (component as any).update();
     }
-    public getTransform(): Transform{
-        return this.transform;
-    }
-    public getGameWorld(): GameWorld{
-        return this.gameWorld;
+    private destroy(): void {
+        for(let component of this.components.values())
+            if (component.enabled)
+                (component as any).destroy();
     }
 }
 
