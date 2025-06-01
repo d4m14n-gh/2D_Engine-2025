@@ -2,7 +2,7 @@ import { GameWorld } from "./GameWorld";
 import { v4 as uuidv4 } from 'uuid';
 import { Component } from "./Component";
 import { GOManagerPlugin } from "../Plugins/GOManager";
-import { BodyC } from "../Components/Body";
+import { RigidBodyC } from "../Components/RigidBody";
 
 export class GameObject {
     public enabled: boolean = true;
@@ -30,8 +30,8 @@ export class GameObject {
     public getAllComponents(): Component[]{
         return Array.from(this.components.values());
     }
-    public getBody(): BodyC | undefined {
-        return this.getComponent(BodyC);
+    public getBody(): RigidBodyC | undefined {
+        return this.getComponent(RigidBodyC);
     }
 
     private spawn(): void {

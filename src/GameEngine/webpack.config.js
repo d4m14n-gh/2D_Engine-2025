@@ -9,6 +9,7 @@ module.exports = {
   },
   experiments: {
     outputModule: true,
+    asyncWebAssembly: true
   },
   resolve: {
     extensions: [".ts", ".js"],  

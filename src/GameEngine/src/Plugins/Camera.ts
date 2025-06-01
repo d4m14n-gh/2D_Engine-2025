@@ -6,8 +6,7 @@ import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
 // import { CollisionDetectionPlugin } from "./CollisionDetection";
 import { KeyboardPlugin } from "./Keyboard";
 import { GOManagerPlugin } from "./GOManager";
-import { Body } from "planck-js";
-import { BodyC } from "../Components/Body";
+import { RigidBodyC } from "../Components/RigidBody";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {
@@ -91,8 +90,8 @@ export class CameraPlugin extends Plugin {
             const mousePositonScreen = this.getPlugin(MousePlugin).getMouseScreenPosition();
             const mousePositon = this.getWorldPosition(mousePositonScreen);
             
-            target.getComponent(BodyC)?.setPosition(
-                target.getComponent(BodyC)!.getPosition().interpolate(mousePositon, Math.pow(0.001, delta))
+            target.getComponent(RigidBodyC)?.setPosition(
+                target.getComponent(RigidBodyC)!.getPosition().interpolate(mousePositon, Math.pow(0.001, delta))
             );
             // if (this.getPlugin(KeyboardPlugin).isPressed("2")){
             //     target.getTransform().rotation += 0.5*3.14*delta;

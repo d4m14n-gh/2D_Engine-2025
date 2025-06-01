@@ -1,8 +1,7 @@
 import { GMath } from "./Math";
-// import * as pl from "planck-js";
-import * as rpr from "@dimforge/rapier2d";
+import * as rp from "@dimforge/rapier2d";
 
-export class Vector extends rpr.Vector2{
+export class Vector extends rp.Vector2{
     constructor(x: number, y: number) {
         super(x, y);
     }
@@ -77,7 +76,7 @@ export class Vector extends rpr.Vector2{
             Math.sin(rad)
         );
     }
-    static fromVec2(vec: rpr.Vector2){
+    static fromVec2(vec: rp.Vector2){
         return new Vector(vec.x, vec.y);
     }
     static randomPos(range: number): Vector{

@@ -11,6 +11,7 @@ import { GOManagerPlugin } from "./GOManager";
 import { TextRendererC } from "../Components/Renderers/TextRenderer";
 import { BarRendererC } from "../Components/Renderers/BarRenderer";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
+import { ColliderRendererC } from "../Components/Renderers/ColliderRenderer";
 // import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
 
 
@@ -102,7 +103,7 @@ export class RendererPlugin extends Plugin {
         
         
         (this.getPlugin(GOManagerPlugin).getComponents(TextRendererC) as RendererC[])
-        // .concat(this.app.getComponents(ColliderRendererC) as RendererC[])
+        .concat(this.getPlugin(GOManagerPlugin).getComponents(ColliderRendererC) as RendererC[])
         .concat(this.getPlugin(GOManagerPlugin).getComponents(PolygonRendererC) as RendererC[])
         .concat(this.getPlugin(GOManagerPlugin).getComponents(BarRendererC)as RendererC[])
         // .concat(this.app.getComponents(ImageRendererC)as RendererC[])

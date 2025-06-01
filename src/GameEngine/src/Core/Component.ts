@@ -3,9 +3,8 @@ import { Plugin } from "./Plugin";
 import { v4 as uuidv4 } from 'uuid';
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
-import { BodyC } from "../Components/Body";
+// import { RigidBodyC } from "../Components/RigidBody";
 import { GOManagerPlugin } from "../Plugins/GOManager";
-// import { BodyC } from "../Components/Body";
 
 export abstract class Component implements ISubscriber {
     public enabled: boolean = true;
@@ -33,7 +32,7 @@ export abstract class Component implements ISubscriber {
     public getManager(): GOManagerPlugin | undefined {
         return this.gameObject?.manager;
     }
-    public getBody(): BodyC | undefined {
-        return this.gameObject?.getComponent(BodyC);
-    }
+    // public getBody(): RigidBodyC | undefined {
+    //     return this.gameObject?.getComponent(RigidBodyC);
+    // }
 }   
