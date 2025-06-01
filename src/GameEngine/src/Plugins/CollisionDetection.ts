@@ -1,11 +1,14 @@
 import { ColliderC, RBushItem } from "../Components/Collider";
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
+import Flatbush from "flatbush";
 import RBush from "rbush";
+import { main } from "..";
 
 export class CollisionDetectionPlugin extends Plugin {
     public name: string = "CollisionDetectionPlugin";
-    private tree: RBush<RBushItem> = new RBush();
+    private data: RBushItem[] = [];
+    private tree!: Flatbush;
 
     override update(): void {
         this.checkCollisions();
@@ -14,27 +17,34 @@ export class CollisionDetectionPlugin extends Plugin {
     
     public overlapPoint(point: Vector): ColliderC[] { 
         // let colliders = this.getNearbyCircles(this.getCellKey(point));
-        const potentials = this.tree.search({minX: point.x, minY: point.y, maxX: point.x, maxY: point.y});
-        const colliders = potentials.map(c => this.gameWorld.getGameObject(c.colliderId)?.getComponent(ColliderC)!).filter(c => c.getCenter().sub(point).magnitude() < c.radius);
+        const potentials = this.tree.search(point.x, point.y, point.x, point.y);
+        const colliders = potentials.map(c => this.gameWorld.getGameObject(this.data[c].colliderId)?.getComponent(ColliderC)!).filter(c => c.getCenter().sub(point).magnitude() < c.radius);
         return colliders;
     }
 
     checkCollisions(): void {
         let AllColliders = this.gameWorld.getComponents(ColliderC)
         
-        this.tree.clear();
-        this.tree.load(AllColliders.map(c => c.getAABB()));
+        this.tree = new Flatbush(AllColliders.length);
+        this.data = AllColliders.map(collider => collider.getAABB());
 
         for (const mainCollider of AllColliders)
             mainCollider.isActive = false;
+
+        for (const item of this.data) 
+            this.tree.add(item.minX, item.minY, item.maxX, item.maxY);
+        this.tree.finish();
+
         for (const mainCollider of AllColliders) {
             if (mainCollider.isStatic)
                 continue; 
             let newCollisions = new Set<ColliderC>();
             
-            const potential = this.tree.search(mainCollider.getAABB());
+            const mainAABB = mainCollider.getAABB();
+            const potential = this.tree.search(mainAABB.minX, mainAABB.minY, mainAABB.maxX, mainAABB.maxY);
+
             for (const item of potential) {
-                const otherCollider = this.gameWorld.getGameObject(item.colliderId)?.getComponent(ColliderC);
+                const otherCollider = this.gameWorld.getGameObject(this.data[item].colliderId)?.getComponent(ColliderC);
                 if (!otherCollider || mainCollider === otherCollider) 
                     continue;
                 

@@ -24,7 +24,7 @@
   "dependencies": {
     "ansi-up": "^1.0.0",
     "express": "^4.21.2",
-    "rbush": "^4.0.1",
+    "flatbush": "^4.4.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "uuid": "^11.1.0"
