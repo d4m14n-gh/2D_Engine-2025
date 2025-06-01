@@ -33,7 +33,7 @@ export abstract class Component implements ISubscriber {
     public getManager(): GOManagerPlugin | undefined {
         return this.gameObject?.manager;
     }
-    public getBody(): BodyC | undefined {
-        return this.gameObject?.getComponent(BodyC);
-    }
+    // public getBody(): BodyC | undefined {
+    //     return this.gameObject?.getComponent(BodyC);
+    // }
 }   

@@ -2,8 +2,8 @@ import { rgb } from "./Helpers/Color";
 // import { RigidBodyC } from "./Components/RigidBody";
 // import { GameObject } from "./Core/GameObject";
 // import { TextRendererC } from "./Components/Renderers/TextRenderer";
-// import { ColliderC as ColliderC } from "./Components/Collider";
-// import { ColliderRendererC } from "./Components/Renderers/ColliderRenderer";
+import { ColliderC as ColliderC } from "./Components/Collider";
+import { ColliderRendererC } from "./Components/Renderers/ColliderRenderer";
 // import { BarRendererC } from "./Components/Renderers/BarRenderer";
 // import { HealthC } from "./Components/Health";
 // import { Component } from "./Core/Component";
@@ -11,7 +11,7 @@ import { rgb } from "./Helpers/Color";
 // import { CanonC } from "./Components/Canon";
 // import { PolygonRendererC } from "./Components/Renderers/PolygonRenderer";
 // import { DestroyerC } from "./Components/Destroyer";
-// import { GMath } from "./Helpers/Math";
+import { GMath } from "./Helpers/Math";
 // import { CanonRendererC } from "./Components/Renderers/CanonRenderer";
 // import { BulletC } from "./Components/Bullet";
 // import { Vector } from "./Helpers/Vector";
@@ -33,8 +33,8 @@ export class GameObjectFactory {
             new BodyC(0.1),
             new PolygonRendererC(radius, n, 0, rgb.randomColor2().toArgb(0.75)),
             new BarRendererC(0.1),
-            // new ColliderC(GMath.getColliderRadius(n, radius)),
-            // new ColliderRendererC(),
+            new ColliderC(GMath.getColliderRadius(n, radius)),
+            new ColliderRendererC(),
             new HealthC(25*n),
             // new AnimationC(),
             new TagsC("Dragable"),
@@ -91,11 +91,11 @@ export class GameObjectFactory {
             new ChasisRendererC(zindex-0.2),
             new PolygonRendererC(radius, 10, zindex, new rgb(50, 99, 52)),
             new TextRendererC("Player", true, zindex+0.1),
-            // new ColliderRendererC(zindex-0.15),
+            new ColliderRendererC(zindex-0.15),
             new BarRendererC(zindex+0.1),
             // new CanonRendererC(zindex-0.1),
             new BodyC(25),
-            // new ColliderC(radius, false),
+            new ColliderC(radius, false),
             new HealthC(1000),
             // new AnimationC(),
             // new CanonC(6, 1.55, 44),

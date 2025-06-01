@@ -32,7 +32,6 @@ export class BodyC extends Component {
     override spawn(): void {
         console.log("BodyC spawned");
         this.body = this.getPlugin(PhysicsPlugin)!.getWorld().createBody(this.bodyDef);
-        this.body.createFixture(new pl.Circle(0.5), { density: 1.0 });
     }
     override destroy(): void {
         console.log("BodyC destroyed");
@@ -43,6 +42,13 @@ export class BodyC extends Component {
         this.body.applyForceToCenter(this.force); // = this.body;
     }
 
+    public getPlBody(): pl.Body {
+        if (this.body)
+            return this.body;
+        else
+            throw new Error("BodyC: Body is not created yet. Use spawn() method to create it.");
+    }
+        
 
     //set parameters
     public setPosition(position: Vector): void {
