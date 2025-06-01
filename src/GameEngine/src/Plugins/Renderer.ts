@@ -11,6 +11,7 @@ import { CanonRendererC } from "../Components/Renderers/CanonRenderer";
 import { Vector } from "../Helpers/Vector";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
+import { BulletRendererC } from "../Components/Renderers/BulletRenderer";
 
 
 export class RendererPlugin extends Plugin {
@@ -107,6 +108,7 @@ export class RendererPlugin extends Plugin {
         .concat(this.gameWorld.getComponents(ImageRendererC)as RendererC[])
         .filter(renderer => !this.clip(renderer.getTransform().position))
         .concat(this.gameWorld.getComponents(CanonRendererC)as RendererC[])
+        .concat(this.gameWorld.getComponents(BulletRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(TracesRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
         .filter(renderer => !this.clip(renderer.getTransform().position))

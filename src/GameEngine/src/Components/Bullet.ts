@@ -5,6 +5,7 @@ import { AnimationC } from "./Animation";
 import { ColliderC } from "./Collider";
 import { DestroyerC } from "./Destroyer";
 import { HealthC } from "./Health";
+import { BulletRendererC } from "./Renderers/BulletRenderer";
 import { ColliderRendererC } from "./Renderers/ColliderRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 import { RigidBodyC } from "./RigidBody";
@@ -25,6 +26,7 @@ export class BulletC extends Component {
     public static bulletGO(owner: GameObject, hp=30, radius: number = 0.65, lifeTime: number=1, zindex=-1, ...components: Component[]): GameObject {
         let bulletGO: GameObject = new GameObject(
             new RigidBodyC(0.05 ,1.),
+            new BulletRendererC(radius, zindex, new rgb(173, 87, 87)),
             new PolygonRendererC(radius, 10, zindex, new rgb(173, 87, 87)),
             new ColliderC(radius, false),
             new ColliderRendererC(),
@@ -36,6 +38,7 @@ export class BulletC extends Component {
         );
         bulletGO.getTransform().rotation = 0;
         bulletGO.name = "Bullet";
+        bulletGO.getComponent(PolygonRendererC).enable(false);
         
         return bulletGO;
     }

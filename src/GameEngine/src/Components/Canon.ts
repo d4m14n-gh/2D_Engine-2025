@@ -2,6 +2,7 @@ import { GMath } from "../Helpers/Math";
 import { Vector } from "../Helpers/Vector";
 import { BulletC } from "./Bullet";
 import { ColliderC } from "./Collider";
+import { BulletRendererC } from "./Renderers/BulletRenderer";
 import { CanonRendererC } from "./Renderers/CanonRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
 import { RigidBodyC } from "./RigidBody";
@@ -25,7 +26,7 @@ export class CanonC extends StandaloneComponent {
         super();
         this.length = length;
         this.width = width;
-        this.offset = new Vector(length-width/2, 0);
+        this.offset = new Vector(length+width, 0);
     }
 
     public getShotDelta(): number{
@@ -57,15 +58,15 @@ export class CanonC extends StandaloneComponent {
             let bullet = BulletC.bulletGO(
                 this.getGameObject(),
                 this.damage,
-                this.width/2+GMath.symRand(sW),
+                this.width/2+GMath.symRand(sW)-this.width/6,
                 this.getBulletLifetime(),
                 zindex
             );
             
             let rigidBody = bullet.getComponent(RigidBodyC);
             let collider = bullet.getComponent(ColliderC);
-            let renderer = bullet.getComponent(PolygonRendererC);
-            renderer.color = this.getComponent(PolygonRendererC).color.clone();
+            bullet.getComponent(PolygonRendererC).color = this.getComponent(PolygonRendererC).color.clone();
+            bullet.getComponent(BulletRendererC).color = this.getComponent(PolygonRendererC).color.clone();
 
             collider.avoidObjectes.add(this.getGameObject());
             
@@ -73,6 +74,7 @@ export class CanonC extends StandaloneComponent {
 
             let spread = this.direction.cross().times(Math.random()*2*this.bulletSpraed-this.bulletSpraed);
             rigidBody.velocity = this.direction.toUnit().add(spread).times(this.bulletSpeed);
+            bullet.getTransform().rotation = this.direction.toRad();
             // rigidBody.velocity = rigidBody.velocity .add(this.getComponent(RigidBodyC).velocity.times(0.25)); 
  
             bullet.spawn(this.getGameWorld());
