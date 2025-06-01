@@ -7,6 +7,9 @@ export class GameWorld {
     private prevWorldTime: number=0;
     private worldTime: number=0;
     private tickCount: number = 0;
+    private accumulator: number = 0;
+    private readonly fixedTimeStep: number = 1 / 60;
+
 
     private plugins: Map<string, Plugin> = new Map<string, Plugin>();
     private events: Set<WeakRef<GameEvent>> = new Set<WeakRef<GameEvent>>();
@@ -53,10 +56,16 @@ export class GameWorld {
     
     public tick(): void {
         this.tickCount++;
+        this.worldTime = performance.now() - this.startTime;
+        const delta = this.worldTime - this.prevWorldTime;
+        this.prevWorldTime = this.worldTime;
+
         if (this.tickCount == 1) 
             this.startWorld();
-        else
-            this.updateWorld();
+        else{
+            this.fixedUpdateWorld(delta/1e3);
+            this.updateWorld(delta/1e3);
+        }
         this.invokeEvents();
     }
     private startWorld(): void{
@@ -64,19 +73,31 @@ export class GameWorld {
         this.Start();
         this.plugins.forEach(plugin => (plugin as any).start());
     }
-    private updateWorld(): void{
-        this.worldTime = performance.now() - this.startTime;
-        const delta = this.worldTime - this.prevWorldTime;
-        this.prevWorldTime = this.worldTime;
-       
-        this.Update(delta / 1e3);
+    private updateWorld(delta: number): void{
+        this.Update(delta);
         this.plugins.forEach(plugin => {
             if (!plugin.enabled)
                 return;
             let start = performance.now(); 
-            (plugin as any).update(delta/1e3);
+            (plugin as any).update(delta);
             this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now()-start);
         });
+    }
+
+    private fixedUpdateWorld(delta: number): void{
+        delta = Math.min(delta, 0.25); 
+        this.accumulator += delta;
+        
+        while (this.accumulator >= this.fixedTimeStep) {
+            this.FixedUpdate(this.fixedTimeStep);
+            this.plugins.forEach(plugin => {
+                if (!plugin.enabled)
+                    return;
+                (plugin as any).fixedUpdate(this.fixedTimeStep);
+            });
+            this.accumulator -= this.fixedTimeStep;
+        }
+        
     }
 
     private invokeEvents(): void{
@@ -93,4 +114,5 @@ export class GameWorld {
     //overridable methods
     protected Start(): void { }
     protected Update(delta: number): void { }
+    protected FixedUpdate(delta: number): void { }
 }

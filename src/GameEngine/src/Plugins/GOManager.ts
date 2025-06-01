@@ -26,7 +26,9 @@ export class GOManagerPlugin extends Plugin {
         (gameObject as any).manager = this;
         (gameObject as any).spawn();
     }
-    public destroy(gameObject: GameObject): void {
+    public destroy(gameObject: GameObject | undefined): void {
+        if (!gameObject)
+            return;
         (gameObject as any).destroy();
         (gameObject as any).manager = undefined;
         this.gameObjects.delete(gameObject.id);

@@ -14,6 +14,7 @@ export abstract class Plugin implements ISubscriber {
     protected event(args: EventArgs, alias?: string): void {}
     protected start(): void { }
     protected update(delta: number): void { }
+    protected fixedUpdate(delta: number): void { }
 
     public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T {
         return this.gameWorld.getPlugin(plugin);

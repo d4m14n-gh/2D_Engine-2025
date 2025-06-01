@@ -11,6 +11,7 @@ import { HealthC } from "./Components/Health";
 import { TextRendererC } from "./Components/Renderers/TextRenderer";
 import { GMath } from "./Helpers/Math";
 import { ColliderRendererC } from "./Components/Renderers/ColliderRenderer";
+import { CanonC } from "./Components/Canon";
 
 export class GameObjectFactory {
     public static polygonGO(radius: number = 2, n: number = 3, ...components: Component[]): GameObject {
@@ -84,7 +85,7 @@ export class GameObjectFactory {
             new ColliderC(radius, false),
             new HealthC(1000),
             // new AnimationC(),
-            // new CanonC(6, 1.55, 44),
+            new CanonC(6, 1.55, 44),
             // new TracesRendererC(-21.37),
             ...components
         );

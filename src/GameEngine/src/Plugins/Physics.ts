@@ -8,13 +8,12 @@ import { Vector } from "../Helpers/Vector";
 export class PhysicsPlugin extends Plugin {
     public name: string = "PhysicsPlugin";
     private world: rp.World = new rp.World(new Vector(0, 0));
-
    
-    public override update(delta: number): void {
-        const totalDelta: number = this.gameWorld!.getWorldTime();
+    public override fixedUpdate(delta: number): void {
         for (let body of this.getPlugin(GOManagerPlugin).getComponents(RigidBodyC)) 
-            (body as any).update(delta);
-        this.world.step();
+            (body as any).update(delta); // aktualizacja ciał fizycznych
+        this.world.step(); // fizyka krok
+        console.log("Physics step completed");
     }
 
     public getWorld(): rp.World {

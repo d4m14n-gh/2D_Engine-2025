@@ -12,7 +12,7 @@ export class RigidBodyC extends Component {
         .setLinearDamping(0)
         .setRotation(0)
         .setAngvel(0)
-        .setAngularDamping(0.2);
+        .setAngularDamping(0.2).setCanSleep(true).setCcdEnabled(false);
    
     private force = new Vector(0, 0);
     

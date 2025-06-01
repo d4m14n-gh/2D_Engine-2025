@@ -75,7 +75,7 @@ export class CameraPlugin extends Plugin {
     }
 
 
-    protected override update(delta: number): void {
+    protected override fixedUpdate(delta: number): void {
         if (this.isFollowing) 
             this.cameraPosition = this.cameraPosition.interpolate(this.targetCameraPosition, Math.pow(this.followingSpeed, delta));
 

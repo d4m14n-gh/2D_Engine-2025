@@ -1,4 +1,4 @@
-// import { CanonC } from "../Components/Canon";
+import { CanonC } from "../Components/Canon";
 import { PolygonRendererC } from "../Components/Renderers/PolygonRenderer";
 // import { RigidBodyC } from "../Components/RigidBody";
 import { GameObject } from "../Core/GameObject";
@@ -62,7 +62,7 @@ export class PlayerPlugin extends Plugin {
       const rotation = body.getRotation();
       const direction = Vector.fromRad(rotation);
       const turnSpeed = 2.5;
-    //   const gun = this.player.getComponent(CanonC);
+      const gun = this.player.getComponent(CanonC);
       // if (Math.random() < 0.05){
       //   this.target=rgb.randomColor2();
       //   // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");
@@ -72,11 +72,11 @@ export class PlayerPlugin extends Plugin {
       camera.targetCameraPosition = body.getPosition(); 
       if (!this.player.enabled) return;
       
-    //   if (!gun) return;
-    //   gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position);
-    //   gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
-    //   if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
-    //     gun.shoot();
+      if (!gun) return;
+      gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getBody()!.getPosition());
+      gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getBody()!.getPosition().add(gun.getGlobalOffset())).length();
+      if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
+        gun.shoot();
 
       let velocity = body.getVelocity();
       // Przyspieszanie
