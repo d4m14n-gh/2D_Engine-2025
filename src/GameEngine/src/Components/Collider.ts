@@ -3,6 +3,16 @@ import { EventArgs, GameEvent } from "../Core/GameEvent";
 import { GameObject } from "../Core/GameObject";
 import { Vector } from "../Helpers/Vector";
 
+
+export interface RBushItem {
+    colliderId: string;
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+}
+
+
 export class CollisionEventArgs extends EventArgs{
     public collider: ColliderC;
     constructor(collider: ColliderC) {
@@ -39,6 +49,18 @@ export class ColliderC extends Component {
     public getCenter(): Vector {
         return this.getTransform().position.add(this.offset);
     }
+
+    public getAABB(): RBushItem { 
+        const center = this.getCenter();
+        return {
+            colliderId: this.getGameObject().getId(),
+            minX: center.x - this.radius,
+            minY: center.y - this.radius,
+            maxX: center.x + this.radius,
+            maxY: center.y + this.radius
+        };
+    }
+
 
     public collides(other: ColliderC): boolean {
         return ( (this.getCenter())

@@ -12,6 +12,7 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^22.13.13",
+    "@types/rbush": "^4.0.0",
     "@types/socket.io": "^3.0.1",
     "@types/ws": "^8.18.0",
     "ts-loader": "^9.5.2",
@@ -23,6 +24,7 @@
   "dependencies": {
     "ansi-up": "^1.0.0",
     "express": "^4.21.2",
+    "rbush": "^4.0.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "uuid": "^11.1.0"
