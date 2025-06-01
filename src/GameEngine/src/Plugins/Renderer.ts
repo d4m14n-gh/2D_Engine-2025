@@ -1,4 +1,4 @@
-// import { ColliderRendererC } from "../Components/Renderers/ColliderRenderer";
+import { ColliderRendererC } from "../Components/Renderers/ColliderRenderer";
 import { RendererC } from "../Components/Renderers/Renderer";
 import { rgb } from "../Helpers/Color";
 import { Plugin } from "../Core/Plugin";
@@ -102,7 +102,7 @@ export class RendererPlugin extends Plugin {
         
         
         (this.getPlugin(GOManagerPlugin).getComponents(TextRendererC) as RendererC[])
-        // .concat(this.app.getComponents(ColliderRendererC) as RendererC[])
+        .concat(this.getPlugin(GOManagerPlugin).getComponents(ColliderRendererC) as RendererC[])
         .concat(this.getPlugin(GOManagerPlugin).getComponents(PolygonRendererC) as RendererC[])
         .concat(this.getPlugin(GOManagerPlugin).getComponents(BarRendererC)as RendererC[])
         // .concat(this.app.getComponents(ImageRendererC)as RendererC[])

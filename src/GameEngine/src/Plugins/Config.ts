@@ -6,7 +6,7 @@ export class ConfigPlugin extends Plugin{
     private readonly config: Map<string, any> = new Map(
         [
             ["bulletSize", 0.75 as any],
-            // ["displayColliders", true as any],
+            ["displayColliders", true as any],
             ["playerSize", 2.5 as any],
             ["bulletColor", new rgb(56, 57, 60) as any],
             // ["playerColor", new Color(145, 125, 39) as any],

@@ -2,6 +2,7 @@ import { GameWorld } from "../../Core/GameWorld";
 import { rgb } from "../../Helpers/Color";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { ConfigPlugin } from "../../Plugins/Config";
+import { ConsolePlugin } from "../../Plugins/Hud/Console";
 import { BodyC } from "../Body";
 import { ColliderC } from "../Collider";
 import { RendererC } from "./Renderer";
