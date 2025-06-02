@@ -8,6 +8,7 @@ import { HealthC } from "./Health";
 import { BulletRendererC } from "./Renderers/BulletRenderer";
 import { ColliderRendererC } from "./Renderers/ColliderRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
+import { SmokeRendererC } from "./Renderers/SmokeRenderer";
 import { RigidBodyC } from "./RigidBody";
 
 export class BulletC extends Component {

@@ -46,8 +46,8 @@ export class BulletRendererC extends RendererC {
         context.closePath();
         // Create a gradient in the local object space, not world space
         const grad = context.createLinearGradient(-3*a-w, 0, w, 0);
-        grad.addColorStop(0, rgb.stroke.toArgb(0).toString());
-        grad.addColorStop(1, color);// rgb.stroke.toString());
+        grad.addColorStop(0, this.color.blend(new rgb(255, 255, 255), 0.5).toArgb(0).toString());
+        grad.addColorStop(1, this.color.toArgb(0.75).toString());// rgb.stroke.toString());
 
         context.fillStyle = grad;
         context.shadowBlur = 0;

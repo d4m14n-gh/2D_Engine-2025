@@ -5,12 +5,13 @@ import { ColliderC } from "./Collider";
 import { BulletRendererC } from "./Renderers/BulletRenderer";
 import { CanonRendererC } from "./Renderers/CanonRenderer";
 import { PolygonRendererC } from "./Renderers/PolygonRenderer";
+import { SmokeRendererC } from "./Renderers/SmokeRenderer";
 import { RigidBodyC } from "./RigidBody";
 import { StandaloneComponent } from "./StandaloneComponent";
 
 export class CanonC extends StandaloneComponent {
-    public cooldown: number = 0.15;
-    public bulletSpeed: number = 40;
+    public cooldown: number = 0.2;
+    public bulletSpeed: number = 50;
     public length: number;
     public width: number;
     public range: number=250;
@@ -26,7 +27,7 @@ export class CanonC extends StandaloneComponent {
         super();
         this.length = length;
         this.width = width;
-        this.offset = new Vector(length+width, 0);
+        this.offset = new Vector(length-this.width, 0);
     }
 
     public getShotDelta(): number{
@@ -55,6 +56,12 @@ export class CanonC extends StandaloneComponent {
         if(this.getShotDelta()>=this.cooldown){
             const sW = 0.125;
             const zindex = this.getComponent(CanonRendererC).zindex-0.01;
+
+            const spread = this.direction.cross().times(Math.random()*2*this.bulletSpraed-this.bulletSpraed);
+            const bulletDirection = this.direction.toUnit().add(spread).toUnit();
+            const offset = this.getGlobalOffset();
+            
+            
             let bullet = BulletC.bulletGO(
                 this.getGameObject(),
                 this.damage,
@@ -63,21 +70,21 @@ export class CanonC extends StandaloneComponent {
                 zindex
             );
             
-            let rigidBody = bullet.getComponent(RigidBodyC);
-            let collider = bullet.getComponent(ColliderC);
+            const rigidBody = bullet.getComponent(RigidBodyC);
+            const collider = bullet.getComponent(ColliderC);
             bullet.getComponent(PolygonRendererC).color = this.getComponent(PolygonRendererC).color.clone();
             bullet.getComponent(BulletRendererC).color = this.getComponent(PolygonRendererC).color.clone();
-
-            collider.avoidObjectes.add(this.getGameObject());
             
-            bullet.getTransform().position = this.getTransform().position.add(this.getGlobalOffset());
+            collider.avoidObjectes.add(this.getGameObject());
+            rigidBody.velocity = bulletDirection.times(this.bulletSpeed);
 
-            let spread = this.direction.cross().times(Math.random()*2*this.bulletSpraed-this.bulletSpraed);
-            rigidBody.velocity = this.direction.toUnit().add(spread).times(this.bulletSpeed);
-            bullet.getTransform().rotation = this.direction.toRad();
-            // rigidBody.velocity = rigidBody.velocity .add(this.getComponent(RigidBodyC).velocity.times(0.25)); 
- 
+            bullet.getTransform().position = this.getTransform().position.add(offset);
+
+            this.getComponent(SmokeRendererC)?.emitParticles(20, offset, this.direction.cross().times(this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
+            this.getComponent(SmokeRendererC)?.emitParticles(20, offset, this.direction.cross().times(-this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
+            bullet.getTransform().rotation = bulletDirection.toRad();
             bullet.spawn(this.getGameWorld());
+
             this.lastShootTime=this.getGameWorld().getWorldTime();
         }
     }    

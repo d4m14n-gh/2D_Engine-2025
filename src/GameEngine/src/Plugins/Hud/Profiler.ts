@@ -32,16 +32,6 @@ export class ProfilerPlugin extends Plugin {
         const fps = 1 / delta;
         this.addRecord("Fps", fps);
         
-        this.frames++;
-        const now = performance.now();
-        if (now - this.lastTime >= 250) {
-            this.fpsHistory.push(this.frames*4);
-            if (this.fpsHistory.length > 100)
-                this.fpsHistory.shift();
-            this.frames = 0;
-            this.lastTime = now;
-        }
-
         let i = 0;
         let values: string[] = [];
         for (const element of this.usage) {
@@ -54,7 +44,18 @@ export class ProfilerPlugin extends Plugin {
             i++;
             values.push(`${key}: `+(mean).toFixed(2).toString());
         }
-        this.profilerWrapper.innerHTML = this.getInnerHtml(values);
+        
+        this.frames++;
+        const now = performance.now();
+        if (now - this.lastTime >= 250) {
+            this.fpsHistory.push(this.frames*4);
+            if (this.fpsHistory.length > 100)
+                this.fpsHistory.shift();
+            this.frames = 0;
+            this.lastTime = now;
+            this.profilerWrapper.innerHTML = this.getInnerHtml(values);
+        }
+
     }
     
     protected override event(args: EventArgs, alias?: string): void {

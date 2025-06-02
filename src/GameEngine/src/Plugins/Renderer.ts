@@ -12,6 +12,7 @@ import { Vector } from "../Helpers/Vector";
 import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
 import { BulletRendererC } from "../Components/Renderers/BulletRenderer";
+import { SmokeRendererC } from "../Components/Renderers/SmokeRenderer";
 
 
 export class RendererPlugin extends Plugin {
@@ -110,9 +111,11 @@ export class RendererPlugin extends Plugin {
         .concat(this.gameWorld.getComponents(CanonRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(BulletRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(TracesRendererC)as RendererC[])
-        .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
         .filter(renderer => !this.clip(renderer.getTransform().position))
-        .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context));
+        .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
+        .concat(this.gameWorld.getComponents(SmokeRendererC)as RendererC[])
+        .filter(renderer => !this.clip(renderer.getTransform().position))
+        .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context, delta));
         // this.gameWorld.getAllComponents<RendererC>(RendererC.name).forEach(renderer => renderer.render(this.context));
         this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.35)');
     }

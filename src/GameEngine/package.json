@@ -12,7 +12,6 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^22.13.13",
-    "@types/rbush": "^4.0.0",
     "@types/socket.io": "^3.0.1",
     "@types/ws": "^8.18.0",
     "ts-loader": "^9.5.2",

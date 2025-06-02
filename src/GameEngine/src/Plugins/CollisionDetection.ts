@@ -2,7 +2,6 @@ import { ColliderC, RBushItem } from "../Components/Collider";
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
 import Flatbush from "flatbush";
-import RBush from "rbush";
 import { main } from "..";
 
 export class CollisionDetectionPlugin extends Plugin {

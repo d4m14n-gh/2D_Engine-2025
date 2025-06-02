@@ -18,6 +18,7 @@ import { Vector } from "./Helpers/Vector";
 import { ChasisRendererC } from "./Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "./Components/Renderers/TracesRenderer";
 import { TagsC } from "./Components/Tags";
+import { SmokeRendererC } from "./Components/Renderers/SmokeRenderer";
 
 export class GameObjectFactory {
     public static polygonGO(radius: number = 2, n: number = 3, ...components: Component[]): GameObject {
@@ -90,8 +91,9 @@ export class GameObjectFactory {
             new ColliderC(radius, false),
             new HealthC(1000),
             new AnimationC(),
-            new CanonC(7, 1.55, 44),
+            new CanonC(7, 1.35, 44),
             new TracesRendererC(-21.37),
+            new SmokeRendererC(2, 20, zindex-0.11, new rgb(179, 179, 179)),
             ...components
         );
         playerGO.getTransform().rotation = 0;

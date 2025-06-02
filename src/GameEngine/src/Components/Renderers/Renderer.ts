@@ -8,5 +8,5 @@ export abstract class RendererC extends Component {
         this.zindex=zindex;
     }
 
-    public abstract render(context: CanvasRenderingContext2D): void; 
+    public abstract render(context: CanvasRenderingContext2D, delta: number): void; 
 }
