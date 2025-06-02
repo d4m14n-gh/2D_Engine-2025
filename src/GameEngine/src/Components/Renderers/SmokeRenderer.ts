@@ -54,7 +54,7 @@ export class SmokeRendererC extends RendererC {
             const x = radius * Math.cos(angle) + this.getTransform().position.x + offset.x;
             const y = radius * Math.sin(angle) + this.getTransform().position.y + offset.y;
 
-            const particleRadius = this.radius * 0.23 + 0.15 * this.radius * GMath.symRand(1);
+            const particleRadius = this.radius * 0.25 + 0.15 * this.radius * GMath.symRand(1);
             const alpha = Math.random() * 0.5 + 0.5;
 
             const particle = new Particle(x, y, particleRadius, this.color, alpha);
@@ -67,6 +67,9 @@ export class SmokeRendererC extends RendererC {
     }
 
     private updateParticles(delta: number): void {
+        const blinkPeriod: number = 1;
+        const popupPeriod: number = 1;
+
         for (const particle of this.particles) {
             particle.x += particle.dx * delta;
             particle.y += particle.dy * delta;
@@ -76,13 +79,14 @@ export class SmokeRendererC extends RendererC {
             particle.dy += (Math.random() - 0.5) * delta*50;
 
             // ogranicz ruch (damping)
-            particle.dx *= Math.pow(0.4, delta);
-            particle.dy *= Math.pow(0.4, delta);
+            particle.dx *= Math.pow(0.1, delta);
+            particle.dy *= Math.pow(0.1, delta);
 
-            particle.alpha *= (Math.pow(0.1, delta));
-            particle.radius += (particle.targetRadius-particle.radius)*(1-Math.pow(0.0001, delta));
+            particle.alpha -= delta / blinkPeriod; 
+            // particle.radius += delta / popupPeriod; //(particle.targetRadius-particle.radius)*(1-Math.pow(0.025, delta));
+            particle.radius += (particle.targetRadius-particle.radius)*(1-Math.pow(0.025, delta));
 
-            if (particle.alpha <= 0.15) {
+            if (particle.alpha <= 0.) {
                 this.particles.splice(this.particles.indexOf(particle), 1); // Remove dead particles
             }
         }
@@ -118,14 +122,19 @@ export class SmokeRendererC extends RendererC {
     
             context.fillStyle = particles.color.toString();
             context.globalAlpha = particles.alpha;
-            context.shadowBlur = 0; 
+            context.shadowColor = particles.color.toString();
+            context.shadowBlur = 10; 
             context.fill();
-            context.stroke();
+            // context.globalCompositeOperation = "lighter"; 
+            // context.stroke();
             context.globalAlpha = 1;
         }
+        context.shadowBlur = 0;
+        context.shadowColor = rgb.stroke.toString();
+        // context.globalCompositeOperation = "source-over"; 
+
+
 
         context.setTransform(1, 0, 0, 1, 0, 0);
-
-        // context.restore();
     }
 }

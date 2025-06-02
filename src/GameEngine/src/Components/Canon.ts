@@ -10,12 +10,12 @@ import { RigidBodyC } from "./RigidBody";
 import { StandaloneComponent } from "./StandaloneComponent";
 
 export class CanonC extends StandaloneComponent {
-    public cooldown: number = 0.2;
-    public bulletSpeed: number = 50;
+    public cooldown: number = 0.25;
+    public bulletSpeed: number = 40;
     public length: number;
     public width: number;
     public range: number=250;
-    public bulletSpraed: number = 0.1;
+    public bulletSpraed: number = 0.05;
     
     public offset: Vector;
     public direction: Vector = Vector.right();
@@ -80,8 +80,8 @@ export class CanonC extends StandaloneComponent {
 
             bullet.getTransform().position = this.getTransform().position.add(offset);
 
-            this.getComponent(SmokeRendererC)?.emitParticles(13, offset, this.direction.cross().times(this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
-            this.getComponent(SmokeRendererC)?.emitParticles(13, offset, this.direction.cross().times(-this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
+            this.getComponent(SmokeRendererC)?.emitParticles(23, offset, this.direction.cross().times(this.bulletSpeed/7).add(this.direction.times(this.bulletSpeed/3)));
+            this.getComponent(SmokeRendererC)?.emitParticles(23, offset, this.direction.cross().times(-this.bulletSpeed/7).add(this.direction.times(this.bulletSpeed/3)));
             bullet.getTransform().rotation = bulletDirection.toRad();
             bullet.spawn(this.getGameWorld());
 
