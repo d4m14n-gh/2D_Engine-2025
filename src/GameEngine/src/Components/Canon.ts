@@ -80,8 +80,8 @@ export class CanonC extends StandaloneComponent {
 
             bullet.getTransform().position = this.getTransform().position.add(offset);
 
-            this.getComponent(SmokeRendererC)?.emitParticles(20, offset, this.direction.cross().times(this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
-            this.getComponent(SmokeRendererC)?.emitParticles(20, offset, this.direction.cross().times(-this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
+            this.getComponent(SmokeRendererC)?.emitParticles(13, offset, this.direction.cross().times(this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
+            this.getComponent(SmokeRendererC)?.emitParticles(13, offset, this.direction.cross().times(-this.bulletSpeed/15).add(this.direction.times(this.bulletSpeed/5)));
             bullet.getTransform().rotation = bulletDirection.toRad();
             bullet.spawn(this.getGameWorld());
 

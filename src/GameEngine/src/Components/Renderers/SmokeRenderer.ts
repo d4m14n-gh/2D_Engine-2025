@@ -72,8 +72,8 @@ export class SmokeRendererC extends RendererC {
             particle.y += particle.dy * delta;
 
             // lekka fluktuacja kierunku (ruch szumowy)
-            particle.dx += (Math.random() - 0.5) * delta*20;
-            particle.dy += (Math.random() - 0.5) * delta*20;
+            particle.dx += (Math.random() - 0.5) * delta*50;
+            particle.dy += (Math.random() - 0.5) * delta*50;
 
             // ogranicz ruch (damping)
             particle.dx *= Math.pow(0.4, delta);
