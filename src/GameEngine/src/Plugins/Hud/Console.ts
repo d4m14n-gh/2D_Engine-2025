@@ -1,6 +1,6 @@
 import { Plugin } from "../../Core/Plugin";
 import { KeyboardEventArgs, KeyboardPlugin } from "../Keyboard";
-import { EventArgs } from "../../Core/GameEvent";
+import { EventArgs, GameEvent } from "../../Core/GameEvent";
 import { CliPlugin } from "../CliPlugin";
 import { cli, cliPlugin, CommandResult } from "../../Helpers/Commands";
 import { rgb } from "../../Helpers/Color";
@@ -17,6 +17,7 @@ export class ConsoleEventArgs extends EventArgs {
 @cliPlugin("console")
 export class ConsolePlugin extends Plugin {
     public name: string = "ConsolePlugin";
+    public messageEnteredEvent = new GameEvent();
     private isVisible: boolean = true;
     private consoleWrapper: HTMLDivElement = document.createElement("div");
     private buffer: string = "";
@@ -32,6 +33,7 @@ export class ConsolePlugin extends Plugin {
     override start(): void {
         this.getPlugin(KeyboardPlugin).KeyDownEvent.subscribe(this, "keydown");
         this.getPlugin(KeyboardPlugin).BlockedKeyDownEvent.subscribe(this, "keydown");
+        this.messageEnteredEvent.register(this.gameWorld);
     }
 
     protected override event(args: EventArgs, alias?: string): void {
@@ -111,7 +113,6 @@ export class ConsolePlugin extends Plugin {
     }
 
     private messageEntered(message: string): void {
-        // this.chatMessageEvent.emit(new ChatEventArgs(message));
         if (message.startsWith("/")){
             this.buffer += message + "\n";
             const result = this.getPlugin(CliPlugin).execute(message.slice(1));
@@ -120,16 +121,16 @@ export class ConsolePlugin extends Plugin {
             if (result.status)
                 this.setStatus("#485b49");
             else
-                this.setStatus("#813136");
+            this.setStatus("#813136");
         }
         else{
             this.buffer += message + "\r\n";
             this.setStatus("white");
+            this.messageEnteredEvent.emit(new ConsoleEventArgs(message));
         }
         this.history[0] = message;
         this.history.unshift("");
         this.historyIndex = 0;
-        // this.buffer += "<hr class='console-item-separator'/>";
         this.updateConsole();
     }
 

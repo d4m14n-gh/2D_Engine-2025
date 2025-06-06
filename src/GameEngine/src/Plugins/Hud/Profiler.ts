@@ -31,19 +31,8 @@ export class ProfilerPlugin extends Plugin {
     override update(delta: number): void {
         const fps = 1 / delta;
         this.addRecord("Fps", fps);
-        
-        let i = 0;
-        let values: string[] = [];
-        for (const element of this.usage) {
-            let key = element[0];
-            let len = element[1].length;
-            let mean = 0;
-            for (const v of element[1])
-                mean += v;
-            mean/=len;    
-            i++;
-            values.push(`${key}: `+(mean).toFixed(2).toString());
-        }
+``        
+       
         
         this.frames++;
         const now = performance.now();
@@ -53,6 +42,19 @@ export class ProfilerPlugin extends Plugin {
                 this.fpsHistory.shift();
             this.frames = 0;
             this.lastTime = now;
+
+            let i = 0;
+            let values: string[] = [];
+            for (const element of this.usage) {
+                let key = element[0];
+                let len = element[1].length;
+                let mean = 0;
+                for (const v of element[1])
+                    mean += v;
+                mean/=len;    
+                i++;
+                values.push(`${key}: `+(mean).toFixed(2).toString());
+            }
             this.profilerWrapper.innerHTML = this.getInnerHtml(values);
         }
 
