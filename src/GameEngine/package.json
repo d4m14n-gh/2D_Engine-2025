@@ -2,6 +2,7 @@
   "name": "gameengine",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx webpack"
@@ -22,10 +23,13 @@
   },
   "dependencies": {
     "ansi-up": "^1.0.0",
+    "class-transformer": "^0.5.1",
     "express": "^4.21.2",
     "flatbush": "^4.4.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "uuid": "^11.1.0"
+    "superjson": "^2.2.2",
+    "uuid": "^11.1.0",
+    "vite": "^6.3.5"
   }
 }

@@ -11,8 +11,11 @@ import { MousePlugin } from "./Mouse";
 import { ConfigPlugin } from "./Config";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 import { CameraPlugin } from "./Camera";
+import { PluginOrder } from "../Core/PluginOrder";
+import { ClientPlugin } from "./Client";
 
 export class PlayerPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Update;
     public name: string = "PlayerPlugin";
     private playerName: string = "player";
     public player: GameObject = GameObjectFactory.playerGO();
@@ -49,9 +52,16 @@ export class PlayerPlugin extends Plugin {
     // target: rgb = new rgb(53, 110, 58);
 
 
+    synchronize(): void {
+      const client = this.getPlugin(ClientPlugin);
+      const mock: GameObject = JSON.parse(JSON.stringify(this.player));
+      delete (mock as any).gameWorld;
+
+      client.synchronize(this.player.getId(), mock);
+    }
 
     protected override update(delta: number): void {
-      
+      this.synchronize();
       // if (Math.random() < 0.05){
       //   this.target=rgb.randomColor2();
       //   // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");

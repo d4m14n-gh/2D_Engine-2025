@@ -1,5 +1,6 @@
 import { EventArgs, GameEvent } from "../Core/GameEvent";
 import { Plugin } from "../Core/Plugin";
+import { PluginOrder } from "../Core/PluginOrder";
 
 export class KeyboardEventArgs extends EventArgs {
     public key: string;
@@ -10,6 +11,7 @@ export class KeyboardEventArgs extends EventArgs {
 }
 
 export class KeyboardPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Input;
     public name: string = "KeyboardPlugin";
     public KeyDownEvent: GameEvent = new GameEvent();
     public BlockedKeyDownEvent: GameEvent = new GameEvent();

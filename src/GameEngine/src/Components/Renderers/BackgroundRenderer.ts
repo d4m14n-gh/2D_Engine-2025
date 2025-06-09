@@ -79,8 +79,8 @@ async function drawDotGrid(context: OffscreenCanvasRenderingContext2D, gridSize:
             context.shadowColor =  'rgba(0, 0, 0, 0.75)';
             context.shadowBlur = 35;
             context.stroke();
-            await new Promise(r => setTimeout(r, 1));
         }
+        await new Promise(r => setTimeout(r, 0));
     }
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.shadowBlur = 0;

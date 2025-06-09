@@ -2,9 +2,11 @@ import { ColliderC, RBushItem } from "../Components/Collider";
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
 import Flatbush from "flatbush";
-import { main } from "..";
+import { main } from "../main";
+import { PluginOrder } from "../Core/PluginOrder";
 
 export class CollisionDetectionPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Collision;
     public name: string = "CollisionDetectionPlugin";
     private data: RBushItem[] = [];
     private tree!: Flatbush;
@@ -23,8 +25,13 @@ export class CollisionDetectionPlugin extends Plugin {
 
     checkCollisions(): void {
         let AllColliders = this.gameWorld.getComponents(ColliderC)
-        
-        this.tree = new Flatbush(AllColliders.length);
+        const length = AllColliders.length;
+        if (length === 0) {
+            this.tree = new Flatbush(1);
+            return;
+        }
+
+        this.tree = new Flatbush(length);
         this.data = AllColliders.map(collider => collider.getAABB());
 
         for (const mainCollider of AllColliders)

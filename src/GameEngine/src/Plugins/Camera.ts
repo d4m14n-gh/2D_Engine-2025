@@ -5,9 +5,12 @@ import { EventArgs } from "../Core/GameEvent";
 import { CommandResult, cliPlugin, cli } from "../Helpers/Commands";
 import { CollisionDetectionPlugin } from "./CollisionDetection";
 import { KeyboardPlugin } from "./Keyboard";
+import { PluginOrder } from "../Core/PluginOrder";
 
 @cliPlugin("camera")
 export class CameraPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Physics;
+    
     public cameraPositon: Vector = new Vector(4, 0);
     public targetCameraPositon: Vector = new Vector(4, 0);
     public cameraScreenOffset: Vector = new Vector(100, 100);

@@ -1,6 +1,7 @@
 import { Vector } from "../Helpers/Vector";
 import { Plugin } from "../Core/Plugin";
 import { EventArgs, GameEvent } from "../Core/GameEvent";
+import { PluginOrder } from "../Core/PluginOrder";
 
 export class MouseScrollEventArgs extends EventArgs{
     public delta: number;
@@ -19,6 +20,7 @@ export class MouseClickEventArgs extends EventArgs{
 }
 
 export class MousePlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Input;
     public name: string = "MousePlugin";
     public mouseScrollYEvent = new GameEvent();
     public mouseDownEvent = new GameEvent();

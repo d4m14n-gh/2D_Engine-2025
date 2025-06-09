@@ -1,7 +1,9 @@
 import { rgb as rgb } from "../Helpers/Color";
 import { Plugin } from "../Core/Plugin";
+import { PluginOrder } from "../Core/PluginOrder";
 
 export class ConfigPlugin extends Plugin{
+    public readonly order: PluginOrder = PluginOrder.Input;
     public name: string = "ConfigPlugin";
     private readonly config: Map<string, any> = new Map(
         [

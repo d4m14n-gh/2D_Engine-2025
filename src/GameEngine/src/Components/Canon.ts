@@ -21,7 +21,8 @@ export class CanonC extends StandaloneComponent {
     public direction: Vector = Vector.right();
     public targetDirection: Vector = Vector.right();
 
-    private lastShootTime: number = -10;
+    private shotDelta: number = 0;
+    // private lastShootTime: number = performance.now();
 
     constructor(length: number=4, width: number=2, private damage=10){
         super();
@@ -31,8 +32,7 @@ export class CanonC extends StandaloneComponent {
     }
 
     public getShotDelta(): number{
-        let totalTime = this.getGameWorld().getWorldTime();
-        return totalTime-this.lastShootTime;
+        return this.shotDelta;
     }
 
     override update(delta: number): void {
@@ -40,6 +40,7 @@ export class CanonC extends StandaloneComponent {
         let targetAngle=this.targetDirection.toRad();
         angle += 9*delta*GMath.deltaAngle(angle, targetAngle);
         this.direction = Vector.fromRad(angle);
+        this.shotDelta += delta;
     }
 
     public getBulletLifetime(): number{
@@ -85,7 +86,7 @@ export class CanonC extends StandaloneComponent {
             bullet.getTransform().rotation = bulletDirection.toRad();
             bullet.spawn(this.getGameWorld());
 
-            this.lastShootTime=this.getGameWorld().getWorldTime();
+            this.shotDelta = 0;
         }
     }    
 } 

@@ -16,6 +16,7 @@ export class GameWorld {
     private componentsToStart: Array<WeakRef<Component>> = [];
     
     constructor(...plugins: Plugin[]){
+        plugins.sort((a, b) => a.order - b.order);
         for(let plugin of plugins){
             let name = plugin.constructor.name;
             if (this.plugins.has(name))
@@ -26,9 +27,17 @@ export class GameWorld {
         }
     }
     //plugins
+    public tryGetPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T | undefined {
+        const name = plugin.name;
+        if (!this.plugins.has(name))
+            return undefined;
+        return this.plugins.get(name) as T;
+    }
     public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T {
         const name = plugin.name;
-        return this.getPluginByName(name);
+        if (!this.plugins.has(name))
+            throw new Error(`Plugin ${name} does not exist in the game world`);
+        return this.plugins.get(name) as T;
     }
     public getPluginByName<T extends Plugin>(name: string): T {
         if (!this.plugins.has(name))
@@ -129,7 +138,7 @@ export class GameWorld {
                 return;
             let start = performance.now(); 
             (plugin as any).update(delta/1e3);
-            this.getPlugin(ProfilerPlugin).addRecord(plugin.name, performance.now()-start);
+            this.tryGetPlugin(ProfilerPlugin)?.addRecord(plugin.name, performance.now()-start);
         });
     }
 
@@ -142,7 +151,7 @@ export class GameWorld {
             else
                 this.events.delete(eventRef);
         }
-        this.getPlugin(ProfilerPlugin).addRecord("Events", performance.now()-start);
+        this.tryGetPlugin(ProfilerPlugin)?.addRecord("Events", performance.now()-start);
     }
     //overridable methods
     protected Start(): void { }

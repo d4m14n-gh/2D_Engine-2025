@@ -7,7 +7,8 @@ import { Plugin } from "./Plugin";
 
 export abstract class Component implements ISubscriber {
     private enabled: boolean = true;
-    private gameObject!: GameObject;
+    private gameObject!: WeakRef<GameObject>;
+    // private gameObjectId: string = "";
     
     //overideable methods
     protected start(): void{ }
@@ -15,30 +16,31 @@ export abstract class Component implements ISubscriber {
 
     
     public getGameWorld(): GameWorld{
-        return this.gameObject.getGameWorld();
+        const gameObject = this.getGameObject();
+        return this.gameObject.deref()!.getGameWorld();
     }
     public hasComponent<T extends Component>(classC: new (...args: any[]) => T): boolean{
-        return this.gameObject.hasComponent(classC);
+        return this.gameObject.deref()!.hasComponent(classC);
     }
     public getComponent<T extends Component>(classC: new (...args: any[]) => T): T{
-        return this.gameObject.getComponent(classC);
+        return this.gameObject.deref()!.getComponent(classC);
     }
     public getAllComponents(): Component[]{
-        return this.gameObject.getAllComponents();
+        return this.gameObject.deref()!.getAllComponents();
     }
 
 
     public getTransform(): Transform{
-        return this.gameObject.getTransform();
+        return this.gameObject.deref()!.getTransform();
     }
     public getGameObject(): GameObject{
-        return this.gameObject;
+        return this.gameObject.deref()!;
     }
     public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
         return this.getGameWorld().getPlugin(plugin);
     }
     public isEnabled(): boolean{
-        return this.gameObject.enabled&&this.enabled;
+        return this.gameObject.deref()!.enabled&&this.enabled;
     }
     public enable(value=true): void{
         this.enabled=value;

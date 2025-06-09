@@ -1,4 +1,5 @@
 import { Plugin } from "../Core/Plugin";
+import { PluginOrder } from "../Core/PluginOrder";
 
 export interface IInvokable {
     onInvoke(topic: string): void;
@@ -11,6 +12,7 @@ type record = {
 }
 
 export class SchedulerPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Input;
     public name: string = "SchedulerPlugin";
     private schedule: record[] = [];
 

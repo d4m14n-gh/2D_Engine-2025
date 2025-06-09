@@ -13,9 +13,11 @@ import { ChasisRendererC } from "../Components/Renderers/ChasisRenderer";
 import { TracesRendererC } from "../Components/Renderers/TracesRenderer";
 import { BulletRendererC } from "../Components/Renderers/BulletRenderer";
 import { SmokeRendererC } from "../Components/Renderers/SmokeRenderer";
+import { PluginOrder } from "../Core/PluginOrder";
 
 
 export class RendererPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Render;
     public name: string = "RendererPlugin";
     private readonly context: CanvasRenderingContext2D;
     public renderDistance: number = 150;
@@ -50,7 +52,10 @@ export class RendererPlugin extends Plugin {
         this.context.fillStyle ="rgb(85, 106, 86)";
         this.context.fillStyle ="rgb(66, 85, 68)";
         ////
-        let worker = new Worker(new URL("../Components/Renderers/BackgroundRenderer.ts", import.meta.url), { type: 'module' }); //this.drawDotGrid(ctx, new Vector(2.5, 2.5), 0.175, rgb.stroke.toString(), new Vector(i*4+5, i*4+5));
+        // let worker = new Worker(new URL("../Components/Renderers/BackgroundRenderer.ts", import.meta.url), { type: 'module' }); //this.drawDotGrid(ctx, new Vector(2.5, 2.5), 0.175, rgb.stroke.toString(), new Vector(i*4+5, i*4+5));
+        const worker = new Worker(new URL('../Components/Renderers/BackgroundRenderer.ts', import.meta.url), { type: 'module' })
+        worker.onerror = (e) => { console.error("Worker error:", e); };
+
         for(let i=0;i<10;i++){
             this.gridCanvas[i] = document.createElement("canvas");
             this.gridCanvas[i].width = 3440;

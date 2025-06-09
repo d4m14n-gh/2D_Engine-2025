@@ -1,9 +1,11 @@
 import { Plugin } from "../Core/Plugin";
+import { PluginOrder } from "../Core/PluginOrder";
 import { rgb } from "../Helpers/Color";
 import { cli, cliPlugin, CommandResult } from "../Helpers/Commands";
 
 @cliPlugin("cli")
 export class CliPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.None;
     public name: string = "CliPlugin";
     private globalCommands: Map<string, string | undefined> = new Map<string, string | undefined>();
 

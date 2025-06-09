@@ -1,7 +1,7 @@
-import { Component } from "./Component";
 import { GameWorld } from "../Core/GameWorld";
 import { EventArgs, ISubscriber } from "./GameEvent";
 import { cli, CommandResult } from "../Helpers/Commands";
+import { PluginOrder } from "./PluginOrder";
 
 
 //WorldComponent = Plugin
@@ -9,6 +9,7 @@ export abstract class Plugin implements ISubscriber {
     protected gameWorld!: GameWorld;
     protected enabled: boolean = true;
     public readonly name: string = "Plugin";
+    public abstract readonly order: PluginOrder;
 
     //overideable methods
     protected event(args: EventArgs, alias?: string): void {}

@@ -5,6 +5,7 @@ import { CliPlugin } from "../CliPlugin";
 import { cli, cliPlugin, CommandResult } from "../../Helpers/Commands";
 import { rgb } from "../../Helpers/Color";
 import { AnsiUp }  from 'ansi-up';
+import { PluginOrder } from "../../Core/PluginOrder";
 
 export class ConsoleEventArgs extends EventArgs {
     public message: string;
@@ -16,6 +17,7 @@ export class ConsoleEventArgs extends EventArgs {
 
 @cliPlugin("console")
 export class ConsolePlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Render;
     public name: string = "ConsolePlugin";
     public messageEnteredEvent = new GameEvent();
     private isVisible: boolean = true;

@@ -4,10 +4,12 @@ import { RendererPlugin } from "../Renderer";
 import { get } from "http";
 import { KeyboardEventArgs, KeyboardPlugin } from "../Keyboard";
 import { EventArgs } from "../../Core/GameEvent";
+import { PluginOrder } from "../../Core/PluginOrder";
 
 
 
 export class ProfilerPlugin extends Plugin {
+    public readonly order: PluginOrder = PluginOrder.Render;
     public name: string = "ProfilerPlugin";
     public size: number = 250;
     private isVisible: boolean = true;
