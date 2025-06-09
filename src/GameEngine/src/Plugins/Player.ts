@@ -127,6 +127,11 @@ export class PlayerPlugin extends Plugin {
   private setname(newName: string): CommandResult {
       this.playerName = newName;
       this.player.name = newName;
+      try {
+        this.getPlugin(ClientPlugin).setServerName(newName);
+      } catch (error) {
+        console.error("Error setting server name:", error);
+      }
       return new CommandResult(true, `Player name set to ${newName}`, undefined);
   }
 

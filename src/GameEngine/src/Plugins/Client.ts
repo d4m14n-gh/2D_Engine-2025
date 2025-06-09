@@ -59,10 +59,12 @@ export class ClientPlugin extends Plugin {
     }
 
     @cli("setServerName", "<name: string>")
-    private setServerName(name: string): CommandResult {
+    public setServerName(name: string): CommandResult {
         this.socket.emit('set_name', name);
         return new CommandResult(true, `Server name set to: ${name}`, name);
     }
+
+    
 
 
     //synchronizer
