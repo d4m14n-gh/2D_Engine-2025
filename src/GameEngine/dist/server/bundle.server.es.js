@@ -678,34 +678,35 @@ f = x([
 class $ {
   enabled = !0;
   gameObject;
+  // private gameObjectId: string = "";
   //overideable methods
   start() {
   }
   event(t, e) {
   }
   getGameWorld() {
-    return this.gameObject.getGameWorld();
+    return this.getGameObject(), this.gameObject.deref().getGameWorld();
   }
   hasComponent(t) {
-    return this.gameObject.hasComponent(t);
+    return this.gameObject.deref().hasComponent(t);
   }
   getComponent(t) {
-    return this.gameObject.getComponent(t);
+    return this.gameObject.deref().getComponent(t);
   }
   getAllComponents() {
-    return this.gameObject.getAllComponents();
+    return this.gameObject.deref().getAllComponents();
   }
   getTransform() {
-    return this.gameObject.getTransform();
+    return this.gameObject.deref().getTransform();
   }
   getGameObject() {
-    return this.gameObject;
+    return this.gameObject.deref();
   }
   getPlugin(t) {
     return this.getGameWorld().getPlugin(t);
   }
   isEnabled() {
-    return this.gameObject.enabled && this.enabled;
+    return this.gameObject.deref().enabled && this.enabled;
   }
   enable(t = !0) {
     this.enabled = t;

@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   root: '.',
   build: {
-    outDir: 'dist',
+    outDir: 'dist/server',
     target: 'node18',
     lib: {
       entry: './src/Server/main.ts',
