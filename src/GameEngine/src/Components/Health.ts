@@ -28,8 +28,8 @@ export class HealthC extends Component{
     }
 
     protected override start(): void {
-        this.damageEvent.register(this.getGameWorld());
-        this.getComponent(ColliderC).onCollisionEnterEvent.subscribe(this, "onCollisionEnter");
+        this.damageEvent.register(this.getGameWorld()!);
+        this.getComponent(ColliderC)!.onCollisionEnterEvent.subscribe(this, "onCollisionEnter");
     }
     protected override event(args: EventArgs): void {
         let cargs = args as CollisionEventArgs;
@@ -37,17 +37,17 @@ export class HealthC extends Component{
     }
 
     onCollisionEnter(other: ColliderC): void { 
-        let otherGO = other.getGameObject();       
-        let otherRigidbody = otherGO.getComponent(RigidBodyC);
-        let thisRigidbody = this.getComponent(RigidBodyC);
+        let otherGO = other.getGameObject()!;       
+        let otherRigidbody = otherGO.getComponent(RigidBodyC)!;
+        let thisRigidbody = this.getComponent(RigidBodyC)!;
         let op = thisRigidbody.mass/(otherRigidbody.mass+thisRigidbody.mass);
         if(thisRigidbody.mass<otherRigidbody.mass){
             otherRigidbody.velocity = otherRigidbody.velocity.add(thisRigidbody.velocity.times(op)).times(0.5); //toUnit().times(v2);
             thisRigidbody.velocity = thisRigidbody.velocity.add(otherRigidbody.velocity.times(1-op).times(0.5)); //toUnit().times(v2);
         }
-        otherRigidbody.angularVelocity += this.getTransform().position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/15);
+        otherRigidbody.angularVelocity += this.getTransform()!.position.sub(otherGO.getTransform().position).vectorProduct(thisRigidbody.velocity)*(op/15);
         try{
-            const other = otherGO.getComponent(HealthC);
+            const other = otherGO.getComponent(HealthC)!;
             const damageValue = Math.min(other.health, this.health);
             if (damageValue==0)
                 return;
@@ -70,17 +70,17 @@ export class HealthC extends Component{
        
         if(this.health==0){
             this.getComponent(ColliderC)?.enable(false);
-            this.getComponent(RigidBodyC).dampingFactor=0.6;
+            this.getComponent(RigidBodyC)!.dampingFactor=0.6;
             this.getComponent(AnimationC)?.startShrink();
             
             if(participant.hasComponent(PolygonRendererC)){
-                let myColor = this.getComponent(PolygonRendererC).color;
+                let myColor = this.getComponent(PolygonRendererC)!.color;
                 let newColor = myColor.blend(
-                    participant.getComponent(PolygonRendererC).color.toRgb(),
+                    participant.getComponent(PolygonRendererC)!.color.toRgb(),
                     0.5
                 ).toRgb();
-                this.getComponent(PolygonRendererC).color = newColor;
-                participant.getComponent(PolygonRendererC).color = newColor;
+                this.getComponent(PolygonRendererC)!.color = newColor;
+                participant.getComponent(PolygonRendererC)!.color = newColor;
             }
         }
         else

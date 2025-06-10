@@ -21,7 +21,7 @@ export class ClientPlugin extends Plugin {
 
         this.socket = io('http://localhost:8001', {
             transports: ['websocket'],
-            reconnection: true,
+            reconnection: false,
             reconnectionDelay: 100,
         });
         this.socket.on('connect', () => this.onConnection());
@@ -51,7 +51,7 @@ export class ClientPlugin extends Plugin {
     }
 
     private onDisconnection(reason: string): void {
-        this.getPlugin(ConsolePlugin).writeLine(`\x1b[31mDisconnected from server: ${reason}\x1b[0m`);
+        this.getPlugin(ConsolePlugin).writeLine(`disconnected! \x1b[31m${reason}\x1b[0m`);
     }
 
     private onChatMessage(author: string, message: string): void {
@@ -86,7 +86,7 @@ export class ClientPlugin extends Plugin {
             const newMock = GameObjectFactory.playerGO();
             this.deepMerge(newMock, data);
             this.gameWorld.spawn(newMock);
-            newMock.getComponent(RigidBodyC).velocity = Vector.zero();
+            newMock.getComponent(RigidBodyC)!.velocity = Vector.zero();
         }
     }
 

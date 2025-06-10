@@ -27,17 +27,27 @@ export class TracesRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-     
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const camera = this.getPlugin(CameraPlugin);
+        if (!world || !transform || !camera) return;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+
+        const x = transform.position.x;
+        const y = transform.position.y;
+        const r = transform.rotation;
+        const scale = transform.scale;
+        
+        const color = this.color.toString();
+
+      
+     
+    
 
         ////////////////////
 
-        const currentPosition = this.getTransform().position.clone();
-        const currentRotation = this.getTransform().rotation;
+        const currentPosition = transform.position.clone();
+        const currentRotation = transform.rotation;
 
         if (this.lastPosition == undefined)
             this.lastPosition = currentPosition.clone();
@@ -47,27 +57,27 @@ export class TracesRendererC extends RendererC {
                 {
                     position: this.lastPosition,
                     rotation: currentRotation,
-                    startTime: this.getGameWorld().getWorldTime(),
+                    startTime: this.getGameWorld()!.getWorldTime(),
                 }
             );
             this.lastPosition = this.lastPosition.add(mv.toUnit().times(this.tracesSpace));
             mv = currentPosition.sub(this.lastPosition);
         }
 
-        ////////////////////
-        while(this.traces.length>0&&this.traces[0].startTime+this.duration<this.getGameWorld().getWorldTime())
+        while(this.traces.length>0&&this.traces[0].startTime+this.duration<this.getGameWorld()!.getWorldTime())
             this.traces.shift();
+        ////////////////////
 
         for (const trace of this.traces) {
-            const cx: number = trace.position.x-cmx;
-            const cy: number = trace.position.y-cmy;
             
-            const lifeTime: number = 1-(this.getGameWorld().getWorldTime()-trace.startTime)/this.duration;
+            // context.setTransform(camera.getCameraTransform());
+            // context.translate(x, y);
+            // context.rotate(r);
+            // context.scale(scale.x, scale.y);
+            const lifeTime: number = 1-(world.getWorldTime()-trace.startTime)/this.duration;
 
-            context.translate(offset.x, offset.y);
-            context.scale(scale.x, scale.y);
-
-            context.translate(cx, cy);
+            context.setTransform(camera.getCameraTransform());
+            context.translate(trace.position.x, trace.position.y);
             context.rotate(trace.rotation);
 
             context.beginPath();
@@ -81,7 +91,9 @@ export class TracesRendererC extends RendererC {
             context.roundRect(-4.5, 1.25, this.length, 2, 0.75);
             context.fill();
             context.closePath();
-            context.setTransform(1, 0, 0, 1, 0, 0);
+
+
+            context.resetTransform();
         }
     }
 }

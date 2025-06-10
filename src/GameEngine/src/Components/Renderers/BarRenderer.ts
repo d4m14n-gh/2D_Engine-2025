@@ -3,6 +3,7 @@ import { Vector } from "../../Helpers/Vector";
 import { CameraPlugin } from "../../Plugins/Camera";
 import { RendererC } from "./Renderer";
 import { HealthC } from "../Health";
+import { GMath } from "../../Helpers/Math";
 
 export class BarRendererC extends RendererC {
     public offset: Vector = new Vector(0, 4);
@@ -15,46 +16,40 @@ export class BarRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-        let width = this.width;
-        let fill = this.fill;
-        try {
-            fill = this.getComponent(HealthC).getHealth();
-            width = 2+this.getComponent(HealthC).maxHealth/250.0;
-        } catch {}
-        if(fill>=1||fill<=0)
-            return;
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const health = this.getComponent(HealthC);
+        const camera = this.getPlugin(CameraPlugin);
+        if (!world || !transform || !health || !camera) return;
 
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+        const x = transform.position.x;
+        const y = transform.position.y;
+        const r = transform.rotation;
+        const scale = transform.scale;
+      
+        
+        const fill = GMath.minmax(health.getHealth(), 0, 1);
+        const width = 2+health.maxHealth/250.0;
         const color = rgb.getHeatmapColor(fill).toString();
-
-        const cx: number = (x-cmx);
-        const cy: number = (y-cmy);
+        const color2 = rgb.background.toString();
         const radius = 0.25;
 
-
         
-        context.translate(offset.x, offset.y);
-        context.scale(scale.x, scale.y);
-        context.translate(cx, cy);
+        context.setTransform(camera.getCameraTransform());
+        context.translate(x, y);
         // context.rotate(r);
-        context.scale(transformScale.x, transformScale.y);
+        context.scale(scale.x, scale.y);
+        
         context.translate(this.offset.x, this.offset.y);
 
         
-        context.fillStyle = color;
         context.shadowBlur = 0;
         
         context.beginPath();
         context.roundRect(-width/2, -this.height/2, width, this.height, radius);
         context.closePath();
-        context.fillStyle = rgb.background.toString();
+        context.fillStyle = color2;
         context.fill();
         
         context.beginPath();
@@ -75,6 +70,7 @@ export class BarRendererC extends RendererC {
         context.shadowBlur = 0;
         context.stroke();
 
-        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        context.resetTransform();
     }
 }

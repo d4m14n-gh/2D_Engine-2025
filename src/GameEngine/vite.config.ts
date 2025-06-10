@@ -5,6 +5,7 @@ export default defineConfig({
   build: {
     outDir: 'dist/client',
     target: 'esnext',
+    sourcemap: true,
     lib: {
       entry: './src/main.ts',
       formats: ['es'],

@@ -42,18 +42,18 @@ export class ColliderC extends Component {
     }
 
     protected override start(): void {
-        this.onCollisionEnterEvent.register(this.getGameWorld());
-        this.onCollisionExitEvent.register(this.getGameWorld());
+        this.onCollisionEnterEvent.register(this.getGameWorld()!);
+        this.onCollisionExitEvent.register(this.getGameWorld()!);
     }
 
     public getCenter(): Vector {
-        return this.getTransform().position.add(this.offset);
+        return this.getTransform()!.position.add(this.offset);
     }
 
     public getAABB(): RBushItem { 
         const center = this.getCenter();
         return {
-            colliderId: this.getGameObject().getId(),
+            colliderId: this.getGameObject()!.getId(),
             minX: center.x - this.radius,
             minY: center.y - this.radius,
             maxX: center.x + this.radius,
@@ -66,7 +66,7 @@ export class ColliderC extends Component {
         return ( (this.getCenter())
         .sub(other.getCenter())
         .magnitude() <= this.radius+other.radius )
-        && !this.avoidObjectes.has(other.getGameObject()) && !other.avoidObjectes.has(this.getGameObject());
+        && !this.avoidObjectes.has(other.getGameObject()!) && !other.avoidObjectes.has(this.getGameObject()!);
     }
 
     public onCollisionEnter(other: ColliderC): void{

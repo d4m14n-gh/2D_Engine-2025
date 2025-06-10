@@ -7,42 +7,43 @@ import { Plugin } from "./Plugin";
 
 export abstract class Component implements ISubscriber {
     private enabled: boolean = true;
-    private gameObject!: WeakRef<GameObject>;
-    // private gameObjectId: string = "";
+    private gameObject?: GameObject;
     
     //overideable methods
     protected start(): void{ }
     protected event(args: EventArgs, alias?: string): void{ }
 
-    
-    public getGameWorld(): GameWorld{
-        const gameObject = this.getGameObject();
-        return this.gameObject.deref()!.getGameWorld();
+    public getGameObject(): GameObject | undefined {
+        return this.gameObject;
     }
+    public getGameWorld(): GameWorld | undefined {
+        return this.gameObject?.getGameWorld();
+    }
+    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T | undefined {
+        return this.gameObject?.getGameWorld()?.getPlugin(plugin);
+    }
+
+
     public hasComponent<T extends Component>(classC: new (...args: any[]) => T): boolean{
-        return this.gameObject.deref()!.hasComponent(classC);
+        return this.gameObject?.hasComponent(classC) ?? false;
     }
-    public getComponent<T extends Component>(classC: new (...args: any[]) => T): T{
-        return this.gameObject.deref()!.getComponent(classC);
+    public getComponent<T extends Component>(classC: new (...args: any[]) => T): T | undefined{
+        return this.gameObject?.getComponent(classC);
     }
     public getAllComponents(): Component[]{
-        return this.gameObject.deref()!.getAllComponents();
+        return this.gameObject?.getAllComponents() ?? [];
     }
 
 
-    public getTransform(): Transform{
-        return this.gameObject.deref()!.getTransform();
-    }
-    public getGameObject(): GameObject{
-        return this.gameObject.deref()!;
-    }
-    public getPlugin<T extends Plugin>(plugin: new (...args: any[]) => T): T{
-        return this.getGameWorld().getPlugin(plugin);
-    }
     public isEnabled(): boolean{
-        return this.gameObject.deref()!.enabled&&this.enabled;
+        return (this.gameObject?.enabled??true) && this.enabled;
     }
     public enable(value=true): void{
         this.enabled=value;
+    }
+
+    
+    public getTransform(): Transform | undefined {
+        return this.gameObject?.getTransform();
     }
 }

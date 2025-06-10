@@ -62,7 +62,7 @@ export class CollisionDetectionPlugin extends Plugin {
                 
                 for(let newC of newCollisions)
                     if(!mainCollider.collisions.has(newC)) 
-                        mainCollider.getComponent(ColliderC).onCollisionEnter(newC); 
+                        mainCollider.onCollisionEnter(newC); 
                     
                 
                 mainCollider.collisions.clear();

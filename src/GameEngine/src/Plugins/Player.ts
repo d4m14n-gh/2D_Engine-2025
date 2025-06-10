@@ -24,13 +24,13 @@ export class PlayerPlugin extends Plugin {
         return this.player.getTransform().position.clone();
     }
     public getPlayerColor(): rgb {
-        return this.player.getComponent(PolygonRendererC).color.clone();
+        return this.player.getComponent(PolygonRendererC)!.color.clone();
     }
 
 
     public override start(): void {
       this.respawn();  
-      this.player.getComponent(PolygonRendererC).color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
+      this.player.getComponent(PolygonRendererC)!.color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
       this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
     }
 
@@ -61,7 +61,7 @@ export class PlayerPlugin extends Plugin {
     }
 
     protected override update(delta: number): void {
-      this.synchronize();
+      // this.synchronize();
       // if (Math.random() < 0.05){
       //   this.target=rgb.randomColor2();
       //   // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");
@@ -93,7 +93,7 @@ export class PlayerPlugin extends Plugin {
       const turnSpeed = 2.5;
 
 
-      let rigidBody = this.player.getComponent(RigidBodyC);
+      let rigidBody = this.player.getComponent(RigidBodyC)!;
       let velocity = rigidBody.velocity;
       // Przyspieszanie
       if (keyboard.isPressed("w")) {
@@ -140,7 +140,7 @@ export class PlayerPlugin extends Plugin {
       try{
         let newColor = rgb.tryParseCssColor(color.toString());
         if (newColor)
-          this.player.getComponent(PolygonRendererC).color = newColor;
+          this.player.getComponent(PolygonRendererC)!.color = newColor;
       } catch {}
       return new CommandResult(true, `Player color set`, undefined);
   }
@@ -151,12 +151,12 @@ export class PlayerPlugin extends Plugin {
       this.gameWorld.destroy(this.player);
     this.player = GameObjectFactory.playerGO();
     this.player.name=this.playerName;
-    this.player.spawn(this.gameWorld);
+    this.gameWorld.spawn(this.player);
     return new CommandResult(true, `Player respawned`, undefined);
   }
 
   @cli("getcolor", undefined, "rgb")
   private getcolor(): CommandResult {
-    return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC).color}`, this.player.getComponent(PolygonRendererC).color);
+    return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC)!.color}`, this.player.getComponent(PolygonRendererC)!.color);
   }
 }

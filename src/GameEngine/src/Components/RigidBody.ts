@@ -21,11 +21,11 @@ export class RigidBodyC extends Component {
     public update(delta: number): void {
         this.velocity = this.velocity.add(this.acceleration.times(delta));
         this.velocity = this.velocity.times(Math.pow(this.dampingFactor, delta));
-        this.getTransform().position = this.getTransform().position.add(this.velocity.times(delta));
-        this.getTransform().position = this.getTransform().position.add(this.acceleration.times(delta*delta/2));
-      
+        this.getTransform()!.position = this.getTransform()!.position.add(this.velocity.times(delta));
+        this.getTransform()!.position = this.getTransform()!.position.add(this.acceleration.times(delta*delta/2));
+
         this.angularVelocity = this.angularVelocity+this.angularAcceleration * delta;
         this.angularVelocity = this.angularVelocity*Math.pow(this.angularDrag, delta);
-        this.getTransform().rotation += this.angularVelocity * delta;
+        this.getTransform()!.rotation += this.angularVelocity * delta;
     }
 }

@@ -51,8 +51,8 @@ export class SmokeRendererC extends RendererC {
         for (let i = 0; i < n; i++) {
             const angle = Math.random() * 2 * Math.PI;
             const radius = radiusRange * (Math.random() * 0.5 + 0.5);
-            const x = radius * Math.cos(angle) + this.getTransform().position.x + offset.x;
-            const y = radius * Math.sin(angle) + this.getTransform().position.y + offset.y;
+            const x = radius * Math.cos(angle) + this.getTransform()!.position.x + offset.x;
+            const y = radius * Math.sin(angle) + this.getTransform()!.position.y + offset.y;
 
             const particleRadius = this.radius * 0.25 + 0.15 * this.radius * GMath.symRand(1);
             const alpha = Math.random() * 0.5 + 0.5;
@@ -100,10 +100,10 @@ export class SmokeRendererC extends RendererC {
         const r = 0;
         const transformScale = Vector.one(); // Assuming no scaling for simplicity
         
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+        const offset = this.getGameWorld()!.getPlugin(CameraPlugin).cameraScreenOffset;
+        const scale = this.getGameWorld()!.getPlugin(CameraPlugin).zoomV;
+        const cmx = this.getGameWorld()!.getPlugin(CameraPlugin).cameraPosition.x;
+        const cmy = this.getGameWorld()!.getPlugin(CameraPlugin).cameraPosition.y;
 
         const cx: number = (x-cmx);
         const cy: number = (y-cmy);

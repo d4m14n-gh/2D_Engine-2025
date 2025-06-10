@@ -52,11 +52,16 @@ export class CanonC extends StandaloneComponent {
     }
 
     public shoot(): void{
-        if(!this.isEnabled||!this.getGameObject().enabled)
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const gameObject = this.getGameObject();
+        if (!world || !transform || !gameObject) return;
+
+        if(!this.isEnabled||!gameObject.enabled)
             return;
         if(this.getShotDelta()>=this.cooldown){
             const sW = 0.125;
-            const zindex = this.getComponent(CanonRendererC).zindex-0.01;
+            const zindex = this.getComponent(CanonRendererC)!.zindex-0.01;
 
             const spread = this.direction.cross().times(Math.random()*2*this.bulletSpraed-this.bulletSpraed);
             const bulletDirection = this.direction.toUnit().add(spread).toUnit();
@@ -64,27 +69,27 @@ export class CanonC extends StandaloneComponent {
             
             
             let bullet = BulletC.bulletGO(
-                this.getGameObject(),
+                gameObject,
                 this.damage,
                 this.width/2+GMath.symRand(sW)-this.width/6,
                 this.getBulletLifetime(),
                 zindex
             );
             
-            const rigidBody = bullet.getComponent(RigidBodyC);
-            const collider = bullet.getComponent(ColliderC);
-            bullet.getComponent(PolygonRendererC).color = this.getComponent(PolygonRendererC).color.clone();
-            bullet.getComponent(BulletRendererC).color = this.getComponent(PolygonRendererC).color.clone();
-            
-            collider.avoidObjectes.add(this.getGameObject());
+            const rigidBody = bullet.getComponent(RigidBodyC)!;
+            const collider = bullet.getComponent(ColliderC)!;
+            bullet.getComponent(PolygonRendererC)!.color = this.getComponent(PolygonRendererC)!.color.clone();
+            bullet.getComponent(BulletRendererC)!.color = this.getComponent(PolygonRendererC)!.color.clone();
+
+            collider.avoidObjectes.add(this.getGameObject()!);
             rigidBody.velocity = bulletDirection.times(this.bulletSpeed);
 
-            bullet.getTransform().position = this.getTransform().position.add(offset);
+            bullet.getTransform().position = this.getTransform()!.position.add(offset);
 
             this.getComponent(SmokeRendererC)?.emitParticles(23, offset, this.direction.cross().times(this.bulletSpeed/7).add(this.direction.times(this.bulletSpeed/3)));
             this.getComponent(SmokeRendererC)?.emitParticles(23, offset, this.direction.cross().times(-this.bulletSpeed/7).add(this.direction.times(this.bulletSpeed/3)));
             bullet.getTransform().rotation = bulletDirection.toRad();
-            bullet.spawn(this.getGameWorld());
+            world.spawn(bullet);
 
             this.shotDelta = 0;
         }

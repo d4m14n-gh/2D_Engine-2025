@@ -14,7 +14,7 @@ export class DestroyerC extends Component implements IInvokable {
     }
 
     override start(): void {
-        let destroyTime = this.getGameWorld().getWorldTime()+this.lifeTime;
-        this.getGameWorld().getPlugin(SchedulerPlugin).addInvoke(this, destroyTime, "destroy");    
+        let destroyTime = this.getGameWorld()!.getWorldTime()+this.lifeTime;
+        this.getGameWorld()!.getPlugin(SchedulerPlugin).addInvoke(this, destroyTime, "destroy");    
     }
 } 

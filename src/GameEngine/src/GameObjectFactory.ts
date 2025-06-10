@@ -54,7 +54,7 @@ export class GameObjectFactory {
             ...components
         );
         circleGO.getTransform().rotation = GMath.symRand(Math.PI);
-        circleGO.getComponent(CanonC).targetDirection = Vector.fromRad(GMath.symRand(Math.PI));
+        circleGO.getComponent(CanonC)!.targetDirection = Vector.fromRad(GMath.symRand(Math.PI));
         circleGO.name = "Enemy";
         
         return circleGO;
@@ -92,7 +92,7 @@ export class GameObjectFactory {
             new HealthC(1000),
             new AnimationC(),
             new CanonC(7, 1.35, 44),
-            // new TracesRendererC(-21.37),
+            new TracesRendererC(-21.37),
             new SmokeRendererC(2, 20, zindex-0.11, new rgb(122, 122, 122)),
             ...components
         );

@@ -1,6 +1,5 @@
 import { rgb } from "../../Helpers/Color";
 import { CameraPlugin } from "../../Plugins/Camera";
-import { PlayerPlugin } from "../../Plugins/Player";
 import { PolygonRendererC } from "./PolygonRenderer";
 import { RendererC } from "./Renderer";
 
@@ -14,32 +13,28 @@ export class ChasisRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-     
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const r = this.getTransform().rotation;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const camera = this.getPlugin(CameraPlugin);
+        if (!world || !transform || !camera) return;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
+
+        const x = transform.position.x;
+        const y = transform.position.y;
+        const r = transform.rotation;
+        const scale = transform.scale;
+        
         const color = this.color.toString();
-
-        const cx: number = x-cmx;
-        const cy: number = y-cmy;
+        const color2 = this.getComponent(PolygonRendererC)?.color.toString()??rgb.stroke.toString();
 
 
-        // context.save();
-        
-        context.translate(offset.x, offset.y);
-        context.scale(scale.x, scale.y);
-        context.translate(cx, cy);
+        context.setTransform(camera.getCameraTransform());
+        context.translate(x, y);
         context.rotate(r);
-        context.scale(transformScale.x, transformScale.y);
-        
+        context.scale(scale.x, scale.y);
+     
         context.beginPath();
-        context.fillStyle = this.getComponent(PolygonRendererC).color.toString();
+        context.fillStyle = color2;
         context.shadowBlur = 0;
         context.roundRect(-4, -2, 8, 4, 1);
         context.fill();
@@ -74,7 +69,7 @@ export class ChasisRendererC extends RendererC {
         context.closePath()
         context.shadowBlur = 0;;
         
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        // context.restore();
+
+        context.resetTransform();
     }
 }

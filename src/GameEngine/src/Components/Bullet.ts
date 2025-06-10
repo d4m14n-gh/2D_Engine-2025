@@ -20,7 +20,7 @@ export class BulletC extends Component {
     }
 
     public getOwner(): GameObject | undefined{
-        return this.getGameWorld().getGameObject(this.ownerId);
+        return this.getGameWorld()?.getGameObject(this.ownerId);
     }
 
     
@@ -39,7 +39,7 @@ export class BulletC extends Component {
         );
         bulletGO.getTransform().rotation = 0;
         bulletGO.name = "Bullet";
-        bulletGO.getComponent(PolygonRendererC).enable(false);
+        bulletGO.getComponent(PolygonRendererC)?.enable(false);
         
         return bulletGO;
     }

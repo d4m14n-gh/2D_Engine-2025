@@ -11,17 +11,18 @@ import { PluginOrder } from "../Core/PluginOrder";
 export class CameraPlugin extends Plugin {
     public readonly order: PluginOrder = PluginOrder.Physics;
     
-    public cameraPositon: Vector = new Vector(4, 0);
+    public cameraPosition: Vector = new Vector(4, 0);
     public targetCameraPositon: Vector = new Vector(4, 0);
     public cameraScreenOffset: Vector = new Vector(100, 100);
     
     public followingSpeed: number = 0.02;
     public isFollowing: boolean = true;
-    public scaleV: Vector = new Vector(20, -20);
-    private scale: number = 20;
+    public zoomV: Vector = new Vector(20, -20);
+    private zoom: number = 20;
     private targetId: string = "None"; //todo: delete this
-    public targetScale: number = 40;
+    public targetZoom: number = 40;
     public name: string = "CameraPlugin";
+    private transformMatrix: DOMMatrix = new DOMMatrix();
 
     override start(): void {
         this.getPlugin(MousePlugin).mouseScrollYEvent.subscribe(this, "scroll");
@@ -32,7 +33,7 @@ export class CameraPlugin extends Plugin {
     override event(args: EventArgs, alias?: string): void {
         if (alias == "scroll") {
             const mouseArgs = args as MouseScrollEventArgs;
-            this.zoom(mouseArgs.delta);
+            this.updateZoom(mouseArgs.delta);
         }
         //todo: delete this
         else if (alias == "down") {
@@ -60,31 +61,40 @@ export class CameraPlugin extends Plugin {
 
     }
 
-    public zoom(delta: number): void {
+    public updateZoom(delta: number): void {
         delta = Math.sign(delta);
-        if (delta > 0 && this.targetScale * 0.9 > 10)
-            this.targetScale = 0.9 * this.targetScale;
-        if (delta < 0 && this.targetScale * 1.1 < 100)
-            this.targetScale = 1.1 * this.targetScale;
+        if (delta > 0 && this.targetZoom * 0.9 > 10)
+            this.targetZoom = 0.9 * this.targetZoom;
+        if (delta < 0 && this.targetZoom * 1.1 < 100)
+            this.targetZoom = 1.1 * this.targetZoom;
     }
 
     public getWorldPosition(screenPositon: Vector): Vector{
-        let scale = this.getPlugin(CameraPlugin).scaleV;
-        let cameraPosition = this.getPlugin(CameraPlugin).cameraPositon;
+        let scale = this.getPlugin(CameraPlugin).zoomV;
+        let cameraPosition = this.getPlugin(CameraPlugin).cameraPosition;
         let worldPosition = new Vector((screenPositon.x-this.cameraScreenOffset.x)/scale.x, (screenPositon.y-this.cameraScreenOffset.y)/scale.y).add(cameraPosition);
         return worldPosition;
     }
 
+    private updateCameraTransform(): void {
+        this.transformMatrix = new DOMMatrix()
+            .translate(this.cameraScreenOffset.x, this.cameraScreenOffset.y)
+            .scale(this.zoomV.x, this.zoomV.y)
+            .translate(-this.cameraPosition.x, -this.cameraPosition.y);
+    }
+    public getCameraTransform(): DOMMatrix {
+        return this.transformMatrix;
+    }
 
     protected override update(delta: number): void {
         if (this.isFollowing) 
-            this.cameraPositon = this.cameraPositon.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, delta));
-
-
+            this.cameraPosition = this.cameraPosition.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, delta));
+        
+        
         // this.scale += (this.targetScale-this.scale)*(2.5*delta);
-        this.scale += (this.targetScale-this.scale)*(1-Math.pow(0.002, delta));// (this.targetScale-this.scale)*(2.5*delta);
-        this.scaleV = new Vector(this.scale, -this.scale);
-
+        this.zoom += (this.targetZoom-this.zoom)*(1-Math.pow(0.002, delta));// (this.targetScale-this.scale)*(2.5*delta);
+        this.zoomV = new Vector(this.zoom, -this.zoom);
+        
         //todo: delete this
         const target = this.gameWorld.getGameObject(this.targetId);
         if (target){
@@ -98,11 +108,14 @@ export class CameraPlugin extends Plugin {
                 target.getTransform().rotation -= 0.5*3.14*delta;
             }
         }
+        
+
+        this.updateCameraTransform();
     }
 
     @cli("getscale", undefined, "number")
     private getscale(): CommandResult{
-        return new CommandResult(true, this.scaleV.toString(), this.scaleV);
+        return new CommandResult(true, this.zoomV.toString(), this.zoomV);
     }
 
     @cli("follow", "<following: boolean>")
@@ -112,7 +125,7 @@ export class CameraPlugin extends Plugin {
     }
     @cli("zoom", "<zoom: number>")
     private setzoom(zoom: number): CommandResult{
-        this.targetScale = zoom;
+        this.targetZoom = zoom;
         return new CommandResult(true, `Camera zoom set to ${zoom}`, undefined);
     }
 }

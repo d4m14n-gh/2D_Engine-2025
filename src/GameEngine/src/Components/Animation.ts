@@ -12,14 +12,14 @@ export class AnimationC extends StandaloneComponent {
     constructor(){
         super();
         this.shrinkAnimation = new GameAnimation(
-            (fill)=>this.getTransform().scale = this.defaultZoom.times(1-fill),
+            (fill)=>this.getTransform()!.scale = this.defaultZoom.times(1-fill),
             ()=>this.getComponent<BarRendererC>(BarRendererC)?.enable(false),
-            ()=>this.getGameObject().destroy()
+            ()=>this.getGameWorld()!.destroy(this.getGameObject())
         );
         this.zoomAnimation = new GameAnimation(
-            (fill)=>this.getTransform().scale = this.defaultZoom.times(1+Math.sin(Math.PI*fill)/5),
-            ()=>this.defaultZoom = this.getTransform().scale.clone(),
-            ()=>this.getTransform().scale = this.defaultZoom
+            (fill)=>this.getTransform()!.scale = this.defaultZoom.times(1+Math.sin(Math.PI*fill)/5),
+            ()=>this.defaultZoom = this.getTransform()!.scale.clone(),
+            ()=>this.getTransform()!.scale = this.defaultZoom
         );
     }
     

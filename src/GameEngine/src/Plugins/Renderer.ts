@@ -67,12 +67,14 @@ export class RendererPlugin extends Plugin {
         
     }
 
-    private clip(position: Vector): boolean{
+    private clip(position?: Vector): boolean{
+        if (!position) return true;
+        
         const width = this.context.canvas.width;
         const height = this.context.canvas.height;
         
-        const scale = this.getPlugin(CameraPlugin).scaleV;
-        const cameraPositon = this.getPlugin(CameraPlugin).cameraPositon;
+        const scale = this.getPlugin(CameraPlugin).zoomV;
+        const cameraPositon = this.getPlugin(CameraPlugin).cameraPosition;
         const xClip = Math.abs(width/2/scale.x);  
         const yClip = Math.abs(height/2/scale.y);
           
@@ -94,8 +96,8 @@ export class RendererPlugin extends Plugin {
         let gx = 2;
         let gy = 2;
         const offset = this.getPlugin(CameraPlugin).cameraScreenOffset;
-        const scale = this.getPlugin(CameraPlugin).scaleV;
-        const cpos = this.getPlugin(CameraPlugin).cameraPositon;
+        const scale = this.getPlugin(CameraPlugin).zoomV;
+        const cpos = this.getPlugin(CameraPlugin).cameraPosition;
         let i = Math.max(0, Math.min(9, Math.round(scale.x/10)));
         let c = i * 5 + 5;
         this.context.translate(offset.x, offset.y);
@@ -112,14 +114,14 @@ export class RendererPlugin extends Plugin {
         .concat(this.gameWorld.getComponents(BarRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(PolygonRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(ImageRendererC)as RendererC[])
-        .filter(renderer => !this.clip(renderer.getTransform().position))
+        .filter(renderer => !this.clip(renderer.getTransform()?.position))
         .concat(this.gameWorld.getComponents(CanonRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(BulletRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(TracesRendererC)as RendererC[])
-        .filter(renderer => !this.clip(renderer.getTransform().position))
+        .filter(renderer => !this.clip(renderer.getTransform()?.position))
         .concat(this.gameWorld.getComponents(ChasisRendererC)as RendererC[])
         .concat(this.gameWorld.getComponents(SmokeRendererC)as RendererC[])
-        .filter(renderer => !this.clip(renderer.getTransform().position))
+        .filter(renderer => !this.clip(renderer.getTransform()?.position))
         .sort((a, b) => a.zindex-b.zindex).forEach(renderer => renderer.render(this.context, delta));
         // this.gameWorld.getAllComponents<RendererC>(RendererC.name).forEach(renderer => renderer.render(this.context));
         this.addVignetteEffect(this.context, 'rgba(0, 0, 0, 0.35)');

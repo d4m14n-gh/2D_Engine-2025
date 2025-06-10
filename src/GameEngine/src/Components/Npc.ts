@@ -26,13 +26,13 @@ export class NpcC extends StandaloneComponent{
    
     protected override start(): void {
         let health = this.getComponent(HealthC);
-        health.damageEvent.subscribe(this);
+        health!.damageEvent.subscribe(this);
     }
     protected override event(args: EventArgs): void {
         let damageArgs = args as DamageEventArgs;
         const other = damageArgs.participant;
-        if(other.hasComponent(BulletC) && other.getComponent(BulletC).getOwner())
-            this.attack(other.getComponent(BulletC).getOwner()!);
+        if(other.getComponent(BulletC)?.getOwner())
+            this.attack(other.getComponent(BulletC)!.getOwner()!);
     }
 
 
@@ -42,16 +42,18 @@ export class NpcC extends StandaloneComponent{
         this.isFollowing = true;
     }
     override update(delta: number): void {
-        let target = this.getGameWorld().getGameObject(this.targetId);
-        
+        const world = this.getGameWorld();
+        if (!world) return;
+
+        let target = world.getGameObject(this.targetId);
         if (!target){
             this.isAttacing=false;
             return;
         } 
         
         if(this.isAttacing){
-            let turret = this.getComponent(CanonC);
-            let direction = target.getTransform().position.sub(this.getTransform().position);
+            let turret = this.getComponent(CanonC)!;
+            let direction = target.getTransform().position.sub(this.getTransform()!.position);
             turret.targetDirection = direction; 
             let distance = direction.magnitude();
             if(distance>this.maxDistance)
@@ -59,12 +61,12 @@ export class NpcC extends StandaloneComponent{
 
             turret.shoot();
             if (distance>=this.minDistance){
-                let angle=this.getTransform().rotation;
+                let angle=this.getTransform()!.rotation;
                 let targetAngle=direction.toRad();
                 angle += 5*delta*GMath.deltaAngle(angle, targetAngle);
-                this.getTransform().rotation = angle;  
+                this.getTransform()!.rotation = angle;  
 
-                let rigidBody = this.getComponent(RigidBodyC);
+                let rigidBody = this.getComponent(RigidBodyC)!;
                 rigidBody.velocity = Vector.fromRad(angle).times(this.maxSpeed);
             }
     

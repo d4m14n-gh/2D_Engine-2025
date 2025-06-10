@@ -1,1 +1,2 @@
 (function(){"use strict";async function v(a,n,r,o,f){const h=a.canvas.width,t=a.canvas.height;n.x*=Math.abs(f.x),n.y*=Math.abs(f.y),a.strokeStyle=o,a.lineWidth=r*f.x,a.beginPath();for(let s=h/2%n.x;s<=h;s+=n.x)a.moveTo(s,0),a.lineTo(s,t);for(let s=t/2%n.y;s<=t;s+=n.y)a.moveTo(0,s),a.lineTo(h,s);a.stroke(),a.setTransform(1,0,0,1,0,0),a.shadowBlur=0}onmessage=async a=>{const r=a.data.canvas.getContext("2d");if(!r)return;let o=a.data.args;await v(r,o[0],.075,o[2],o[3])}})();
+//# sourceMappingURL=BackgroundRenderer-Dyo13YMg.js.map

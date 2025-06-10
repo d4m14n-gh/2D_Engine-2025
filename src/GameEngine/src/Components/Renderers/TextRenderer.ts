@@ -15,42 +15,28 @@ export class TextRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-     
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const r = this.getTransform().rotation;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const camera = this.getPlugin(CameraPlugin);
+        if (!world || !transform || !camera) return;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
-        const color = this.color.toString();
+
+        const x = transform.position.x;
+        const y = transform.position.y;
+        const r = transform.rotation;
+        const scale = transform.scale;
         
-        const cx: number = (x-cmx);
-        const cy: number = (y-cmy);
+        const color: string = this.color.toString();
+        const text: string = this.displayName?this.getGameObject()?.name??this.text:this.text;
 
-
-        // context.save();
-        
-        context.fillStyle = color;
-        context.translate(offset.x, offset.y);
-        context.scale(scale.x, scale.y);
-        context.translate(cx, cy);
+        context.setTransform(camera.getCameraTransform());
+        context.translate(x, y);
         // context.rotate(r);
-        context.scale(transformScale.x, transformScale.y);
-        context.scale(1, -1);
+        context.scale(scale.x, scale.y);
+        context.scale(scale.x, -scale.y);
         
-        
-        
-        // context.fillRect(-a, -a, 2*a, 2*a);
-        // context.shadowBlur = 30;
-        // context.strokeRect(-a, -a, 2*a, 2*a);
 
-    
-        
-        
-        const text = this.displayName?this.getGameObject().name:this.text;
+        context.fillStyle = color;
         const textHeight = 1.0;
         context.font = "bold "+textHeight+"px Arial";
         context.fillStyle = "azure";
@@ -60,7 +46,8 @@ export class TextRendererC extends RendererC {
         context.fillText(text, -textOffset, textHeight/4);
 
         context.shadowBlur = 0;
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        // context.restore();
+
+
+        context.resetTransform();
     }
 }

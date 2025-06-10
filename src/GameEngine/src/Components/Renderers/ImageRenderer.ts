@@ -17,40 +17,34 @@ export class ImageRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-     
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const r = this.getTransform().rotation;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const camera = this.getPlugin(CameraPlugin);
+        if (!world || !transform || !camera) return;
 
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
-        const cx: number = (x-cmx);
-        const cy: number = (y-cmy);
 
+        const x = transform.position.x;
+        const y = transform.position.y;
+        const r = transform.rotation;
+        const scale = transform.scale;
+
+        context.setTransform(camera.getCameraTransform());
+        context.translate(x, y);
+        context.rotate(r);
+        context.scale(scale.x, scale.y);
+
+        
         let a: Vector = this.side;
         if (a.x==0)
             a.x = this.image.width;
         if (a.y==0)
             a.y = this.image.height;
 
-        // context.save();
-        
-        context.translate(offset.x, offset.y);
-        context.scale(scale.x, scale.y);
-        context.translate(cx, cy);
-        context.rotate(r);
-        context.scale(transformScale.x, transformScale.y);
-        context.translate(this.offset.x, this.offset.y);
-
         context.shadowBlur = 15;
-        
         context.drawImage(this.image, -a.x/2,  -a.y/2, a.x, a.y);
         context.shadowBlur = 0;
 
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        // context.restore();
+
+        context.resetTransform();
     }
 }

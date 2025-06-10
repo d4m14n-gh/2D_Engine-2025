@@ -16,57 +16,37 @@ export class PolygonRendererC extends RendererC {
     }
 
     public render(context: CanvasRenderingContext2D): void {
-     
-        const offset = this.getGameWorld().getPlugin(CameraPlugin).cameraScreenOffset;
-        const x = this.getTransform().position.x;
-        const y = this.getTransform().position.y;
-        const r = this.getTransform().rotation;
-        const transformScale = this.getTransform().scale;
-        const scale = this.getGameWorld().getPlugin(CameraPlugin).scaleV;
-
-        const cmx = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.x;
-        const cmy = this.getGameWorld().getPlugin(CameraPlugin).cameraPositon.y;
-        const color = this.color.toString();
-
-        const cx: number = (x-cmx);
-        const cy: number = (y-cmy);
+        const world = this.getGameWorld();
+        const transform = this.getTransform();
+        const camera = this.getPlugin(CameraPlugin);
+        if (!world || !transform || !camera) return;
 
 
-        // context.save();
-        // const sin = Math.sin(r);
-        // const cos = Math.cos(r);
-
-        // const sx = scale.x * transformScale.x;
-        // const sy = scale.y * transformScale.y;
-        // const a2 = cos * sx;
-        // const b = sin * sx;
-        // const c = -sin * sy;
-        // const d = cos * sy;
-        // const e = offset.x + scale.x * (cx * cos - cy * sin);
-        // const f = offset.y + scale.y * (cx * sin + cy * cos);
-
-        // // Ustaw bezpośrednio macierz transformacji
-        // context.setTransform(a2, b, c, d, e, f);
-
-        context.translate(offset.x, offset.y);
-        context.scale(scale.x, scale.y);
-        context.translate(cx, cy);
-        context.rotate(r);
-        context.scale(transformScale.x, transformScale.y);
+        const x = transform.position.x;
+        const y = transform.position.y;
+        const r = transform.rotation;
+        const scale = transform.scale;
         
-        const a = this.radius;
+        const color = this.color.toString();
+        const size = this.radius;
+
+        context.setTransform(camera.getCameraTransform());
+        context.translate(x, y);
+        context.rotate(r);
+        context.scale(scale.x, scale.y);
+        
+        
         if(this.n<10){
             context.beginPath();
-            context.moveTo(0, a);
+            context.moveTo(0, size);
             const angle: number = (2*Math.PI)/this.n;
-            for(let i=1;i<this.n;i++){
-                context.lineTo(Math.sin(i*angle)*a, Math.cos(i*angle)*a);
-            }
+            for(let i=1;i<this.n;i++)
+                context.lineTo(Math.sin(i*angle)*size, Math.cos(i*angle)*size);
             context.closePath();
         }
         else{
             context.beginPath();
-            context.arc(0, 0, a, 0, 2 * Math.PI);
+            context.arc(0, 0, size, 0, 2 * Math.PI);
             context.closePath();
         }
         
@@ -75,10 +55,9 @@ export class PolygonRendererC extends RendererC {
         context.fill();
         context.shadowBlur = 50;
         context.stroke();
-
         context.shadowBlur = 0;
-        context.setTransform(1, 0, 0, 1, 0, 0);
 
-        // context.restore();
+
+        context.resetTransform();
     }
 }

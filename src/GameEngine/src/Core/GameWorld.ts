@@ -67,12 +67,17 @@ export class GameWorld {
         gameObject.getAllComponents().forEach(comp => this.componentsToStart.push(new WeakRef(comp)));
         return gameObject;
     }
-    public destroy(gameObject: GameObject): void{
+    public destroy(gameObject?: GameObject): void{
+        if (!gameObject) return;
         if (!this.gameObjects.has(gameObject.getId()))
             throw new Error(`GameObject ${gameObject.name} does'not exist in the game world`);
-        
+        (gameObject as any).gameWorld = undefined;
+
         gameObject.enabled=false;
         this.gameObjects.delete(gameObject.getId());
+    }
+    public hasGameObject(id: string): boolean {
+        return this.gameObjects.has(id);
     }
     public getGameObject(id: string): GameObject | undefined {
         return this.gameObjects.get(id);
@@ -84,8 +89,8 @@ export class GameWorld {
     //components
     public getComponents<T extends Component>(classC: new (...args: any[]) => T, onlyEnabled: boolean=true): T[]{
         return this.getAllGameObjects()
-        .filter(go => go.hasComponent(classC)&&(go.getComponent(classC).isEnabled()||!onlyEnabled))
-        .map(go => go.getComponent(classC));
+        .filter(go => go.hasComponent(classC)&&(go.getComponent(classC)!.isEnabled()||!onlyEnabled))
+        .map(go => go.getComponent(classC)!);
     }
     public getAllComponents(onlyEnabled: boolean=true): Component[]{
         //todo optimalization

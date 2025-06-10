@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <link rel="icon" type="image/x-icon" href="./public/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <script type="module" src="./GameEngine/dist/client/bundle.es.js" defer></script> 
+    <style>
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+        body * {
+            font-family: "IBM Plex Mono", monospace;
+        }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const context = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const scale = window.devicePixelRatio || 1;
+
+            canvas.width = window.innerWidth*scale;
+            canvas.height = window.innerHeight*scale;
+            context.imageSmoothingEnabled = true;
+            context.strokeStyle = "rgb(43,43,44)";
+            context.lineWidth = 0.175;
+            context.lineJoin = "round";
+            context.shadowColor =  'rgba(0, 0, 0, 0.75)';
+        }
+        
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+        
+    </script>
+</body>
+</html>
