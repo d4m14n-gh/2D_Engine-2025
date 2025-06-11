@@ -37,6 +37,9 @@ export class CanonRendererC extends RendererC {
         context.rotate(r);
         context.scale(scale.x, scale.y);
 
+
+
+
         const length: number = canon.length;
         const width: number = canon.width;
      

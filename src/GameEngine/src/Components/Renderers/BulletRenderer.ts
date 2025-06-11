@@ -1,5 +1,7 @@
 import { rgb } from "../../Helpers/Color";
+import { GMath } from "../../Helpers/Math";
 import { CameraPlugin } from "../../Plugins/Camera";
+import { BulletC } from "../Bullet";
 import { RendererC } from "./Renderer";
 
 export class BulletRendererC extends RendererC {
@@ -17,7 +19,8 @@ export class BulletRendererC extends RendererC {
         const world = this.getGameWorld();
         const transform = this.getTransform();
         const camera = this.getPlugin(CameraPlugin);
-        if (!world || !transform || !camera) return;
+        const bulletC = this.getComponent(BulletC);
+        if (!world || !transform || !camera || !bulletC) return;
 
 
         const x = transform.position.x;
@@ -27,7 +30,7 @@ export class BulletRendererC extends RendererC {
         
         const color = this.color.toString();
         const size = this.radius;
-        const gradientWidth = 4;
+        const gradientWidth = GMath.minmax(bulletC.getBulletAge()*15, 1, 4);
 
 
         context.setTransform(camera.getCameraTransform());
@@ -41,7 +44,7 @@ export class BulletRendererC extends RendererC {
         context.closePath();
         const grad = context.createLinearGradient(-3*size-gradientWidth, 0, gradientWidth, 0);
         grad.addColorStop(0, this.color.blend(new rgb(255, 255, 255), 0.5).toArgb(0).toString());
-        grad.addColorStop(1, this.color.toArgb(0.75).toString());// rgb.stroke.toString());
+        grad.addColorStop(1, this.color.toArgb(0.5).toString());// rgb.stroke.toString());
 
         context.fillStyle = grad;
         context.shadowBlur = 0;

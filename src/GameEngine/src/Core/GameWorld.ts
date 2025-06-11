@@ -75,6 +75,15 @@ export class GameWorld {
         gameObject.enabled=false;
         this.gameObjects.delete(gameObject.getId());
     }
+    public destroyById(id: string): void{
+        if (!this.gameObjects.has(id))
+            throw new Error(`GameObject ${id} does'not exist in the game world`);
+        const gameObject = this.getGameObject(id)!;
+        (gameObject as any).gameWorld = undefined;
+        
+        gameObject.enabled=false;
+        this.gameObjects.delete(id);
+    }
     public hasGameObject(id: string): boolean {
         return this.gameObjects.has(id);
     }
@@ -116,7 +125,7 @@ export class GameWorld {
     private startComponents(): void{
         for (let gameObjectId of this.gameObjectsToStart) {
             const gameObject = this.getGameObject(gameObjectId);
-            gameObject?.getAllComponents().forEach(component => {(component as any).start();});
+            gameObject?.getAllComponents3().forEach(component => {(component as any).start();});
         }
         this.gameObjectsToStart = [];
     }

@@ -17,20 +17,24 @@ import { ClientPlugin } from "./Client";
 export class PlayerPlugin extends Plugin {
     public readonly order: PluginOrder = PluginOrder.Update;
     public name: string = "PlayerPlugin";
+    public playerId: string = GameObjectFactory.playerGO().getId();
+    
     private playerName: string = "player";
-    public player: GameObject = GameObjectFactory.playerGO();
+    private activeCanon: number = 0;
 
-    public getPlayerPosition(): Vector {
-        return this.player.getTransform().position.clone();
+
+    public getPlayerPosition(): Vector | undefined {
+      return this.gameWorld.getGameObject(this.playerId)?.getTransform().position.clone();
     }
-    public getPlayerColor(): rgb {
-        return this.player.getComponent(PolygonRendererC)!.color.clone();
+    public getPlayerColor(): rgb | undefined{
+      return this.gameWorld.getGameObject(this.playerId)?.getComponent(PolygonRendererC)?.color.clone();
     }
 
 
     public override start(): void {
-      this.respawn();  
-      this.player.getComponent(PolygonRendererC)!.color = this.getPlugin(ConfigPlugin)?.get("playerColor")??new rgb(53, 110, 58);
+      this.respawn();
+      const playerGO = this.gameWorld.getGameObject(this.playerId)!;
+      playerGO.getComponent(PolygonRendererC)!.color = this.getPlugin(ConfigPlugin)?.get("playerColor")??rgb.randomColor2();
       this.getPlugin(KeyboardPlugin)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
     }
 
@@ -45,6 +49,9 @@ export class PlayerPlugin extends Plugin {
           if (displayColliders !== undefined) 
             this.getPlugin(ConfigPlugin)?.set("displayColliders", !displayColliders);
         }
+        else if (keyArgs.key === "q") {
+          this.activeCanon = (this.activeCanon + 1) % 2;
+        }
       }
     }
     
@@ -53,47 +60,47 @@ export class PlayerPlugin extends Plugin {
 
 
     synchronize(): void {
-      const client = this.getPlugin(ClientPlugin);
-      const mock: GameObject = JSON.parse(JSON.stringify(this.player));
-      delete (mock as any).gameWorld;
+      // const client = this.getPlugin(ClientPlugin);
+      // const mock: GameObject = JSON.parse(JSON.stringify(this.player));
+      // delete (mock as any).gameWorld;
 
-      client.synchronize(this.player.getId(), mock);
+      // client.synchronize(this.playerId, mock);
     }
 
     protected override update(delta: number): void {
+      const playerGO = this.gameWorld.getGameObject(this.playerId);
+      if (!playerGO) return;
       // this.synchronize();
-      // if (Math.random() < 0.05){
-      //   this.target=rgb.randomColor2();
-      //   // this.getPlugin(CliPlugin)?.execute("player:setcolor {randomcolor}");
-      // }
-      // this.color = this.color.blend(this.target, 0.02);
-      // this.player.getComponent(PolygonRendererC).color = this.color;
+
 
       let camera = this.getPlugin(CameraPlugin);
-      camera.targetCameraPositon = this.player.getTransform().position.clone();
-      if (!this.player.enabled) return;
+      camera.targetCameraPositon = playerGO.getTransform().position.clone();
+      if (!playerGO.enabled) return;
 
       let mouse = this.getPlugin(MousePlugin);
       let keyboard = this.getPlugin(KeyboardPlugin);
-      let gun = this.player.getComponent(CanonC);
-      if (!gun) 
-        return;
-      gun.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position);
-      gun.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(this.player.getTransform().position.add(gun.getGlobalOffset())).magnitude();
-      if (keyboard.isPressed("e")||mouse.isKeyDown(0)) 
-        gun.shoot();
+
+      if (keyboard.isPressed("e")||mouse.isKeyDown(0)) {
+        const canon = playerGO.getExtraComponent(CanonC, this.activeCanon)!;
+        canon.shoot();
+      }
+      
+      for(let canon of playerGO.getAllComponents2(CanonC)) {
+        canon.targetDirection = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(playerGO.getTransform().position);
+        canon.range = camera.getWorldPosition(mouse.getMouseScreenPosition()).sub(playerGO.getTransform().position.add(canon.getGlobalOffset())).magnitude();
+      }
 
 
       const g = -25;
       const a = keyboard.isPressed("shift") ? 120 : 60;
 
       const vmax = 50.0;
-      const rotation = this.player.getTransform().rotation;
+      const rotation = playerGO.getTransform().rotation;
       const direction = Vector.fromRad(rotation);
       const turnSpeed = 2.5;
 
 
-      let rigidBody = this.player.getComponent(RigidBodyC)!;
+      let rigidBody = playerGO.getComponent(RigidBodyC)!;
       let velocity = rigidBody.velocity;
       // Przyspieszanie
       if (keyboard.isPressed("w")) {
@@ -125,38 +132,50 @@ export class PlayerPlugin extends Plugin {
 
   @cli("setname", "<name: string>")
   private setname(newName: string): CommandResult {
-      this.playerName = newName;
-      this.player.name = newName;
-      try {
-        this.getPlugin(ClientPlugin).setServerName(newName);
-      } catch (error) {
-        console.error("Error setting server name:", error);
-      }
-      return new CommandResult(true, `Player name set to ${newName}`, undefined);
+    this.playerName = newName;
+    const playerGO = this.gameWorld.getGameObject(this.playerId);
+    if (playerGO)
+      playerGO.name = newName;
+    
+    try {
+      this.getPlugin(ClientPlugin).setServerName(newName);
+    } catch (error) {
+      console.error("Error setting server name:", error);
+    }
+    return new CommandResult(true, `Player name set to ${newName}`, undefined);
   }
 
   @cli("setcolor", "<color: string | rgb>")
   private setcolor(color: string | rgb): CommandResult {
-      try{
-        let newColor = rgb.tryParseCssColor(color.toString());
-        if (newColor)
-          this.player.getComponent(PolygonRendererC)!.color = newColor;
-      } catch {}
-      return new CommandResult(true, `Player color set`, undefined);
+    const playerGO = this.gameWorld.getGameObject(this.playerId);
+    try{
+      let newColor = rgb.tryParseCssColor(color.toString());
+      if (newColor && playerGO)
+        playerGO.getComponent(PolygonRendererC)!.color = newColor;
+    } catch {}
+    return new CommandResult(true, `Player color set`, undefined);
   }
 
   @cli("respawn")  
   private respawn(): CommandResult {
-    if(this.player && this.gameWorld.isSpawned(this.player))  
-      this.gameWorld.destroy(this.player);
-    this.player = GameObjectFactory.playerGO();
-    this.player.name=this.playerName;
-    this.gameWorld.spawn(this.player);
+    // const playerGO = this.gameWorld.getGameObject(this.playerId);
+    // if(playerGO)  
+    if(this.gameWorld.hasGameObject(this.playerId))
+      this.gameWorld.destroyById(this.playerId);
+    const player = GameObjectFactory.playerGO();
+    player.name = this.playerName
+    player.getComponent(PolygonRendererC)!.color = rgb.randomColor2();
+    ;
+    this.gameWorld.spawn(player);
+    this.playerId = player.getId();
     return new CommandResult(true, `Player respawned`, undefined);
   }
 
   @cli("getcolor", undefined, "rgb")
   private getcolor(): CommandResult {
-    return new CommandResult(true, `Player color is ${this.player.getComponent(PolygonRendererC)!.color}`, this.player.getComponent(PolygonRendererC)!.color);
+    const playerGO = this.gameWorld.getGameObject(this.playerId);
+    if (!playerGO) 
+      return new CommandResult(false, "Player not found", undefined);
+    return new CommandResult(true, `Player color is ${playerGO.getComponent(PolygonRendererC)!.color}`, playerGO  .getComponent(PolygonRendererC)!.color);
   }
 }

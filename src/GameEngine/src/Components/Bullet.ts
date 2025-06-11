@@ -13,6 +13,7 @@ import { RigidBodyC } from "./RigidBody";
 
 export class BulletC extends Component {
     private ownerId: string;
+    private spawnTime: number = 0;
 
     constructor(owner: GameObject){
         super();
@@ -23,7 +24,20 @@ export class BulletC extends Component {
         return this.getGameWorld()?.getGameObject(this.ownerId);
     }
 
-    
+    protected start(): void {
+        this.spawnTime = this.getGameWorld()!.getWorldTime();
+    }
+
+    public getSpawnTime(): number {
+        return this.spawnTime;
+    }
+
+    public getBulletAge(): number {
+        if (!this.getGameWorld())
+            return 0;
+        return this.getGameWorld()!.getWorldTime() - this.spawnTime;
+    }
+
     public static bulletGO(owner: GameObject, hp=30, radius: number = 0.65, lifeTime: number=1, zindex=-1, ...components: Component[]): GameObject {
         let bulletGO: GameObject = new GameObject(
             new RigidBodyC(0.05 ,1.),

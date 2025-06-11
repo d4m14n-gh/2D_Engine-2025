@@ -27,7 +27,7 @@ export class GameObjectFactory {
             new BarRendererC(0.1),
             new ColliderC(GMath.getColliderRadius(n, radius)),
             new ColliderRendererC(),
-            new HealthC(25*n),
+            new HealthC(4*n*n),
             new AnimationC(),
             new TagsC("Dragable"),
             ...components
@@ -78,6 +78,11 @@ export class GameObjectFactory {
     }
 
     public static playerGO(radius: number = 2.5, zindex = 5, ...components: Component[]): GameObject {
+        const secondCanon = new CanonC(5, 0.75, 5);
+        secondCanon.cooldown = 0.1;
+        secondCanon.offset = secondCanon.offset.add(new Vector(0.0, 1));
+        secondCanon.bulletSpeed = 75;
+
         let playerGO: GameObject = new GameObject(
             // new ImageRendererC(undefined, new Vector(1.3, 0.3), "GameEngine/src/Assets/vectorpaint2.svg" , zindex-0.2),
             new ChasisRendererC(zindex-0.2),
@@ -86,11 +91,13 @@ export class GameObjectFactory {
             new ColliderRendererC(zindex-0.15),
             new BarRendererC(zindex+0.1),
             new CanonRendererC(zindex-0.1),
+            new CanonRendererC(zindex-0.1),
             new RigidBodyC(30, 0.025),
             new ColliderC(radius, false),
             new HealthC(1000),
             new AnimationC(),
             new CanonC(7, 1.55, 44),
+            secondCanon,
             new TracesRendererC(-21.37),
             // new SmokeRendererC(2, 20, zindex-0.11, new rgb(122, 122, 122)),
             ...components

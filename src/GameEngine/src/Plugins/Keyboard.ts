@@ -25,12 +25,14 @@ export class KeyboardPlugin extends Plugin {
         this.pressedKeys = new Set();
         document.onkeydown = (event: KeyboardEvent) => {
             const key = event.key.toLowerCase();
+            if (this.pressedKeys.has(key)) return;
             this.pressedKeys.add(key);
             this.NowPressedKeys.add(key);
         }
         document.onkeyup = (event: KeyboardEvent) => {
             const key = event.key.toLowerCase();
             this.pressedKeys.delete(key);
+            this.NowPressedKeys.delete(key);
         }
     }
     

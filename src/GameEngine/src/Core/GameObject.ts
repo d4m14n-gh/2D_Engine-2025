@@ -35,11 +35,22 @@ export class GameObject {
         return this.components.get(classC.name) as T | undefined;
     }
     public getExtraComponent<T extends Component>(classC: new (...args: any[]) => T, index: number): T | undefined {
-        return this.components.get(classC.name) as T | undefined;
+        if (index == 0)
+            return this.components.get(classC.name) as T | undefined;
+        return this.extraComponents.get(classC.name)?.[index-1] as T | undefined;
+    }
+    public getAllComponents2<T extends Component>(classC: new (...args: any[]) => T): T[] {
+        return (this.extraComponents.get(classC.name) as T[]).concat(this.components.get(classC.name) as T ?? []);
+    }
+    public getAllComponents3(onlyEnabled: boolean=false): Component[] {
+        const mainComponents = Array.from(this.components.values()).filter(c=>onlyEnabled ? c.isEnabled() : true);
+        const extraComponents = Array.from(this.extraComponents.values().flatMap(c => c)).filter(c=>onlyEnabled ? c.isEnabled() : true);
+        return mainComponents.concat(extraComponents);
     }
     public getAllComponents(onlyEnabled: boolean=false): Component[]{
         return Array.from(this.components.values()).filter(c=>onlyEnabled ? c.isEnabled() : true);
     }
+
 
     public getId(): string{
         return this.id;

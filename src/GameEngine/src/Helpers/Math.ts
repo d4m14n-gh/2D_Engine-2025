@@ -24,7 +24,7 @@ export class GMath{
     
         return [v1Final, v2Final];
     }
-    public static minmax(value: number, min: number, max: number): number {
+    public static minmax(value: number, min: number=0, max: number=1e9): number {
         if (value < min) return min;
         if (value > max) return max;
         return value;

@@ -29,9 +29,6 @@ export abstract class Component implements ISubscriber {
     public getComponent<T extends Component>(classC: new (...args: any[]) => T): T | undefined{
         return this.gameObject?.getComponent(classC);
     }
-    public getAllComponents(): Component[]{
-        return this.gameObject?.getAllComponents() ?? [];
-    }
 
 
     public isEnabled(): boolean{
