@@ -9,12 +9,13 @@ export class DestroyerC extends Component implements IInvokable {
     }
 
     onInvoke(topic: string): void {
-        // this.getComponent(ColliderC)?.enable(false);
         this.getComponent(AnimationC)?.startShrink();
     }
 
     override start(): void {
-        let destroyTime = this.getGameWorld()!.getWorldTime()+this.lifeTime;
-        this.getGameWorld()!.getPlugin(SchedulerPlugin).addInvoke(this, destroyTime, "destroy");    
+        const world = this.getGameWorld()!;
+
+        let destroyTime = world.getWorldTime()+this.lifeTime;
+        world.getPlugin(SchedulerPlugin).addInvoke(this, destroyTime, "destroy");
     }
 } 

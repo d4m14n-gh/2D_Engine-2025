@@ -14,7 +14,7 @@ export class AnimationC extends StandaloneComponent {
         this.shrinkAnimation = new GameAnimation(
             (fill)=>this.getTransform()!.scale = this.defaultZoom.times(1-fill),
             ()=>this.getComponent<BarRendererC>(BarRendererC)?.enable(false),
-            ()=>this.getGameWorld()!.destroy(this.getGameObject())
+            ()=>this.getGameWorld()?.destroy(this.getGameObject())
         );
         this.zoomAnimation = new GameAnimation(
             (fill)=>this.getTransform()!.scale = this.defaultZoom.times(1+Math.sin(Math.PI*fill)/5),

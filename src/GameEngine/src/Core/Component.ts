@@ -1,4 +1,3 @@
-import { RigidBodyC } from "../Components/RigidBody";
 import { EventArgs, ISubscriber } from "./GameEvent";
 import { GameObject } from "./GameObject";
 import { GameWorld } from "./GameWorld";
@@ -7,7 +6,7 @@ import { Plugin } from "./Plugin";
 
 export abstract class Component implements ISubscriber {
     private enabled: boolean = true;
-    private gameObject?: GameObject;
+    private readonly gameObject?: GameObject;
     
     //overideable methods
     protected start(): void{ }

@@ -13,7 +13,7 @@ export class GameWorld {
     private gameObjects: Map<string, GameObject> = new Map<string, GameObject>();
     private plugins: Map<string, Plugin> = new Map<string, Plugin>();
     private events: Set<WeakRef<GameEvent>> = new Set<WeakRef<GameEvent>>();
-    private componentsToStart: Array<WeakRef<Component>> = [];
+    private gameObjectsToStart: string[] = [];
     
     constructor(...plugins: Plugin[]){
         plugins.sort((a, b) => a.order - b.order);
@@ -63,8 +63,7 @@ export class GameWorld {
 
         (gameObject as any).gameWorld = this;
         this.gameObjects.set(gameObject.getId(), gameObject);
-
-        gameObject.getAllComponents().forEach(comp => this.componentsToStart.push(new WeakRef(comp)));
+        this.gameObjectsToStart.push(gameObject.getId());
         return gameObject;
     }
     public destroy(gameObject?: GameObject): void{
@@ -92,11 +91,6 @@ export class GameWorld {
         .filter(go => go.hasComponent(classC)&&(go.getComponent(classC)!.isEnabled()||!onlyEnabled))
         .map(go => go.getComponent(classC)!);
     }
-    public getAllComponents(onlyEnabled: boolean=true): Component[]{
-        //todo optimalization
-        //not optimalized
-        return Array.from(this.getAllGameObjects(onlyEnabled)).flatMap(go => go.getAllComponents());
-    }
     //events
     public registerEvent(event: GameEvent): void{
         this.events.add(new WeakRef(event));
@@ -120,12 +114,11 @@ export class GameWorld {
         this.invokeEvents();
     }
     private startComponents(): void{
-        for (let componentRef of this.componentsToStart) {
-            const component = componentRef.deref();
-            if (component)
-                (component as any).start();
+        for (let gameObjectId of this.gameObjectsToStart) {
+            const gameObject = this.getGameObject(gameObjectId);
+            gameObject?.getAllComponents().forEach(component => {(component as any).start();});
         }
-        this.componentsToStart = [];
+        this.gameObjectsToStart = [];
     }
     private startWorld(): void{
         this.startTime = performance.now();

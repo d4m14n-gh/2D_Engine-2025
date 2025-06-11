@@ -1,4 +1,4 @@
-class q {
+class j {
   enabled = !0;
   gameObject;
   //overideable methods
@@ -55,7 +55,7 @@ class T {
     return t < e ? e : t > s ? s : t;
   }
 }
-class f {
+class d {
   x = 0;
   y = 0;
   constructor(t, e) {
@@ -63,16 +63,16 @@ class f {
   }
   //standard operators
   add(t) {
-    return new f(this.x + t.x, this.y + t.y);
+    return new d(this.x + t.x, this.y + t.y);
   }
   sub(t) {
-    return new f(this.x - t.x, this.y - t.y);
+    return new d(this.x - t.x, this.y - t.y);
   }
   times(t) {
-    return new f(this.x * t, this.y * t);
+    return new d(this.x * t, this.y * t);
   }
   timesV(t) {
-    return new f(this.x * t.x, this.y * t.y);
+    return new d(this.x * t.x, this.y * t.y);
   }
   //other operators 
   distance(t) {
@@ -85,7 +85,7 @@ class f {
     return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   }
   cross() {
-    return new f(this.y, -this.x).toUnit();
+    return new d(this.y, -this.x).toUnit();
   }
   scalarProduct(t) {
     return this.x * t.x + this.y * t.y;
@@ -97,7 +97,7 @@ class f {
     return this.sub(t.cross().times(t.scalarProduct(this) / (t.magnitude() * t.magnitude())));
   }
   toUnit() {
-    return this.magnitude() != 0 ? new f(this.x, this.y).times(1 / this.magnitude()) : new f(1, 0);
+    return this.magnitude() != 0 ? new d(this.x, this.y).times(1 / this.magnitude()) : new d(1, 0);
   }
   setLength(t) {
     return this.toUnit().times(t);
@@ -110,51 +110,51 @@ class f {
   }
   reverse() {
     let t = 1e32, e = 1e32;
-    return this.x != 0 && (t = 1 / this.x), this.y != 0 && (e = 1 / this.y), new f(t, e);
+    return this.x != 0 && (t = 1 / this.x), this.y != 0 && (e = 1 / this.y), new d(t, e);
   }
   interpolate(t, e) {
     const s = t.sub(this), n = s.sub(s.times(Math.min(1, Math.max(0, e))));
     return this.add(n);
   }
   static fromRad(t) {
-    return new f(
+    return new d(
       Math.cos(t),
       Math.sin(t)
     );
   }
   static randomPos(t) {
-    return new f(T.symRand(t), T.symRand(t));
+    return new d(T.symRand(t), T.symRand(t));
   }
   static randomPos2(t) {
     let e = T.symRand(Math.PI), s = Math.random() * t;
-    return f.fromRad(e).times(s);
+    return d.fromRad(e).times(s);
   }
   clone() {
-    return new f(this.x, this.y);
+    return new d(this.x, this.y);
   }
   //consts
   static zero() {
-    return new f(0, 0);
+    return new d(0, 0);
   }
   static one() {
-    return new f(1, 1);
+    return new d(1, 1);
   }
   static up() {
-    return new f(0, 1);
+    return new d(0, 1);
   }
   static down() {
-    return new f(0, -1);
+    return new d(0, -1);
   }
   static left() {
-    return new f(-1, 0);
+    return new d(-1, 0);
   }
   static right() {
-    return new f(1, 0);
+    return new d(1, 0);
   }
 }
-class C extends q {
+class C extends j {
   velocity;
-  acceleration = f.zero();
+  acceleration = d.zero();
   mass = 1;
   dampingFactor;
   angularVelocity = 0;
@@ -163,7 +163,7 @@ class C extends q {
   constructor(t, e = 0.45) {
     super();
     const s = 15;
-    this.velocity = new f(Math.random() * s * 2 - s, Math.random() * s * 2 - s), this.dampingFactor = e, this.mass = t;
+    this.velocity = new d(Math.random() * s * 2 - s, Math.random() * s * 2 - s), this.dampingFactor = e, this.mass = t;
   }
   update(t) {
     this.velocity = this.velocity.add(this.acceleration.times(t)), this.velocity = this.velocity.times(Math.pow(this.dampingFactor, t)), this.getTransform().position = this.getTransform().position.add(this.velocity.times(t)), this.getTransform().position = this.getTransform().position.add(this.acceleration.times(t * t / 2)), this.angularVelocity = this.angularVelocity + this.angularAcceleration * t, this.angularVelocity = this.angularVelocity * Math.pow(this.angularDrag, t), this.getTransform().rotation += this.angularVelocity * t;
@@ -233,7 +233,7 @@ class ct {
   position;
   rotation;
   scale;
-  constructor(t = new f(0, 0), e = 0, s = f.one()) {
+  constructor(t = new d(0, 0), e = 0, s = d.one()) {
     this.position = t, this.rotation = e, this.scale = s;
   }
   static fromPosition(t) {
@@ -248,53 +248,55 @@ class ct {
 const P = [];
 for (let i = 0; i < 256; ++i)
   P.push((i + 256).toString(16).slice(1));
-function _e(i, t = 0) {
+function Ce(i, t = 0) {
   return (P[i[t + 0]] + P[i[t + 1]] + P[i[t + 2]] + P[i[t + 3]] + "-" + P[i[t + 4]] + P[i[t + 5]] + "-" + P[i[t + 6]] + P[i[t + 7]] + "-" + P[i[t + 8]] + P[i[t + 9]] + "-" + P[i[t + 10]] + P[i[t + 11]] + P[i[t + 12]] + P[i[t + 13]] + P[i[t + 14]] + P[i[t + 15]]).toLowerCase();
 }
-let _t;
-const Ce = new Uint8Array(16);
-function Pe() {
-  if (!_t) {
+let bt;
+const Pe = new Uint8Array(16);
+function Ee() {
+  if (!bt) {
     if (typeof crypto > "u" || !crypto.getRandomValues)
       throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
-    _t = crypto.getRandomValues.bind(crypto);
+    bt = crypto.getRandomValues.bind(crypto);
   }
-  return _t(Ce);
+  return bt(Pe);
 }
-const Ee = typeof crypto < "u" && crypto.randomUUID && crypto.randomUUID.bind(crypto), zt = { randomUUID: Ee };
-function xe(i, t, e) {
-  if (zt.randomUUID && !i)
-    return zt.randomUUID();
+const xe = typeof crypto < "u" && crypto.randomUUID && crypto.randomUUID.bind(crypto), Vt = { randomUUID: xe };
+function Te(i, t, e) {
+  if (Vt.randomUUID && !i)
+    return Vt.randomUUID();
   i = i || {};
-  const s = i.random ?? i.rng?.() ?? Pe();
+  const s = i.random ?? i.rng?.() ?? Ee();
   if (s.length < 16)
     throw new Error("Random bytes length must be >= 16");
-  return s[6] = s[6] & 15 | 64, s[8] = s[8] & 63 | 128, _e(s);
+  return s[6] = s[6] & 15 | 64, s[8] = s[8] & 63 | 128, Ce(s);
 }
 class J {
   enabled = !0;
   name = "UnnamedGameObject";
-  id = xe();
+  id = Te();
   transform = new ct();
-  components = {};
+  components = /* @__PURE__ */ new Map();
+  extraComponents = /* @__PURE__ */ new Map();
   gameWorld;
+  insertComponent(t) {
+    let e = t.constructor.name;
+    this.components.has(e) ? (this.extraComponents.set(e, []), this.extraComponents.get(e)?.push(t)) : this.components.set(e, t), t.gameObject = this;
+  }
   constructor(...t) {
-    for (let e of t) {
-      let s = e.constructor.name;
-      if (Object.prototype.hasOwnProperty.call(this.components, s))
-        throw new Error(`Component ${s} already exists in the game object`);
-      e.gameObject = new WeakRef(this), this.components[s] = e;
-    }
+    t.forEach((e) => this.insertComponent(e));
   }
   hasComponent(t) {
-    return Object.prototype.hasOwnProperty.call(this.components, t.name);
+    return this.components.has(t.name);
   }
   getComponent(t) {
-    const e = t.name;
-    return this.components[e];
+    return this.components.get(t.name);
+  }
+  getExtraComponent(t, e) {
+    return this.components.get(t.name);
   }
   getAllComponents(t = !1) {
-    return Object.values(this.components).filter((e) => t ? e.isEnabled() : !0);
+    return Array.from(this.components.values()).filter((e) => t ? e.isEnabled() : !0);
   }
   getId() {
     return this.id;
@@ -331,10 +333,10 @@ function Wt(i) {
     };
   };
 }
-var Te = Object.defineProperty, ke = Object.getOwnPropertyDescriptor, Dt = (i, t, e, s) => {
-  for (var n = ke(t, e), r = i.length - 1, o; r >= 0; r--)
+var ke = Object.defineProperty, Se = Object.getOwnPropertyDescriptor, Dt = (i, t, e, s) => {
+  for (var n = Se(t, e), r = i.length - 1, o; r >= 0; r--)
     (o = i[r]) && (n = o(t, e, n) || n);
-  return n && Te(t, e, n), n;
+  return n && ke(t, e, n), n;
 };
 class E {
   gameWorld;
@@ -426,19 +428,19 @@ class L {
   }
 }
 var x = /* @__PURE__ */ ((i) => (i[i.None = -1] = "None", i[i.Input = 0] = "Input", i[i.Update = 1] = "Update", i[i.Physics = 2] = "Physics", i[i.Collision = 3] = "Collision", i[i.Render = 4] = "Render", i))(x || {});
-class Se extends Y {
+class Ae extends Y {
   delta;
   constructor(t) {
     super(), this.delta = t;
   }
 }
-class Vt extends Y {
+class Ht extends Y {
   button;
   constructor(t) {
     super(), this.button = t;
   }
 }
-class j extends E {
+class q extends E {
   order = x.Input;
   name = "MousePlugin";
   mouseScrollYEvent = new L();
@@ -446,7 +448,7 @@ class j extends E {
   mouseUpEvent = new L();
   pressedKeys = /* @__PURE__ */ new Set();
   canvas;
-  position = f.zero();
+  position = d.zero();
   constructor(t) {
     super(), this.canvas = t, this.trackMouse(t);
   }
@@ -458,30 +460,30 @@ class j extends E {
   }
   getMouseScreenPosition() {
     const t = window.devicePixelRatio || 1;
-    return new f(this.position.x * t, this.position.y * t);
+    return new d(this.position.x * t, this.position.y * t);
   }
   trackMouse(t) {
     t.addEventListener("mousemove", (e) => {
       const s = t.getBoundingClientRect();
       let n = e.clientX - s.left, r = e.clientY - s.top;
-      this.position = new f(n, r);
+      this.position = new d(n, r);
     }), t.addEventListener("mousedown", (e) => {
-      this.pressedKeys.add(e.button), this.mouseDownEvent.emit(new Vt(e.button));
+      this.pressedKeys.add(e.button), this.mouseDownEvent.emit(new Ht(e.button));
     }), t.addEventListener("mouseup", (e) => {
-      this.pressedKeys.delete(e.button), this.mouseUpEvent.emit(new Vt(e.button));
+      this.pressedKeys.delete(e.button), this.mouseUpEvent.emit(new Ht(e.button));
     }), t.addEventListener("wheel", (e) => {
-      this.mouseScrollYEvent.emit(new Se(e.deltaY));
+      this.mouseScrollYEvent.emit(new Ae(e.deltaY));
     });
   }
 }
-class Ht extends Y {
+class Kt extends Y {
   collider;
   constructor(t) {
     super(), this.collider = t;
   }
 }
-class A extends q {
-  offset = f.zero();
+class A extends j {
+  offset = d.zero();
   radius;
   isActive = !1;
   isStatic;
@@ -513,13 +515,13 @@ class A extends q {
     return this.getCenter().sub(t.getCenter()).magnitude() <= this.radius + t.radius && !this.avoidObjectes.has(t.getGameObject()) && !t.avoidObjectes.has(this.getGameObject());
   }
   onCollisionEnter(t) {
-    this.onCollisionEnterEvent.emit(new Ht(t));
+    this.onCollisionEnterEvent.emit(new Kt(t));
   }
   onCollisionExit(t) {
-    this.onCollisionExitEvent.emit(new Ht(t));
+    this.onCollisionExitEvent.emit(new Kt(t));
   }
 }
-class Ae {
+class Be {
   constructor() {
     this.ids = [], this.values = [], this.length = 0;
   }
@@ -565,7 +567,7 @@ class Ae {
     this.ids.length = this.values.length = this.length;
   }
 }
-const Kt = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array], Ct = 3;
+const Yt = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array], vt = 3;
 class ut {
   /**
    * Recreate a Flatbush index from raw `ArrayBuffer` or `SharedArrayBuffer` data.
@@ -582,9 +584,9 @@ class ut {
     if (s !== 251)
       throw new Error("Data does not appear to be in a Flatbush format.");
     const r = n >> 4;
-    if (r !== Ct)
-      throw new Error(`Got v${r} data when expected v${Ct}.`);
-    const o = Kt[n & 15];
+    if (r !== vt)
+      throw new Error(`Got v${r} data when expected v${vt}.`);
+    const o = Yt[n & 15];
     if (!o)
       throw new Error("Unrecognized array type.");
     const [a] = new Uint16Array(t, e + 2, 1), [h] = new Uint32Array(t, e + 4, 1);
@@ -609,10 +611,10 @@ class ut {
       a = Math.ceil(a / this.nodeSize), h += a, this._levelBounds.push(h * 4);
     while (a !== 1);
     this.ArrayType = s, this.IndexArrayType = h < 16384 ? Uint16Array : Uint32Array;
-    const l = Kt.indexOf(this.ArrayType), c = h * 4 * this.ArrayType.BYTES_PER_ELEMENT;
+    const l = Yt.indexOf(this.ArrayType), c = h * 4 * this.ArrayType.BYTES_PER_ELEMENT;
     if (l < 0)
       throw new Error(`Unexpected typed array class: ${s}.`);
-    r && r.byteLength !== void 0 && !r.buffer ? (this.data = r, this._boxes = new this.ArrayType(this.data, o + 8, h * 4), this._indices = new this.IndexArrayType(this.data, o + 8 + c, h), this._pos = h * 4, this.minX = this._boxes[this._pos - 4], this.minY = this._boxes[this._pos - 3], this.maxX = this._boxes[this._pos - 2], this.maxY = this._boxes[this._pos - 1]) : (this.data = new n(8 + c + h * this.IndexArrayType.BYTES_PER_ELEMENT), this._boxes = new this.ArrayType(this.data, 8, h * 4), this._indices = new this.IndexArrayType(this.data, 8 + c, h), this._pos = 0, this.minX = 1 / 0, this.minY = 1 / 0, this.maxX = -1 / 0, this.maxY = -1 / 0, new Uint8Array(this.data, 0, 2).set([251, (Ct << 4) + l]), new Uint16Array(this.data, 2, 1)[0] = e, new Uint32Array(this.data, 4, 1)[0] = t), this._queue = new Ae();
+    r && r.byteLength !== void 0 && !r.buffer ? (this.data = r, this._boxes = new this.ArrayType(this.data, o + 8, h * 4), this._indices = new this.IndexArrayType(this.data, o + 8 + c, h), this._pos = h * 4, this.minX = this._boxes[this._pos - 4], this.minY = this._boxes[this._pos - 3], this.maxX = this._boxes[this._pos - 2], this.maxY = this._boxes[this._pos - 1]) : (this.data = new n(8 + c + h * this.IndexArrayType.BYTES_PER_ELEMENT), this._boxes = new this.ArrayType(this.data, 8, h * 4), this._indices = new this.IndexArrayType(this.data, 8 + c, h), this._pos = 0, this.minX = 1 / 0, this.minY = 1 / 0, this.maxX = -1 / 0, this.maxY = -1 / 0, new Uint8Array(this.data, 0, 2).set([251, (vt << 4) + l]), new Uint16Array(this.data, 2, 1)[0] = e, new Uint32Array(this.data, 4, 1)[0] = t), this._queue = new Be();
   }
   /**
    * Add a given rectangle to the index.
@@ -637,18 +639,18 @@ class ut {
     }
     const e = this.maxX - this.minX || 1, s = this.maxY - this.minY || 1, n = new Uint32Array(this.numItems), r = 65535;
     for (let o = 0, a = 0; o < this.numItems; o++) {
-      const h = t[a++], l = t[a++], c = t[a++], u = t[a++], d = Math.floor(r * ((h + c) / 2 - this.minX) / e), w = Math.floor(r * ((l + u) / 2 - this.minY) / s);
-      n[o] = Re(d, w);
+      const h = t[a++], l = t[a++], c = t[a++], u = t[a++], f = Math.floor(r * ((h + c) / 2 - this.minX) / e), y = Math.floor(r * ((l + u) / 2 - this.minY) / s);
+      n[o] = Oe(f, y);
     }
-    Tt(n, t, this._indices, 0, this.numItems - 1, this.nodeSize);
+    Et(n, t, this._indices, 0, this.numItems - 1, this.nodeSize);
     for (let o = 0, a = 0; o < this._levelBounds.length - 1; o++) {
       const h = this._levelBounds[o];
       for (; a < h; ) {
         const l = a;
-        let c = t[a++], u = t[a++], d = t[a++], w = t[a++];
+        let c = t[a++], u = t[a++], f = t[a++], y = t[a++];
         for (let R = 1; R < this.nodeSize && a < h; R++)
-          c = Math.min(c, t[a++]), u = Math.min(u, t[a++]), d = Math.max(d, t[a++]), w = Math.max(w, t[a++]);
-        this._indices[this._pos >> 2] = l, t[this._pos++] = c, t[this._pos++] = u, t[this._pos++] = d, t[this._pos++] = w;
+          c = Math.min(c, t[a++]), u = Math.min(u, t[a++]), f = Math.max(f, t[a++]), y = Math.max(y, t[a++]);
+        this._indices[this._pos >> 2] = l, t[this._pos++] = c, t[this._pos++] = u, t[this._pos++] = f, t[this._pos++] = y;
       }
     }
   }
@@ -667,7 +669,7 @@ class ut {
     let o = this._boxes.length - 4;
     const a = [], h = [];
     for (; o !== void 0; ) {
-      const l = Math.min(o + this.nodeSize * 4, Xt(o, this._levelBounds));
+      const l = Math.min(o + this.nodeSize * 4, Zt(o, this._levelBounds));
       for (let c = o; c < l; c += 4) {
         if (s < this._boxes[c] || n < this._boxes[c + 1] || t > this._boxes[c + 2] || e > this._boxes[c + 3]) continue;
         const u = this._indices[c >> 2] | 0;
@@ -692,10 +694,10 @@ class ut {
     let o = this._boxes.length - 4;
     const a = this._queue, h = [], l = n * n;
     t: for (; o !== void 0; ) {
-      const c = Math.min(o + this.nodeSize * 4, Xt(o, this._levelBounds));
+      const c = Math.min(o + this.nodeSize * 4, Zt(o, this._levelBounds));
       for (let u = o; u < c; u += 4) {
-        const d = this._indices[u >> 2] | 0, w = Yt(t, this._boxes[u], this._boxes[u + 2]), R = Yt(e, this._boxes[u + 1], this._boxes[u + 3]), S = w * w + R * R;
-        S > l || (o >= this.numItems * 4 ? a.push(d << 1, S) : (r === void 0 || r(d)) && a.push((d << 1) + 1, S));
+        const f = this._indices[u >> 2] | 0, y = Xt(t, this._boxes[u], this._boxes[u + 2]), R = Xt(e, this._boxes[u + 1], this._boxes[u + 3]), S = y * y + R * R;
+        S > l || (o >= this.numItems * 4 ? a.push(f << 1, S) : (r === void 0 || r(f)) && a.push((f << 1) + 1, S));
       }
       for (; a.length && a.peek() & 1; )
         if (a.peekValue() > l || (h.push(a.pop() >> 1), h.length === s)) break t;
@@ -704,10 +706,10 @@ class ut {
     return a.clear(), h;
   }
 }
-function Yt(i, t, e) {
+function Xt(i, t, e) {
   return i < t ? t - i : i <= e ? 0 : i - e;
 }
-function Xt(i, t) {
+function Zt(i, t) {
   let e = 0, s = t.length - 1;
   for (; e < s; ) {
     const n = e + s >> 1;
@@ -715,7 +717,7 @@ function Xt(i, t) {
   }
   return t[e];
 }
-function Tt(i, t, e, s, n, r) {
+function Et(i, t, e, s, n, r) {
   if (Math.floor(s / r) >= Math.floor(n / r)) return;
   const o = i[s + n >> 1];
   let a = s - 1, h = n + 1;
@@ -727,25 +729,25 @@ function Tt(i, t, e, s, n, r) {
       h--;
     while (i[h] > o);
     if (a >= h) break;
-    Be(i, t, e, a, h);
+    Re(i, t, e, a, h);
   }
-  Tt(i, t, e, s, h, r), Tt(i, t, e, h + 1, n, r);
+  Et(i, t, e, s, h, r), Et(i, t, e, h + 1, n, r);
 }
-function Be(i, t, e, s, n) {
+function Re(i, t, e, s, n) {
   const r = i[s];
   i[s] = i[n], i[n] = r;
   const o = 4 * s, a = 4 * n, h = t[o], l = t[o + 1], c = t[o + 2], u = t[o + 3];
   t[o] = t[a], t[o + 1] = t[a + 1], t[o + 2] = t[a + 2], t[o + 3] = t[a + 3], t[a] = h, t[a + 1] = l, t[a + 2] = c, t[a + 3] = u;
-  const d = e[s];
-  e[s] = e[n], e[n] = d;
+  const f = e[s];
+  e[s] = e[n], e[n] = f;
 }
-function Re(i, t) {
+function Oe(i, t) {
   let e = i ^ t, s = 65535 ^ e, n = 65535 ^ (i | t), r = i & (t ^ 65535), o = e | s >> 1, a = e >> 1 ^ e, h = n >> 1 ^ s & r >> 1 ^ n, l = e & n >> 1 ^ r >> 1 ^ r;
   e = o, s = a, n = h, r = l, o = e & e >> 2 ^ s & s >> 2, a = e & s >> 2 ^ s & (e ^ s) >> 2, h ^= e & n >> 2 ^ s & r >> 2, l ^= s & n >> 2 ^ (e ^ s) & r >> 2, e = o, s = a, n = h, r = l, o = e & e >> 4 ^ s & s >> 4, a = e & s >> 4 ^ s & (e ^ s) >> 4, h ^= e & n >> 4 ^ s & r >> 4, l ^= s & n >> 4 ^ (e ^ s) & r >> 4, e = o, s = a, n = h, r = l, h ^= e & n >> 8 ^ s & r >> 8, l ^= s & n >> 8 ^ (e ^ s) & r >> 8, e = h ^ h >> 1, s = l ^ l >> 1;
   let c = i ^ t, u = s | 65535 ^ (c | e);
   return c = (c | c << 8) & 16711935, c = (c | c << 4) & 252645135, c = (c | c << 2) & 858993459, c = (c | c << 1) & 1431655765, u = (u | u << 8) & 16711935, u = (u | u << 4) & 252645135, u = (u | u << 2) & 858993459, u = (u | u << 1) & 1431655765, (u << 1 | c) >>> 0;
 }
-class ie extends E {
+class ne extends E {
   order = x.Collision;
   name = "CollisionDetectionPlugin";
   data = [];
@@ -786,13 +788,13 @@ class ie extends E {
     }
   }
 }
-class Zt extends Y {
+class Jt extends Y {
   key;
   constructor(t) {
     super(), this.key = t;
   }
 }
-class G extends E {
+class F extends E {
   order = x.Input;
   name = "KeyboardPlugin";
   KeyDownEvent = new L();
@@ -817,23 +819,23 @@ class G extends E {
   }
   update(t) {
     this.NowPressedKeys.forEach((e) => {
-      this.block ? this.BlockedKeyDownEvent.emit(new Zt(e)) : this.KeyDownEvent.emit(new Zt(e));
+      this.block ? this.BlockedKeyDownEvent.emit(new Jt(e)) : this.KeyDownEvent.emit(new Jt(e));
     }), this.NowPressedKeys.clear();
   }
 }
-var Oe = Object.defineProperty, Me = Object.getOwnPropertyDescriptor, pt = (i, t, e, s) => {
-  for (var n = s > 1 ? void 0 : s ? Me(t, e) : t, r = i.length - 1, o; r >= 0; r--)
+var Me = Object.defineProperty, Ie = Object.getOwnPropertyDescriptor, ft = (i, t, e, s) => {
+  for (var n = s > 1 ? void 0 : s ? Ie(t, e) : t, r = i.length - 1, o; r >= 0; r--)
     (o = i[r]) && (n = (s ? o(t, e, n) : o(n)) || n);
-  return s && n && Oe(t, e, n), n;
+  return s && n && Me(t, e, n), n;
 };
-let y = class extends E {
+let w = class extends E {
   order = x.Physics;
-  cameraPosition = new f(4, 0);
-  targetCameraPositon = new f(4, 0);
-  cameraScreenOffset = new f(100, 100);
+  cameraPosition = new d(4, 0);
+  targetCameraPositon = new d(4, 0);
+  cameraScreenOffset = new d(100, 100);
   followingSpeed = 0.02;
   isFollowing = !0;
-  zoomV = new f(20, -20);
+  zoomV = new d(20, -20);
   zoom = 20;
   targetId = "None";
   //todo: delete this
@@ -841,7 +843,7 @@ let y = class extends E {
   name = "CameraPlugin";
   transformMatrix = new DOMMatrix();
   start() {
-    this.getPlugin(j).mouseScrollYEvent.subscribe(this, "scroll"), this.getPlugin(j).mouseDownEvent.subscribe(this, "down"), this.getPlugin(j).mouseUpEvent.subscribe(this, "up");
+    this.getPlugin(q).mouseScrollYEvent.subscribe(this, "scroll"), this.getPlugin(q).mouseDownEvent.subscribe(this, "down"), this.getPlugin(q).mouseUpEvent.subscribe(this, "up");
   }
   event(i, t) {
     if (t == "scroll") {
@@ -854,8 +856,8 @@ let y = class extends E {
         this.targetId = "None";
         return;
       }
-      const n = this.getPlugin(j).getMouseScreenPosition(), r = this.getWorldPosition(n);
-      let o = this.getPlugin(ie).overlapPoint(r)[0]?.getGameObject();
+      const n = this.getPlugin(q).getMouseScreenPosition(), r = this.getWorldPosition(n);
+      let o = this.getPlugin(ne).overlapPoint(r)[0]?.getGameObject();
       o && (this.targetId = o.getId());
     }
   }
@@ -863,21 +865,21 @@ let y = class extends E {
     i = Math.sign(i), i > 0 && this.targetZoom * 0.9 > 10 && (this.targetZoom = 0.9 * this.targetZoom), i < 0 && this.targetZoom * 1.1 < 100 && (this.targetZoom = 1.1 * this.targetZoom);
   }
   getWorldPosition(i) {
-    let t = this.getPlugin(y).zoomV, e = this.getPlugin(y).cameraPosition;
-    return new f((i.x - this.cameraScreenOffset.x) / t.x, (i.y - this.cameraScreenOffset.y) / t.y).add(e);
+    let t = this.getPlugin(w).zoomV, e = this.getPlugin(w).cameraPosition;
+    return new d((i.x - this.cameraScreenOffset.x) / t.x, (i.y - this.cameraScreenOffset.y) / t.y).add(e);
   }
   updateCameraTransform() {
-    this.transformMatrix = new DOMMatrix().translate(this.cameraScreenOffset.x, this.cameraScreenOffset.y).scale(this.zoomV.x, this.zoomV.y).translate(this.cameraPosition.x, this.cameraPosition.y);
+    this.transformMatrix = new DOMMatrix().translate(this.cameraScreenOffset.x, this.cameraScreenOffset.y).scale(this.zoomV.x, this.zoomV.y).translate(-this.cameraPosition.x, -this.cameraPosition.y);
   }
   getCameraTransform() {
     return this.transformMatrix;
   }
   update(i) {
-    this.isFollowing && (this.cameraPosition = this.cameraPosition.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, i))), this.zoom += (this.targetZoom - this.zoom) * (1 - Math.pow(2e-3, i)), this.zoomV = new f(this.zoom, -this.zoom);
+    this.isFollowing && (this.cameraPosition = this.cameraPosition.interpolate(this.targetCameraPositon, Math.pow(this.followingSpeed, i))), this.zoom += (this.targetZoom - this.zoom) * (1 - Math.pow(2e-3, i)), this.zoomV = new d(this.zoom, -this.zoom);
     const t = this.gameWorld.getGameObject(this.targetId);
     if (t) {
-      const e = this.getPlugin(j).getMouseScreenPosition(), s = this.getWorldPosition(e);
-      t.getTransform().position = t.getTransform().position.interpolate(s, Math.pow(1e-3, i)), this.getPlugin(G).isPressed("2") && (t.getTransform().rotation += 0.5 * 3.14 * i), this.getPlugin(G).isPressed("1") && (t.getTransform().rotation -= 0.5 * 3.14 * i);
+      const e = this.getPlugin(q).getMouseScreenPosition(), s = this.getWorldPosition(e);
+      t.getTransform().position = t.getTransform().position.interpolate(s, Math.pow(1e-3, i)), this.getPlugin(F).isPressed("2") && (t.getTransform().rotation += 0.5 * 3.14 * i), this.getPlugin(F).isPressed("1") && (t.getTransform().rotation -= 0.5 * 3.14 * i);
     }
     this.updateCameraTransform();
   }
@@ -891,25 +893,25 @@ let y = class extends E {
     return this.targetZoom = i, new g(!0, `Camera zoom set to ${i}`, void 0);
   }
 };
-pt([
+ft([
   b("getscale", void 0, "number")
-], y.prototype, "getscale", 1);
-pt([
+], w.prototype, "getscale", 1);
+ft([
   b("follow", "<following: boolean>")
-], y.prototype, "follow", 1);
-pt([
+], w.prototype, "follow", 1);
+ft([
   b("zoom", "<zoom: number>")
-], y.prototype, "setzoom", 1);
-y = pt([
+], w.prototype, "setzoom", 1);
+w = ft([
   Wt("camera")
-], y);
-class W extends q {
+], w);
+class W extends j {
   zindex;
   constructor(t = 0) {
     super(), this.zindex = t;
   }
 }
-class kt extends W {
+class xt extends W {
   color = new p(42, 42, 55);
   text;
   displayName;
@@ -917,12 +919,12 @@ class kt extends W {
     super(), this.text = t, this.zindex = s, this.displayName = e;
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(y);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w);
     if (!e || !s || !n) return;
     const r = s.position.x, o = s.position.y;
     s.rotation;
     const a = s.scale, h = this.color.toString(), l = this.displayName ? this.getGameObject()?.name ?? this.text : this.text;
-    t.setTransform(n.getCameraTransform()), t.translate(r, o), t.scale(a.x, a.y), t.fillStyle = h;
+    t.setTransform(n.getCameraTransform()), t.translate(r, o), t.scale(a.x, a.y), t.scale(a.x, -a.y), t.fillStyle = h;
     const c = 1;
     t.font = "bold " + c + "px Arial", t.fillStyle = "azure", t.shadowBlur = 10;
     const u = t.measureText(l).width / 2;
@@ -969,12 +971,12 @@ class V extends W {
   render(t) {
     if (!(this.getPlugin(tt)?.get("displayColliders") ?? !1))
       return;
-    const s = this.getGameWorld(), n = this.getTransform(), r = this.getPlugin(y), o = this.getComponent(A);
+    const s = this.getGameWorld(), n = this.getTransform(), r = this.getPlugin(w), o = this.getComponent(A);
     if (!s || !n || !r || !o) return;
     const a = n.position.x, h = n.position.y, l = n.rotation, c = n.scale, u = this.getColor();
     o.offset;
-    const d = o.radius, w = o.radius + 0.25;
-    t.save(), t.setTransform(r.getCameraTransform()), t.translate(a, h), t.rotate(l), t.scale(c.x, c.y), t.strokeStyle = u.toRgb().toString(), t.fillStyle = u.toString(), t.shadowBlur = 30, t.beginPath(), t.arc(0, 0, w, 0, 2 * Math.PI), t.closePath(), t.fill(), t.stroke(), t.beginPath(), t.arc(0, 0, d, 0, 2 * Math.PI), t.closePath(), t.lineWidth = 0.1, t.stroke(), t.restore();
+    const f = o.radius, y = o.radius + 0.25;
+    t.save(), t.setTransform(r.getCameraTransform()), t.translate(a, h), t.rotate(l), t.scale(c.x, c.y), t.strokeStyle = u.toRgb().toString(), t.fillStyle = u.toString(), t.shadowBlur = 30, t.beginPath(), t.arc(0, 0, y, 0, 2 * Math.PI), t.closePath(), t.fill(), t.stroke(), t.beginPath(), t.arc(0, 0, f, 0, 2 * Math.PI), t.closePath(), t.lineWidth = 0.1, t.stroke(), t.restore();
   }
 }
 class it {
@@ -1002,25 +1004,40 @@ class it {
     this.progress == -1 ? (this.startAnimation(), this.progress = this.duration) : this.progress = (this.duration + this.progress) / 2;
   }
 }
-class mt extends q {
+class re extends E {
+  order = x.Update;
+  name = "StandaloneComponentPlugin";
+  components = [];
+  addComponent(t) {
+    this.components.some((e) => e.deref() === t) || this.components.push(new WeakRef(t));
+  }
+  update(t) {
+    this.components.forEach((e) => {
+      const s = e.deref();
+      s && s.tick(t);
+    }), this.components = this.components.filter((e) => e.deref());
+  }
+}
+class Lt extends j {
   tickCount = 0;
   tick(t) {
-    this.tickCount == 0 ? this.start() : this.update(t), this.tickCount++;
+    this.update(t), this.tickCount++;
   }
   start() {
+    this.tickCount = 0, this.getGameWorld()?.getPlugin(re)?.addComponent(this);
   }
   update(t) {
   }
 }
-class F extends mt {
+class G extends Lt {
   shrinkAnimation = new it();
   zoomAnimation = new it();
-  defaultZoom = new f(1, 1);
+  defaultZoom = new d(1, 1);
   constructor() {
     super(), this.shrinkAnimation = new it(
       (t) => this.getTransform().scale = this.defaultZoom.times(1 - t),
       () => this.getComponent(et)?.enable(!1),
-      () => this.getGameWorld().destroy(this.getGameObject())
+      () => this.getGameWorld()?.destroy(this.getGameObject())
     ), this.zoomAnimation = new it(
       (t) => this.getTransform().scale = this.defaultZoom.times(1 + Math.sin(Math.PI * t) / 5),
       () => this.defaultZoom = this.getTransform().scale.clone(),
@@ -1045,28 +1062,28 @@ class v extends W {
     super(), this.radius = t, this.n = e, this.zindex = s, this.color = n;
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(y);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w);
     if (!e || !s || !n) return;
     const r = s.position.x, o = s.position.y, a = s.rotation, h = s.scale, l = this.color.toString(), c = this.radius;
     if (t.setTransform(n.getCameraTransform()), t.translate(r, o), t.rotate(a), t.scale(h.x, h.y), this.n < 10) {
       t.beginPath(), t.moveTo(0, c);
       const u = 2 * Math.PI / this.n;
-      for (let d = 1; d < this.n; d++)
-        t.lineTo(Math.sin(d * u) * c, Math.cos(d * u) * c);
+      for (let f = 1; f < this.n; f++)
+        t.lineTo(Math.sin(f * u) * c, Math.cos(f * u) * c);
       t.closePath();
     } else
       t.beginPath(), t.arc(0, 0, c, 0, 2 * Math.PI), t.closePath();
     t.fillStyle = l, t.shadowBlur = 0, t.fill(), t.shadowBlur = 50, t.stroke(), t.shadowBlur = 0, t.resetTransform();
   }
 }
-class Ie extends Y {
+class Ne extends Y {
   damage;
   participant;
   constructor(t, e) {
     super(), this.damage = t, this.participant = e;
   }
 }
-class D extends q {
+class D extends j {
   health;
   maxHealth;
   damageEvent;
@@ -1098,8 +1115,8 @@ class D extends q {
     this.health = Math.min(this.maxHealth, this.health + t);
   }
   onDamage(t, e) {
-    if (this.health -= t, this.damageEvent.emit(new Ie(t, e)), this.health == 0) {
-      if (this.getComponent(A)?.enable(!1), this.getComponent(C).dampingFactor = 0.6, this.getComponent(F)?.startShrink(), e.hasComponent(v)) {
+    if (this.health -= t, this.damageEvent.emit(new Ne(t, e)), this.health == 0) {
+      if (this.getComponent(A)?.enable(!1), this.getComponent(C).dampingFactor = 0.6, this.getComponent(G)?.startShrink(), e.hasComponent(v)) {
         let n = this.getComponent(v).color.blend(
           e.getComponent(v).color.toRgb(),
           0.5
@@ -1107,11 +1124,11 @@ class D extends q {
         this.getComponent(v).color = n, e.getComponent(v).color = n;
       }
     } else
-      this.getComponent(F)?.startZoom();
+      this.getComponent(G)?.startZoom();
   }
 }
 class et extends W {
-  offset = new f(0, 4);
+  offset = new d(0, 4);
   fill = 0.5;
   width = 5;
   height = 0.5;
@@ -1119,13 +1136,15 @@ class et extends W {
     super(t);
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getComponent(D), r = this.getPlugin(y);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getComponent(D), r = this.getPlugin(w);
     if (!e || !s || !n || !r) return;
-    const o = s.position.x, a = s.position.y, h = s.rotation, l = s.scale, c = n.getHealth(), u = T.minmax(2 + n.maxHealth / 250, 0, 1), d = p.getHeatmapColor(u).toString(), w = 0.25;
-    t.setTransform(r.getCameraTransform()), t.translate(o, a), t.rotate(h), t.scale(l.x, l.y), t.translate(this.offset.x, this.offset.y), t.fillStyle = d, t.shadowBlur = 0, t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c, this.height, w), t.closePath(), t.fillStyle = p.background.toString(), t.fill(), t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c * u, this.height, w), t.closePath(), t.fillStyle = d, t.fill(), t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c, this.height, w), t.closePath(), t.shadowBlur = 30, t.stroke(), t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c * u, this.height, w), t.closePath(), t.shadowBlur = 0, t.stroke(), t.resetTransform();
+    const o = s.position.x, a = s.position.y;
+    s.rotation;
+    const h = s.scale, l = T.minmax(n.getHealth(), 0, 1), c = 2 + n.maxHealth / 250, u = p.getHeatmapColor(l).toString(), f = p.background.toString(), y = 0.25;
+    t.setTransform(r.getCameraTransform()), t.translate(o, a), t.scale(h.x, h.y), t.translate(this.offset.x, this.offset.y), t.shadowBlur = 0, t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c, this.height, y), t.closePath(), t.fillStyle = f, t.fill(), t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c * l, this.height, y), t.closePath(), t.fillStyle = u, t.fill(), t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c, this.height, y), t.closePath(), t.shadowBlur = 30, t.stroke(), t.beginPath(), t.roundRect(-c / 2, -this.height / 2, c * l, this.height, y), t.closePath(), t.shadowBlur = 0, t.stroke(), t.resetTransform();
   }
 }
-class ne extends E {
+class oe extends E {
   order = x.Input;
   name = "SchedulerPlugin";
   schedule = [];
@@ -1142,34 +1161,35 @@ class ne extends E {
       }
   }
 }
-class re extends q {
+class ae extends j {
   constructor(t = 1) {
     super(), this.lifeTime = t;
   }
   onInvoke(t) {
-    this.getComponent(F)?.startShrink();
+    this.getComponent(G)?.startShrink();
   }
   start() {
-    let t = this.getGameWorld().getWorldTime() + this.lifeTime;
-    this.getGameWorld().getPlugin(ne).addInvoke(this, t, "destroy");
+    const t = this.getGameWorld();
+    let e = t.getWorldTime() + this.lifeTime;
+    t.getPlugin(oe).addInvoke(this, e, "destroy");
   }
 }
-class Lt extends W {
+class Ft extends W {
   color;
   radius;
   constructor(t, e = 0, s = p.randomColor2()) {
     super(), this.radius = t, this.zindex = e, this.color = s;
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(y);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w);
     if (!e || !s || !n) return;
     const r = s.position.x, o = s.position.y, a = s.rotation, h = s.scale, l = this.color.toString(), c = this.radius, u = 4;
     t.setTransform(n.getCameraTransform()), t.translate(r, o), t.rotate(a), t.scale(h.x, h.y), t.beginPath(), t.rect(-3 * c - u, -c, u, 2 * c), t.closePath();
-    const d = t.createLinearGradient(-3 * c - u, 0, u, 0);
-    d.addColorStop(0, this.color.blend(new p(255, 255, 255), 0.5).toArgb(0).toString()), d.addColorStop(1, this.color.toArgb(0.75).toString()), t.fillStyle = d, t.shadowBlur = 0, t.fill(), t.beginPath(), t.arc(0, 0, c, 0, 2 * Math.PI), t.closePath(), t.fillStyle = l, t.shadowBlur = 0, t.fill(), t.shadowBlur = 50, t.stroke(), t.beginPath(), t.roundRect(-3 * c, -c, 3 * c, 2 * c, c / 2), t.closePath(), t.fillStyle = this.color.blend(p.background, 1).toString(), t.shadowBlur = 0, t.fill(), t.shadowBlur = 50, t.stroke(), t.resetTransform();
+    const f = t.createLinearGradient(-3 * c - u, 0, u, 0);
+    f.addColorStop(0, this.color.blend(new p(255, 255, 255), 0.5).toArgb(0).toString()), f.addColorStop(1, this.color.toArgb(0.75).toString()), t.fillStyle = f, t.shadowBlur = 0, t.fill(), t.beginPath(), t.arc(0, 0, c, 0, 2 * Math.PI), t.closePath(), t.fillStyle = l, t.shadowBlur = 0, t.fill(), t.shadowBlur = 50, t.stroke(), t.beginPath(), t.roundRect(-3 * c, -c, 3 * c, 2 * c, c / 2), t.closePath(), t.fillStyle = this.color.blend(p.background, 1).toString(), t.shadowBlur = 0, t.fill(), t.shadowBlur = 50, t.stroke(), t.resetTransform();
   }
 }
-class H extends q {
+class H extends j {
   ownerId;
   constructor(t) {
     super(), this.ownerId = t.getId();
@@ -1180,38 +1200,42 @@ class H extends q {
   static bulletGO(t, e = 30, s = 0.65, n = 1, r = -1, ...o) {
     let a = new J(
       new C(0.05, 1),
-      new Lt(s, r, new p(173, 87, 87)),
+      new Ft(s, r, new p(173, 87, 87)),
       new v(s, 10, r, new p(173, 87, 87)),
       new A(s, !1),
       new V(),
       new D(e),
-      new F(),
-      new re(n),
+      new G(),
+      new ae(n),
       new H(t),
       ...o
     );
     return a.getTransform().rotation = 0, a.name = "Bullet", a.getComponent(v)?.enable(!1), a;
   }
 }
-class gt extends W {
+class pt extends W {
   color;
+  displayFireBloom = !1;
   constructor(t = 0, e = p.background.clone()) {
     super(), this.zindex = t, this.color = e;
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(y), r = this.getComponent(K);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w), r = this.getComponent(K);
     if (!e || !s || !n || !r) return;
     const o = s.position.x, a = s.position.y, h = s.rotation, l = s.scale, c = this.color.toString();
     t.setTransform(n.getCameraTransform()), t.translate(o, a), t.rotate(h), t.scale(l.x, l.y);
-    const u = r.length, d = r.width, w = Math.min(1, r.getShotDelta() / r.cooldown), R = Math.sin(w * Math.PI), S = 1;
+    const u = r.length, f = r.width, y = Math.min(1, r.getShotDelta() / r.cooldown), R = Math.sin(y * Math.PI), S = 1;
     r.range / 5;
-    const jt = r.direction.times(r.bulletSpeed).times(r.getBulletLifetime()).add(r.getGlobalOffset());
-    t.setTransform(n.getCameraTransform()), t.translate(o, a), t.scale(l.x, l.y), t.save(), t.globalCompositeOperation = "lighter", t.rotate(r.direction.toRad()), t.translate((1 - R / 3) * u, 0);
-    const vt = t.createRadialGradient(0, 0, 0, 0, 0, 5 * (1 - w));
-    vt.addColorStop(0, "rgba(219, 144, 31, 0.25)"), vt.addColorStop(1, "rgba(58, 40, 12, 0)"), t.fillStyle = vt, t.shadowBlur = 0, t.beginPath(), t.arc(0, 0, 20, 0, 2 * Math.PI), t.closePath(), t.fill(), t.restore(), t.translate(jt.x, jt.y), t.beginPath(), t.arc(0, 0, S, 0, 2 * Math.PI), t.closePath(), t.shadowBlur = 0, t.stroke(), t.strokeRect(-S / 2, -S / 2, S, S), t.resetTransform(), t.setTransform(n.getCameraTransform()), t.translate(o, a), t.scale(l.x, l.y), t.rotate(r.direction.toRad()), t.beginPath(), t.roundRect(0, -d / 2, (1 - R / 3) * u, d, 0.1), t.closePath(), t.fillStyle = c, t.shadowBlur = 0, t.fill(), t.shadowBlur = 30, t.stroke(), t.shadowBlur = 0, t.resetTransform();
+    const zt = r.direction.times(r.bulletSpeed).times(r.getBulletLifetime()).add(r.getGlobalOffset());
+    if (t.setTransform(n.getCameraTransform()), t.translate(o, a), t.scale(l.x, l.y), this.displayFireBloom && y > 0) {
+      t.save(), t.globalCompositeOperation = "lighter", t.rotate(r.direction.toRad()), t.translate((1 - R / 3) * u, 0);
+      const wt = t.createRadialGradient(0, 0, 0, 0, 0, 5 * (1 - y));
+      wt.addColorStop(0, "rgba(219, 144, 31, 0.25)"), wt.addColorStop(1, "rgba(58, 40, 12, 0)"), t.fillStyle = wt, t.shadowBlur = 0, t.beginPath(), t.arc(0, 0, 20, 0, 2 * Math.PI), t.closePath(), t.fill(), t.restore();
+    }
+    t.translate(zt.x, zt.y), t.beginPath(), t.arc(0, 0, S, 0, 2 * Math.PI), t.closePath(), t.shadowBlur = 0, t.stroke(), t.strokeRect(-S / 2, -S / 2, S, S), t.resetTransform(), t.setTransform(n.getCameraTransform()), t.translate(o, a), t.scale(l.x, l.y), t.rotate(r.direction.toRad()), t.beginPath(), t.roundRect(0, -f / 2, (1 - R / 3) * u, f, 0.1), t.closePath(), t.fillStyle = c, t.shadowBlur = 0, t.fill(), t.shadowBlur = 30, t.stroke(), t.shadowBlur = 0, t.resetTransform();
   }
 }
-class Ne {
+class We {
   x;
   y;
   dx;
@@ -1224,7 +1248,7 @@ class Ne {
     this.x = t, this.y = e, this.dx = 0, this.dy = 0, this.radius = 0, this.targetRadius = s, this.color = n, this.alpha = r;
   }
 }
-class dt extends W {
+class Tt extends W {
   color;
   radius;
   n;
@@ -1234,10 +1258,10 @@ class dt extends W {
   }
   start() {
   }
-  emitParticles(t = 1, e = new f(0, 0), s = new f(0, 0)) {
+  emitParticles(t = 1, e = new d(0, 0), s = new d(0, 0)) {
     for (let r = 0; r < t; r++) {
-      const o = Math.random() * 2 * Math.PI, a = 1 * (Math.random() * 0.5 + 0.5), h = a * Math.cos(o) + this.getTransform().position.x + e.x, l = a * Math.sin(o) + this.getTransform().position.y + e.y, c = this.radius * 0.25 + 0.15 * this.radius * T.symRand(1), u = Math.random() * 0.5 + 0.5, d = new Ne(h, l, c, this.color, u);
-      d.dx = this.getComponent(C)?.velocity.x ?? 0, d.dy = this.getComponent(C)?.velocity.y ?? 0, d.dx += s.x, d.dy += s.y, this.particles.push(d);
+      const o = Math.random() * 2 * Math.PI, a = 1 * (Math.random() * 0.5 + 0.5), h = a * Math.cos(o) + this.getTransform().position.x + e.x, l = a * Math.sin(o) + this.getTransform().position.y + e.y, c = this.radius * 0.25 + 0.15 * this.radius * T.symRand(1), u = Math.random() * 0.5 + 0.5, f = new We(h, l, c, this.color, u);
+      f.dx = this.getComponent(C)?.velocity.x ?? 0, f.dy = this.getComponent(C)?.velocity.y ?? 0, f.dx += s.x, f.dy += s.y, this.particles.push(f);
     }
   }
   updateParticles(t) {
@@ -1246,17 +1270,17 @@ class dt extends W {
   }
   render(t, e) {
     this.updateParticles(e);
-    const s = 0, n = 0, r = this.getGameWorld().getPlugin(y).cameraScreenOffset, o = this.getGameWorld().getPlugin(y).zoomV, a = this.getGameWorld().getPlugin(y).cameraPosition.x, h = this.getGameWorld().getPlugin(y).cameraPosition.y, l = s - a, c = n - h;
+    const s = 0, n = 0, r = this.getGameWorld().getPlugin(w).cameraScreenOffset, o = this.getGameWorld().getPlugin(w).zoomV, a = this.getGameWorld().getPlugin(w).cameraPosition.x, h = this.getGameWorld().getPlugin(w).cameraPosition.y, l = s - a, c = n - h;
     t.translate(r.x, r.y), t.scale(o.x, o.y), t.translate(l, c);
     for (const u of this.particles)
       t.beginPath(), t.arc(u.x, u.y, u.radius, 0, 2 * Math.PI), t.closePath(), t.fillStyle = u.color.toString(), t.globalAlpha = u.alpha, t.shadowColor = u.color.toString(), t.shadowBlur = 10, t.fill(), t.globalAlpha = 1;
     t.shadowBlur = 0, t.shadowColor = p.stroke.toString(), t.setTransform(1, 0, 0, 1, 0, 0);
   }
 }
-class K extends mt {
+class K extends Lt {
   // private lastShootTime: number = performance.now();
   constructor(t = 4, e = 2, s = 10) {
-    super(), this.damage = s, this.length = t, this.width = e, this.offset = new f(t - this.width, 0);
+    super(), this.damage = s, this.length = t, this.width = e, this.offset = new d(t - this.width, 0);
   }
   cooldown = 0.25;
   bulletSpeed = 40;
@@ -1265,15 +1289,15 @@ class K extends mt {
   range = 250;
   bulletSpraed = 0.05;
   offset;
-  direction = f.right();
-  targetDirection = f.right();
-  shotDelta = 0;
+  direction = d.right();
+  targetDirection = d.right();
+  shotDelta = 1e9;
   getShotDelta() {
     return this.shotDelta;
   }
   update(t) {
     let e = this.direction.toRad(), s = this.targetDirection.toRad();
-    e += 9 * t * T.deltaAngle(e, s), this.direction = f.fromRad(e), this.shotDelta += t;
+    e += 9 * t * T.deltaAngle(e, s), this.direction = d.fromRad(e), this.shotDelta += t;
   }
   getBulletLifetime() {
     return this.range / this.bulletSpeed;
@@ -1284,7 +1308,7 @@ class K extends mt {
   shoot() {
     const t = this.getGameWorld(), e = this.getTransform(), s = this.getGameObject();
     if (!(!t || !e || !s) && !(!this.isEnabled || !s.enabled) && this.getShotDelta() >= this.cooldown) {
-      const r = this.getComponent(gt).zindex - 0.01, o = this.direction.cross().times(Math.random() * 2 * this.bulletSpraed - this.bulletSpraed), a = this.direction.toUnit().add(o).toUnit(), h = this.getGlobalOffset();
+      const r = this.getComponent(pt).zindex - 0.01, o = this.direction.cross().times(Math.random() * 2 * this.bulletSpraed - this.bulletSpraed), a = this.direction.toUnit().add(o).toUnit(), h = this.getGlobalOffset();
       let l = H.bulletGO(
         s,
         this.damage,
@@ -1293,17 +1317,17 @@ class K extends mt {
         r
       );
       const c = l.getComponent(C), u = l.getComponent(A);
-      l.getComponent(v).color = this.getComponent(v).color.clone(), l.getComponent(Lt).color = this.getComponent(v).color.clone(), u.avoidObjectes.add(this.getGameObject()), c.velocity = a.times(this.bulletSpeed), l.getTransform().position = this.getTransform().position.add(h), this.getComponent(dt)?.emitParticles(23, h, this.direction.cross().times(this.bulletSpeed / 7).add(this.direction.times(this.bulletSpeed / 3))), this.getComponent(dt)?.emitParticles(23, h, this.direction.cross().times(-this.bulletSpeed / 7).add(this.direction.times(this.bulletSpeed / 3))), l.getTransform().rotation = a.toRad(), t.spawn(l), this.shotDelta = 0;
+      l.getComponent(v).color = this.getComponent(v).color.clone(), l.getComponent(Ft).color = this.getComponent(v).color.clone(), u.avoidObjectes.add(this.getGameObject()), c.velocity = a.times(this.bulletSpeed), l.getTransform().position = this.getTransform().position.add(h), this.getComponent(Tt)?.emitParticles(23, h, this.direction.cross().times(this.bulletSpeed / 7).add(this.direction.times(this.bulletSpeed / 3))), this.getComponent(Tt)?.emitParticles(23, h, this.direction.cross().times(-this.bulletSpeed / 7).add(this.direction.times(this.bulletSpeed / 3))), l.getTransform().rotation = a.toRad(), t.spawn(l), this.shotDelta = 0;
     }
   }
 }
-class St extends W {
+class kt extends W {
   color;
   constructor(t = 0, e = new p(22, 24, 25)) {
     super(), this.zindex = t, this.color = e;
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(y);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w);
     if (!e || !s || !n) return;
     const r = s.position.x, o = s.position.y, a = s.rotation, h = s.scale;
     this.color.toString();
@@ -1311,7 +1335,7 @@ class St extends W {
     t.setTransform(n.getCameraTransform()), t.translate(r, o), t.rotate(a), t.scale(h.x, h.y), t.beginPath(), t.fillStyle = l, t.shadowBlur = 0, t.roundRect(-4, -2, 8, 4, 1), t.fill(), t.shadowBlur = 50, t.stroke(), t.closePath(), t.beginPath(), t.fillStyle = p.background.toString(), t.shadowBlur = 0, t.roundRect(-4.5, -3.25, 10, 2, 0.5), t.fill(), t.shadowBlur = 50, t.stroke(), t.closePath(), t.beginPath(), t.shadowBlur = 0, t.roundRect(-4.5, 1.25, 10, 2, 0.5), t.fill(), t.shadowBlur = 50, t.stroke(), t.closePath(), t.beginPath(), t.fillStyle = p.background.toString(), t.shadowBlur = 0, t.roundRect(-3, -2, 6, 4, 1.5), t.fill(), t.shadowBlur = 50, t.stroke(), t.closePath(), t.shadowBlur = 0, t.resetTransform();
   }
 }
-class oe extends W {
+class St extends W {
   color;
   tracesSpace = 0.5;
   traces = [];
@@ -1323,26 +1347,29 @@ class oe extends W {
     super(), e = e.blend(p.stroke, 0.3), this.zindex = t, this.color = e;
   }
   render(t) {
-    const e = this.getGameWorld().getPlugin(y).cameraScreenOffset, s = this.getGameWorld().getPlugin(y).zoomV, n = this.getGameWorld().getPlugin(y).cameraPosition.x, r = this.getGameWorld().getPlugin(y).cameraPosition.y, o = this.getTransform().position.clone(), a = this.getTransform().rotation;
-    this.lastPosition == null && (this.lastPosition = o.clone());
-    let h = o.sub(this.lastPosition);
-    for (; h.magnitude() > this.tracesSpace; )
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w);
+    if (!e || !s || !n) return;
+    s.position.x, s.position.y, s.rotation, s.scale, this.color.toString();
+    const r = s.position.clone(), o = s.rotation;
+    this.lastPosition == null && (this.lastPosition = r.clone());
+    let a = r.sub(this.lastPosition);
+    for (; a.magnitude() > this.tracesSpace; )
       this.traces.push(
         {
           position: this.lastPosition,
-          rotation: a,
+          rotation: o,
           startTime: this.getGameWorld().getWorldTime()
         }
-      ), this.lastPosition = this.lastPosition.add(h.toUnit().times(this.tracesSpace)), h = o.sub(this.lastPosition);
+      ), this.lastPosition = this.lastPosition.add(a.toUnit().times(this.tracesSpace)), a = r.sub(this.lastPosition);
     for (; this.traces.length > 0 && this.traces[0].startTime + this.duration < this.getGameWorld().getWorldTime(); )
       this.traces.shift();
-    for (const l of this.traces) {
-      const c = l.position.x - n, u = l.position.y - r, d = 1 - (this.getGameWorld().getWorldTime() - l.startTime) / this.duration;
-      t.translate(e.x, e.y), t.scale(s.x, s.y), t.translate(c, u), t.rotate(l.rotation), t.beginPath(), t.fillStyle = this.color.toArgb(this.color.a * this.transparency * d).toString(), t.shadowBlur = 0, t.roundRect(-4.5, -3.25, this.length, 2, 0.75), t.fill(), t.closePath(), t.beginPath(), t.roundRect(-4.5, 1.25, this.length, 2, 0.75), t.fill(), t.closePath(), t.setTransform(1, 0, 0, 1, 0, 0);
+    for (const h of this.traces) {
+      const l = 1 - (e.getWorldTime() - h.startTime) / this.duration;
+      t.setTransform(n.getCameraTransform()), t.translate(h.position.x, h.position.y), t.rotate(h.rotation), t.beginPath(), t.fillStyle = this.color.toArgb(this.color.a * this.transparency * l).toString(), t.shadowBlur = 0, t.roundRect(-4.5, -3.25, this.length, 2, 0.75), t.fill(), t.closePath(), t.beginPath(), t.roundRect(-4.5, 1.25, this.length, 2, 0.75), t.fill(), t.closePath(), t.resetTransform();
     }
   }
 }
-class We extends q {
+class De extends j {
   tags = /* @__PURE__ */ new Set();
   constructor(...t) {
     super(), t.forEach((e) => this.addTag(e));
@@ -1369,27 +1396,27 @@ class z {
       new A(T.getColliderRadius(e, t)),
       new V(),
       new D(25 * e),
-      new F(),
-      new We("Dragable"),
+      new G(),
+      new De("Dragable"),
       ...s
     );
     return n.getTransform().rotation = Math.random() * 2 * Math.PI, n.name = "Polygon", n;
   }
   static enemyGO(t = 2.5, e = "", s = 4, ...n) {
     let r = new J(
-      new kt(e, void 0, s + 0.1),
+      new xt(e, void 0, s + 0.1),
       new v(t, 8, s),
       new et(s + 0.1),
-      new St(s - 0.2),
+      new kt(s - 0.2),
       new C(30),
       new A(t, !1),
       new V(s - 0.15),
       new D(1500),
-      new F(),
-      new oe(-21.37),
+      new G(),
+      new St(-21.37),
       ...n
     );
-    return r.getTransform().rotation = T.symRand(Math.PI), r.getComponent(K).targetDirection = f.fromRad(T.symRand(Math.PI)), r.name = "Enemy", r;
+    return r.getTransform().rotation = T.symRand(Math.PI), r.getComponent(K).targetDirection = d.fromRad(T.symRand(Math.PI)), r.name = "Enemy", r;
   }
   static bulletGO(t, e = 30, s = 0.65, n = 1, r = -1, ...o) {
     let a = new J(
@@ -1398,8 +1425,8 @@ class z {
       new A(s, !1),
       new V(),
       new D(e),
-      new F(),
-      new re(n),
+      new G(),
+      new ae(n),
       new H(t),
       ...o
     );
@@ -1408,19 +1435,18 @@ class z {
   static playerGO(t = 2.5, e = 5, ...s) {
     let n = new J(
       // new ImageRendererC(undefined, new Vector(1.3, 0.3), "GameEngine/src/Assets/vectorpaint2.svg" , zindex-0.2),
-      new St(e - 0.2),
+      new kt(e - 0.2),
       new v(t, 10, e, new p(50, 99, 52)),
-      new kt("Player", !0, e + 0.1),
+      new xt("Player", !0, e + 0.1),
       new V(e - 0.15),
       new et(e + 0.1),
-      new gt(e - 0.1),
+      new pt(e - 0.1),
       new C(30, 0.025),
       new A(t, !1),
       new D(1e3),
-      new F(),
-      new K(7, 1.35, 44),
-      // new TracesRendererC(-21.37),
-      new dt(2, 20, e - 0.11, new p(122, 122, 122)),
+      new G(),
+      new K(7, 1.55, 44),
+      new St(-21.37),
       ...s
     );
     return n.getTransform().rotation = 0, n.name = "Player", n;
@@ -1437,7 +1463,7 @@ class At extends E {
     super();
   }
   start() {
-    this.getPlugin(G).KeyDownEvent.subscribe(this, "keydown"), document.body.appendChild(this.profilerWrapper), this.addRecord("Fps", 0);
+    this.getPlugin(F).KeyDownEvent.subscribe(this, "keydown"), document.body.appendChild(this.profilerWrapper), this.addRecord("Fps", 0);
   }
   lastTime = performance.now();
   frames = 0;
@@ -1555,7 +1581,7 @@ class At extends E {
             `;
   }
 }
-class De {
+class Le {
   startTime = 0;
   prevWorldTime = 0;
   worldTime = 0;
@@ -1563,7 +1589,7 @@ class De {
   gameObjects = /* @__PURE__ */ new Map();
   plugins = /* @__PURE__ */ new Map();
   events = /* @__PURE__ */ new Set();
-  componentsToStart = [];
+  gameObjectsToStart = [];
   constructor(...t) {
     t.sort((e, s) => e.order - s.order);
     for (let e of t) {
@@ -1604,13 +1630,13 @@ class De {
   spawn(t) {
     if (this.gameObjects.has(t.getId()))
       throw new Error(`GameObject ${t.name} already exists in the game world`);
-    return t.gameWorld = this, this.gameObjects.set(t.getId(), t), t.getAllComponents().forEach((e) => this.componentsToStart.push(new WeakRef(e))), t;
+    return t.gameWorld = this, this.gameObjects.set(t.getId(), t), this.gameObjectsToStart.push(t.getId()), t;
   }
   destroy(t) {
     if (t) {
       if (!this.gameObjects.has(t.getId()))
         throw new Error(`GameObject ${t.name} does'not exist in the game world`);
-      t.enabled = !1, this.gameObjects.delete(t.getId());
+      t.gameWorld = void 0, t.enabled = !1, this.gameObjects.delete(t.getId());
     }
   }
   hasGameObject(t) {
@@ -1626,9 +1652,6 @@ class De {
   getComponents(t, e = !0) {
     return this.getAllGameObjects().filter((s) => s.hasComponent(t) && (s.getComponent(t).isEnabled() || !e)).map((s) => s.getComponent(t));
   }
-  getAllComponents(t = !0) {
-    return Array.from(this.getAllGameObjects(t)).flatMap((e) => e.getAllComponents());
-  }
   //events
   registerEvent(t) {
     this.events.add(new WeakRef(t));
@@ -1642,11 +1665,11 @@ class De {
     this.tickCount++, this.tickCount == 1 ? this.startWorld() : this.updateWorld(), this.startComponents(), this.invokeEvents();
   }
   startComponents() {
-    for (let t of this.componentsToStart) {
-      const e = t.deref();
-      e && e.start();
-    }
-    this.componentsToStart = [];
+    for (let t of this.gameObjectsToStart)
+      this.getGameObject(t)?.getAllComponents().forEach((s) => {
+        s.start();
+      });
+    this.gameObjectsToStart = [];
   }
   startWorld() {
     this.startTime = performance.now(), this.Start(), this.plugins.forEach((t) => t.start());
@@ -1675,7 +1698,7 @@ class De {
   Update(t) {
   }
 }
-class Le extends mt {
+class Fe extends Lt {
   type = 2;
   isAttacing = !1;
   targetId = "None";
@@ -1694,42 +1717,44 @@ class Le extends mt {
     this.isAttacing = !0, this.targetId = t.getId(), this.isFollowing = !0;
   }
   update(t) {
-    let e = this.getGameWorld().getGameObject(this.targetId);
-    if (!e) {
+    const e = this.getGameWorld();
+    if (!e) return;
+    let s = e.getGameObject(this.targetId);
+    if (!s) {
       this.isAttacing = !1;
       return;
     }
     if (this.isAttacing) {
-      let s = this.getComponent(K), n = e.getTransform().position.sub(this.getTransform().position);
-      s.targetDirection = n;
-      let r = n.magnitude();
-      if (r > this.maxDistance && (this.isAttacing = !1), s.shoot(), r >= this.minDistance) {
-        let o = this.getTransform().rotation, a = n.toRad();
-        o += 5 * t * T.deltaAngle(o, a), this.getTransform().rotation = o;
-        let h = this.getComponent(C);
-        h.velocity = f.fromRad(o).times(this.maxSpeed);
+      let n = this.getComponent(K), r = s.getTransform().position.sub(this.getTransform().position);
+      n.targetDirection = r;
+      let o = r.magnitude();
+      if (o > this.maxDistance && (this.isAttacing = !1), n.shoot(), o >= this.minDistance) {
+        let a = this.getTransform().rotation, h = r.toRad();
+        a += 5 * t * T.deltaAngle(a, h), this.getTransform().rotation = a;
+        let l = this.getComponent(C);
+        l.velocity = d.fromRad(a).times(this.maxSpeed);
       }
     }
   }
 }
-class Ge extends De {
+class Ge extends Le {
   Start() {
     console.log("Hello, MyWorld!");
     const t = 350;
     for (let e = 0; e < 350; e++) {
       const s = 3 + T.symRand(0.25);
       let n = z.polygonGO(s / 2, 4);
-      n.getTransform().position = f.randomPos(t), n.getComponent(C).angularVelocity = Math.random() * 2 - 1, this.spawn(n);
+      n.getTransform().position = d.randomPos(t), n.getComponent(C).angularVelocity = Math.random() * 2 - 1, this.spawn(n);
     }
     for (let e = 0; e < 150; e++) {
       const s = 3.5 + T.symRand(0.25);
       let n = z.polygonGO(s / 2, 3);
-      n.getTransform().position = f.randomPos(t), n.getComponent(C).angularVelocity = Math.random() * 2 - 1, this.spawn(n);
+      n.getTransform().position = d.randomPos(t), n.getComponent(C).angularVelocity = Math.random() * 2 - 1, this.spawn(n);
     }
     for (let e = 0; e < 250; e++) {
       const s = 4 + T.symRand(0.25);
       let n = z.polygonGO(s / 2, Math.round(Math.random() * 3) + 5);
-      n.getTransform().position = f.randomPos(t), n.getComponent(C).angularVelocity = Math.random() * 2 - 1, this.spawn(n);
+      n.getTransform().position = d.randomPos(t), n.getComponent(C).angularVelocity = Math.random() * 2 - 1, this.spawn(n);
     }
     for (let e = 0; e < 25; e++) {
       let s = z.enemyGO(
@@ -1737,24 +1762,24 @@ class Ge extends De {
         "Enemy nr." + e,
         4,
         new K(void 0, void 0, 10 + Math.random() * 5),
-        new gt(3.9),
-        new Le()
+        new pt(3.9),
+        new Fe()
       );
-      s.getTransform().position = f.randomPos(t), this.spawn(s);
+      s.getTransform().position = d.randomPos(t), this.spawn(s);
     }
   }
   Update(t) {
   }
 }
-class Fe extends W {
+class Ue extends W {
   image = new Image();
   side;
   offset;
-  constructor(t = f.zero(), e = f.zero(), s = "GameEngine/src/Assets/vectorpaint3.svg", n = 0) {
+  constructor(t = d.zero(), e = d.zero(), s = "GameEngine/src/Assets/vectorpaint3.svg", n = 0) {
     super(), this.zindex = n, this.side = t, this.offset = e, this.image.src = s;
   }
   render(t) {
-    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(y);
+    const e = this.getGameWorld(), s = this.getTransform(), n = this.getPlugin(w);
     if (!e || !s || !n) return;
     const r = s.position.x, o = s.position.y, a = s.rotation, h = s.scale;
     t.setTransform(n.getCameraTransform()), t.translate(r, o), t.rotate(a), t.scale(h.x, h.y);
@@ -1762,7 +1787,7 @@ class Fe extends W {
     l.x == 0 && (l.x = this.image.width), l.y == 0 && (l.y = this.image.height), t.shadowBlur = 15, t.drawImage(this.image, -l.x / 2, -l.y / 2, l.x, l.y), t.shadowBlur = 0, t.resetTransform();
   }
 }
-class Ue extends E {
+class $e extends E {
   order = x.Render;
   name = "RendererPlugin";
   context;
@@ -1788,24 +1813,24 @@ class Ue extends E {
     for (let e = 0; e < 10; e++) {
       this.gridCanvas[e] = document.createElement("canvas"), this.gridCanvas[e].width = 3440, this.gridCanvas[e].height = 1440, document.createElement("canvas");
       const s = this.gridCanvas[e].transferControlToOffscreen();
-      t.postMessage({ canvas: s, args: [new f(2, 2), 0.175, p.stroke.toString(), new f(e * 5 + 5, e * 5 + 5)] }, [s]);
+      t.postMessage({ canvas: s, args: [new d(2, 2), 0.175, p.stroke.toString(), new d(e * 5 + 5, e * 5 + 5)] }, [s]);
     }
   }
   clip(t) {
     if (!t) return !0;
-    const e = this.context.canvas.width, s = this.context.canvas.height, n = this.getPlugin(y).zoomV, r = this.getPlugin(y).cameraPosition, o = Math.abs(e / 2 / n.x), a = Math.abs(s / 2 / n.y);
+    const e = this.context.canvas.width, s = this.context.canvas.height, n = this.getPlugin(w).zoomV, r = this.getPlugin(w).cameraPosition, o = Math.abs(e / 2 / n.x), a = Math.abs(s / 2 / n.y);
     return Math.abs(t.x - r.x) > o || Math.abs(t.y - r.y) > a;
   }
   update(t) {
     const e = this.context.canvas.width, s = this.context.canvas.height;
-    this.context.fillStyle = "rgba(80, 100, 81, 1)", this.context.fillRect(0, 0, e, s), this.getPlugin(y).cameraScreenOffset = new f(this.context.canvas.width / 2, this.context.canvas.height / 2);
+    this.context.fillStyle = "rgba(80, 100, 81, 1)", this.context.fillRect(0, 0, e, s), this.getPlugin(w).cameraScreenOffset = new d(this.context.canvas.width / 2, this.context.canvas.height / 2);
     let n = 2, r = 2;
-    const o = this.getPlugin(y).cameraScreenOffset, a = this.getPlugin(y).zoomV, h = this.getPlugin(y).cameraPosition;
+    const o = this.getPlugin(w).cameraScreenOffset, a = this.getPlugin(w).zoomV, h = this.getPlugin(w).cameraPosition;
     let l = Math.max(0, Math.min(9, Math.round(a.x / 10))), c = l * 5 + 5;
-    this.context.translate(o.x, o.y), this.context.scale(a.x, a.y), this.context.translate(-h.x % n, -h.y % r), this.context.scale(1 / c, 1 / c), this.context.drawImage(this.gridCanvas[l], -this.gridCanvas[l].width / 2, -this.gridCanvas[l].height / 2, this.gridCanvas[l].width, this.gridCanvas[l].height), this.context.setTransform(1, 0, 0, 1, 0, 0), this.gameWorld.getComponents(kt).concat(this.gameWorld.getComponents(V)).concat(this.gameWorld.getComponents(et)).concat(this.gameWorld.getComponents(v)).concat(this.gameWorld.getComponents(Fe)).filter((u) => !this.clip(u.getTransform()?.position)).concat(this.gameWorld.getComponents(gt)).concat(this.gameWorld.getComponents(Lt)).concat(this.gameWorld.getComponents(oe)).filter((u) => !this.clip(u.getTransform()?.position)).concat(this.gameWorld.getComponents(St)).concat(this.gameWorld.getComponents(dt)).filter((u) => !this.clip(u.getTransform()?.position)).sort((u, d) => u.zindex - d.zindex).forEach((u) => u.render(this.context, t)), this.addVignetteEffect(this.context, "rgba(0, 0, 0, 0.35)");
+    this.context.translate(o.x, o.y), this.context.scale(a.x, a.y), this.context.translate(-h.x % n, -h.y % r), this.context.scale(1 / c, 1 / c), this.context.drawImage(this.gridCanvas[l], -this.gridCanvas[l].width / 2, -this.gridCanvas[l].height / 2, this.gridCanvas[l].width, this.gridCanvas[l].height), this.context.setTransform(1, 0, 0, 1, 0, 0), this.gameWorld.getComponents(xt).concat(this.gameWorld.getComponents(V)).concat(this.gameWorld.getComponents(et)).concat(this.gameWorld.getComponents(v)).concat(this.gameWorld.getComponents(Ue)).filter((u) => !this.clip(u.getTransform()?.position)).concat(this.gameWorld.getComponents(pt)).concat(this.gameWorld.getComponents(Ft)).concat(this.gameWorld.getComponents(St)).filter((u) => !this.clip(u.getTransform()?.position)).concat(this.gameWorld.getComponents(kt)).concat(this.gameWorld.getComponents(Tt)).filter((u) => !this.clip(u.getTransform()?.position)).sort((u, f) => u.zindex - f.zindex).forEach((u) => u.render(this.context, t)), this.addVignetteEffect(this.context, "rgba(0, 0, 0, 0.35)");
   }
 }
-class $e extends E {
+class je extends E {
   order = x.Physics;
   name = "PhysicsPlugin";
   update(t) {
@@ -1824,59 +1849,59 @@ const ot = /* @__PURE__ */ Object.create(null);
 Object.keys(N).forEach((i) => {
   ot[N[i]] = i;
 });
-const Bt = { type: "error", data: "parser error" }, ae = typeof Blob == "function" || typeof Blob < "u" && Object.prototype.toString.call(Blob) === "[object BlobConstructor]", he = typeof ArrayBuffer == "function", le = (i) => typeof ArrayBuffer.isView == "function" ? ArrayBuffer.isView(i) : i && i.buffer instanceof ArrayBuffer, Gt = ({ type: i, data: t }, e, s) => ae && t instanceof Blob ? e ? s(t) : Jt(t, s) : he && (t instanceof ArrayBuffer || le(t)) ? e ? s(t) : Jt(new Blob([t]), s) : s(N[i] + (t || "")), Jt = (i, t) => {
+const Bt = { type: "error", data: "parser error" }, he = typeof Blob == "function" || typeof Blob < "u" && Object.prototype.toString.call(Blob) === "[object BlobConstructor]", le = typeof ArrayBuffer == "function", ce = (i) => typeof ArrayBuffer.isView == "function" ? ArrayBuffer.isView(i) : i && i.buffer instanceof ArrayBuffer, Gt = ({ type: i, data: t }, e, s) => he && t instanceof Blob ? e ? s(t) : Qt(t, s) : le && (t instanceof ArrayBuffer || ce(t)) ? e ? s(t) : Qt(new Blob([t]), s) : s(N[i] + (t || "")), Qt = (i, t) => {
   const e = new FileReader();
   return e.onload = function() {
     const s = e.result.split(",")[1];
     t("b" + (s || ""));
   }, e.readAsDataURL(i);
 };
-function Qt(i) {
+function te(i) {
   return i instanceof Uint8Array ? i : i instanceof ArrayBuffer ? new Uint8Array(i) : new Uint8Array(i.buffer, i.byteOffset, i.byteLength);
 }
-let Pt;
+let _t;
 function qe(i, t) {
-  if (ae && i.data instanceof Blob)
-    return i.data.arrayBuffer().then(Qt).then(t);
-  if (he && (i.data instanceof ArrayBuffer || le(i.data)))
-    return t(Qt(i.data));
+  if (he && i.data instanceof Blob)
+    return i.data.arrayBuffer().then(te).then(t);
+  if (le && (i.data instanceof ArrayBuffer || ce(i.data)))
+    return t(te(i.data));
   Gt(i, !1, (e) => {
-    Pt || (Pt = new TextEncoder()), t(Pt.encode(e));
+    _t || (_t = new TextEncoder()), t(_t.encode(e));
   });
 }
-const te = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", Q = typeof Uint8Array > "u" ? [] : new Uint8Array(256);
-for (let i = 0; i < te.length; i++)
-  Q[te.charCodeAt(i)] = i;
-const je = (i) => {
+const ee = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", Q = typeof Uint8Array > "u" ? [] : new Uint8Array(256);
+for (let i = 0; i < ee.length; i++)
+  Q[ee.charCodeAt(i)] = i;
+const ze = (i) => {
   let t = i.length * 0.75, e = i.length, s, n = 0, r, o, a, h;
   i[i.length - 1] === "=" && (t--, i[i.length - 2] === "=" && t--);
   const l = new ArrayBuffer(t), c = new Uint8Array(l);
   for (s = 0; s < e; s += 4)
     r = Q[i.charCodeAt(s)], o = Q[i.charCodeAt(s + 1)], a = Q[i.charCodeAt(s + 2)], h = Q[i.charCodeAt(s + 3)], c[n++] = r << 2 | o >> 4, c[n++] = (o & 15) << 4 | a >> 2, c[n++] = (a & 3) << 6 | h & 63;
   return l;
-}, ze = typeof ArrayBuffer == "function", Ft = (i, t) => {
+}, Ve = typeof ArrayBuffer == "function", Ut = (i, t) => {
   if (typeof i != "string")
     return {
       type: "message",
-      data: ce(i, t)
+      data: ue(i, t)
     };
   const e = i.charAt(0);
   return e === "b" ? {
     type: "message",
-    data: Ve(i.substring(1), t)
+    data: He(i.substring(1), t)
   } : ot[e] ? i.length > 1 ? {
     type: ot[e],
     data: i.substring(1)
   } : {
     type: ot[e]
   } : Bt;
-}, Ve = (i, t) => {
-  if (ze) {
-    const e = je(i);
-    return ce(e, t);
+}, He = (i, t) => {
+  if (Ve) {
+    const e = ze(i);
+    return ue(e, t);
   } else
     return { base64: !0, data: i };
-}, ce = (i, t) => {
+}, ue = (i, t) => {
   switch (t) {
     case "blob":
       return i instanceof Blob ? i : new Blob([i]);
@@ -1884,24 +1909,24 @@ const je = (i) => {
     default:
       return i instanceof ArrayBuffer ? i : i.buffer;
   }
-}, ue = "", He = (i, t) => {
+}, de = "", Ke = (i, t) => {
   const e = i.length, s = new Array(e);
   let n = 0;
   i.forEach((r, o) => {
     Gt(r, !1, (a) => {
-      s[o] = a, ++n === e && t(s.join(ue));
+      s[o] = a, ++n === e && t(s.join(de));
     });
   });
-}, Ke = (i, t) => {
-  const e = i.split(ue), s = [];
+}, Ye = (i, t) => {
+  const e = i.split(de), s = [];
   for (let n = 0; n < e.length; n++) {
-    const r = Ft(e[n], t);
+    const r = Ut(e[n], t);
     if (s.push(r), r.type === "error")
       break;
   }
   return s;
 };
-function Ye() {
+function Xe() {
   return new TransformStream({
     transform(i, t) {
       qe(i, (e) => {
@@ -1923,7 +1948,7 @@ function Ye() {
     }
   });
 }
-let Et;
+let Ct;
 function nt(i) {
   return i.reduce((t, e) => t + e.length, 0);
 }
@@ -1936,8 +1961,8 @@ function rt(i, t) {
     e[n] = i[0][s++], s === i[0].length && (i.shift(), s = 0);
   return i.length && s < i[0].length && (i[0] = i[0].slice(s)), e;
 }
-function Xe(i, t) {
-  Et || (Et = new TextDecoder());
+function Ze(i, t) {
+  Ct || (Ct = new TextDecoder());
   const e = [];
   let s = 0, n = -1, r = !1;
   return new TransformStream({
@@ -1966,7 +1991,7 @@ function Xe(i, t) {
           if (nt(e) < n)
             break;
           const h = rt(e, n);
-          a.enqueue(Ft(r ? h : Et.decode(h), t)), s = 0;
+          a.enqueue(Ut(r ? h : Ct.decode(h), t)), s = 0;
         }
         if (n === 0 || n > i) {
           a.enqueue(Bt);
@@ -1976,11 +2001,11 @@ function Xe(i, t) {
     }
   });
 }
-const de = 4;
+const fe = 4;
 function _(i) {
-  if (i) return Ze(i);
+  if (i) return Je(i);
 }
-function Ze(i) {
+function Je(i) {
   for (var t in _.prototype)
     i[t] = _.prototype[t];
   return i;
@@ -2026,34 +2051,34 @@ _.prototype.listeners = function(i) {
 _.prototype.hasListeners = function(i) {
   return !!this.listeners(i).length;
 };
-const yt = typeof Promise == "function" && typeof Promise.resolve == "function" ? (t) => Promise.resolve().then(t) : (t, e) => e(t, 0), B = typeof self < "u" ? self : typeof window < "u" ? window : Function("return this")(), Je = "arraybuffer";
-function fe(i, ...t) {
+const mt = typeof Promise == "function" && typeof Promise.resolve == "function" ? (t) => Promise.resolve().then(t) : (t, e) => e(t, 0), B = typeof self < "u" ? self : typeof window < "u" ? window : Function("return this")(), Qe = "arraybuffer";
+function pe(i, ...t) {
   return t.reduce((e, s) => (i.hasOwnProperty(s) && (e[s] = i[s]), e), {});
 }
-const Qe = B.setTimeout, ts = B.clearTimeout;
-function wt(i, t) {
-  t.useNativeTimers ? (i.setTimeoutFn = Qe.bind(B), i.clearTimeoutFn = ts.bind(B)) : (i.setTimeoutFn = B.setTimeout.bind(B), i.clearTimeoutFn = B.clearTimeout.bind(B));
+const ts = B.setTimeout, es = B.clearTimeout;
+function gt(i, t) {
+  t.useNativeTimers ? (i.setTimeoutFn = ts.bind(B), i.clearTimeoutFn = es.bind(B)) : (i.setTimeoutFn = B.setTimeout.bind(B), i.clearTimeoutFn = B.clearTimeout.bind(B));
 }
-const es = 1.33;
-function ss(i) {
-  return typeof i == "string" ? is(i) : Math.ceil((i.byteLength || i.size) * es);
-}
+const ss = 1.33;
 function is(i) {
+  return typeof i == "string" ? ns(i) : Math.ceil((i.byteLength || i.size) * ss);
+}
+function ns(i) {
   let t = 0, e = 0;
   for (let s = 0, n = i.length; s < n; s++)
     t = i.charCodeAt(s), t < 128 ? e += 1 : t < 2048 ? e += 2 : t < 55296 || t >= 57344 ? e += 3 : (s++, e += 4);
   return e;
 }
-function pe() {
+function me() {
   return Date.now().toString(36).substring(3) + Math.random().toString(36).substring(2, 5);
 }
-function ns(i) {
+function rs(i) {
   let t = "";
   for (let e in i)
     i.hasOwnProperty(e) && (t.length && (t += "&"), t += encodeURIComponent(e) + "=" + encodeURIComponent(i[e]));
   return t;
 }
-function rs(i) {
+function os(i) {
   let t = {}, e = i.split("&");
   for (let s = 0, n = e.length; s < n; s++) {
     let r = e[s].split("=");
@@ -2061,12 +2086,12 @@ function rs(i) {
   }
   return t;
 }
-class os extends Error {
+class as extends Error {
   constructor(t, e, s) {
     super(t), this.description = e, this.context = s, this.type = "TransportError";
   }
 }
-class Ut extends _ {
+class $t extends _ {
   /**
    * Transport abstract constructor.
    *
@@ -2074,7 +2099,7 @@ class Ut extends _ {
    * @protected
    */
   constructor(t) {
-    super(), this.writable = !1, wt(this, t), this.opts = t, this.query = t.query, this.socket = t.socket, this.supportsBinary = !t.forceBase64;
+    super(), this.writable = !1, gt(this, t), this.opts = t, this.query = t.query, this.socket = t.socket, this.supportsBinary = !t.forceBase64;
   }
   /**
    * Emits an error.
@@ -2086,7 +2111,7 @@ class Ut extends _ {
    * @protected
    */
   onError(t, e, s) {
-    return super.emitReserved("error", new os(t, e, s)), this;
+    return super.emitReserved("error", new as(t, e, s)), this;
   }
   /**
    * Opens the transport.
@@ -2123,7 +2148,7 @@ class Ut extends _ {
    * @protected
    */
   onData(t) {
-    const e = Ft(t, this.socket.binaryType);
+    const e = Ut(t, this.socket.binaryType);
     this.onPacket(e);
   }
   /**
@@ -2160,11 +2185,11 @@ class Ut extends _ {
     return this.opts.port && (this.opts.secure && +(this.opts.port !== 443) || !this.opts.secure && Number(this.opts.port) !== 80) ? ":" + this.opts.port : "";
   }
   _query(t) {
-    const e = ns(t);
+    const e = rs(t);
     return e.length ? "?" + e : "";
   }
 }
-class as extends Ut {
+class hs extends $t {
   constructor() {
     super(...arguments), this._polling = !1;
   }
@@ -2220,7 +2245,7 @@ class as extends Ut {
         return this.onClose({ description: "transport closed by the server" }), !1;
       this.onPacket(s);
     };
-    Ke(t, this.socket.binaryType).forEach(e), this.readyState !== "closed" && (this._polling = !1, this.emitReserved("pollComplete"), this.readyState === "open" && this._poll());
+    Ye(t, this.socket.binaryType).forEach(e), this.readyState !== "closed" && (this._polling = !1, this.emitReserved("pollComplete"), this.readyState === "open" && this._poll());
   }
   /**
    * For polling, send a close packet.
@@ -2240,7 +2265,7 @@ class as extends Ut {
    * @protected
    */
   write(t) {
-    this.writable = !1, He(t, (e) => {
+    this.writable = !1, Ke(t, (e) => {
       this.doWrite(e, () => {
         this.writable = !0, this.emitReserved("drain");
       });
@@ -2253,18 +2278,18 @@ class as extends Ut {
    */
   uri() {
     const t = this.opts.secure ? "https" : "http", e = this.query || {};
-    return this.opts.timestampRequests !== !1 && (e[this.opts.timestampParam] = pe()), !this.supportsBinary && !e.sid && (e.b64 = 1), this.createUri(t, e);
+    return this.opts.timestampRequests !== !1 && (e[this.opts.timestampParam] = me()), !this.supportsBinary && !e.sid && (e.b64 = 1), this.createUri(t, e);
   }
 }
-let me = !1;
+let ge = !1;
 try {
-  me = typeof XMLHttpRequest < "u" && "withCredentials" in new XMLHttpRequest();
+  ge = typeof XMLHttpRequest < "u" && "withCredentials" in new XMLHttpRequest();
 } catch {
 }
-const hs = me;
-function ls() {
+const ls = ge;
+function cs() {
 }
-class cs extends as {
+class us extends hs {
   /**
    * XHR Polling constructor.
    *
@@ -2314,7 +2339,7 @@ class I extends _ {
    * @package
    */
   constructor(t, e, s) {
-    super(), this.createRequest = t, wt(this, s), this._opts = s, this._method = s.method || "GET", this._uri = e, this._data = s.data !== void 0 ? s.data : null, this._create();
+    super(), this.createRequest = t, gt(this, s), this._opts = s, this._method = s.method || "GET", this._uri = e, this._data = s.data !== void 0 ? s.data : null, this._create();
   }
   /**
    * Creates the XHR object and sends the request.
@@ -2323,7 +2348,7 @@ class I extends _ {
    */
   _create() {
     var t;
-    const e = fe(this._opts, "agent", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "autoUnref");
+    const e = pe(this._opts, "agent", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "autoUnref");
     e.xdomain = !!this._opts.xd;
     const s = this._xhr = this.createRequest(e);
     try {
@@ -2377,7 +2402,7 @@ class I extends _ {
    */
   _cleanup(t) {
     if (!(typeof this._xhr > "u" || this._xhr === null)) {
-      if (this._xhr.onreadystatechange = ls, t)
+      if (this._xhr.onreadystatechange = cs, t)
         try {
           this._xhr.abort();
         } catch {
@@ -2407,36 +2432,36 @@ I.requestsCount = 0;
 I.requests = {};
 if (typeof document < "u") {
   if (typeof attachEvent == "function")
-    attachEvent("onunload", ee);
+    attachEvent("onunload", se);
   else if (typeof addEventListener == "function") {
     const i = "onpagehide" in B ? "pagehide" : "unload";
-    addEventListener(i, ee, !1);
+    addEventListener(i, se, !1);
   }
 }
-function ee() {
+function se() {
   for (let i in I.requests)
     I.requests.hasOwnProperty(i) && I.requests[i].abort();
 }
-const us = function() {
-  const i = ge({
+const ds = function() {
+  const i = ye({
     xdomain: !1
   });
   return i && i.responseType !== null;
 }();
-class ds extends cs {
+class fs extends us {
   constructor(t) {
     super(t);
     const e = t && t.forceBase64;
-    this.supportsBinary = us && !e;
+    this.supportsBinary = ds && !e;
   }
   request(t = {}) {
-    return Object.assign(t, { xd: this.xd }, this.opts), new I(ge, this.uri(), t);
+    return Object.assign(t, { xd: this.xd }, this.opts), new I(ye, this.uri(), t);
   }
 }
-function ge(i) {
+function ye(i) {
   const t = i.xdomain;
   try {
-    if (typeof XMLHttpRequest < "u" && (!t || hs))
+    if (typeof XMLHttpRequest < "u" && (!t || ls))
       return new XMLHttpRequest();
   } catch {
   }
@@ -2446,13 +2471,13 @@ function ge(i) {
     } catch {
     }
 }
-const ye = typeof navigator < "u" && typeof navigator.product == "string" && navigator.product.toLowerCase() === "reactnative";
-class fs extends Ut {
+const we = typeof navigator < "u" && typeof navigator.product == "string" && navigator.product.toLowerCase() === "reactnative";
+class ps extends $t {
   get name() {
     return "websocket";
   }
   doOpen() {
-    const t = this.uri(), e = this.opts.protocols, s = ye ? {} : fe(this.opts, "agent", "perMessageDeflate", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "localAddress", "protocolVersion", "origin", "maxPayload", "family", "checkServerIdentity");
+    const t = this.uri(), e = this.opts.protocols, s = we ? {} : pe(this.opts, "agent", "perMessageDeflate", "pfx", "key", "passphrase", "cert", "ca", "ciphers", "rejectUnauthorized", "localAddress", "protocolVersion", "origin", "maxPayload", "family", "checkServerIdentity");
     this.opts.extraHeaders && (s.headers = this.opts.extraHeaders);
     try {
       this.ws = this.createSocket(t, e, s);
@@ -2483,7 +2508,7 @@ class fs extends Ut {
           this.doWrite(s, r);
         } catch {
         }
-        n && yt(() => {
+        n && mt(() => {
           this.writable = !0, this.emitReserved("drain");
         }, this.setTimeoutFn);
       });
@@ -2500,19 +2525,19 @@ class fs extends Ut {
    */
   uri() {
     const t = this.opts.secure ? "wss" : "ws", e = this.query || {};
-    return this.opts.timestampRequests && (e[this.opts.timestampParam] = pe()), this.supportsBinary || (e.b64 = 1), this.createUri(t, e);
+    return this.opts.timestampRequests && (e[this.opts.timestampParam] = me()), this.supportsBinary || (e.b64 = 1), this.createUri(t, e);
   }
 }
-const xt = B.WebSocket || B.MozWebSocket;
-class ps extends fs {
+const Pt = B.WebSocket || B.MozWebSocket;
+class ms extends ps {
   createSocket(t, e, s) {
-    return ye ? new xt(t, e, s) : e ? new xt(t, e) : new xt(t);
+    return we ? new Pt(t, e, s) : e ? new Pt(t, e) : new Pt(t);
   }
   doWrite(t, e) {
     this.ws.send(e);
   }
 }
-class ms extends Ut {
+class gs extends $t {
   get name() {
     return "webtransport";
   }
@@ -2528,7 +2553,7 @@ class ms extends Ut {
       this.onError("webtransport error", t);
     }), this._transport.ready.then(() => {
       this._transport.createBidirectionalStream().then((t) => {
-        const e = Xe(Number.MAX_SAFE_INTEGER, this.socket.binaryType), s = t.readable.pipeThrough(e).getReader(), n = Ye();
+        const e = Ze(Number.MAX_SAFE_INTEGER, this.socket.binaryType), s = t.readable.pipeThrough(e).getReader(), n = Xe();
         n.readable.pipeTo(t.writable), this._writer = n.writable.getWriter();
         const r = () => {
           s.read().then(({ done: a, value: h }) => {
@@ -2547,7 +2572,7 @@ class ms extends Ut {
     for (let e = 0; e < t.length; e++) {
       const s = t[e], n = e === t.length - 1;
       this._writer.write(s).then(() => {
-        n && yt(() => {
+        n && mt(() => {
           this.writable = !0, this.emitReserved("drain");
         }, this.setTimeoutFn);
       });
@@ -2558,11 +2583,11 @@ class ms extends Ut {
     (t = this._transport) === null || t === void 0 || t.close();
   }
 }
-const gs = {
-  websocket: ps,
-  webtransport: ms,
-  polling: ds
-}, ys = /^(?:(?![^:@\/?#]+:[^:@\/]*@)(http|https|ws|wss):\/\/)?((?:(([^:@\/?#]*)(?::([^:@\/?#]*))?)?@)?((?:[a-f0-9]{0,4}:){2,7}[a-f0-9]{0,4}|[^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/, ws = [
+const ys = {
+  websocket: ms,
+  webtransport: gs,
+  polling: fs
+}, ws = /^(?:(?![^:@\/?#]+:[^:@\/]*@)(http|https|ws|wss):\/\/)?((?:(([^:@\/?#]*)(?::([^:@\/?#]*))?)?@)?((?:[a-f0-9]{0,4}:){2,7}[a-f0-9]{0,4}|[^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/, bs = [
   "source",
   "protocol",
   "authority",
@@ -2583,16 +2608,16 @@ function Rt(i) {
     throw "URI too long";
   const t = i, e = i.indexOf("["), s = i.indexOf("]");
   e != -1 && s != -1 && (i = i.substring(0, e) + i.substring(e, s).replace(/:/g, ";") + i.substring(s, i.length));
-  let n = ys.exec(i || ""), r = {}, o = 14;
+  let n = ws.exec(i || ""), r = {}, o = 14;
   for (; o--; )
-    r[ws[o]] = n[o] || "";
-  return e != -1 && s != -1 && (r.source = t, r.host = r.host.substring(1, r.host.length - 1).replace(/;/g, ":"), r.authority = r.authority.replace("[", "").replace("]", "").replace(/;/g, ":"), r.ipv6uri = !0), r.pathNames = bs(r, r.path), r.queryKey = vs(r, r.query), r;
+    r[bs[o]] = n[o] || "";
+  return e != -1 && s != -1 && (r.source = t, r.host = r.host.substring(1, r.host.length - 1).replace(/;/g, ":"), r.authority = r.authority.replace("[", "").replace("]", "").replace(/;/g, ":"), r.ipv6uri = !0), r.pathNames = vs(r, r.path), r.queryKey = _s(r, r.query), r;
 }
-function bs(i, t) {
+function vs(i, t) {
   const e = /\/{2,9}/g, s = t.replace(e, "/").split("/");
   return (t.slice(0, 1) == "/" || t.length === 0) && s.splice(0, 1), t.slice(-1) == "/" && s.splice(s.length - 1, 1), s;
 }
-function vs(i, t) {
+function _s(i, t) {
   const e = {};
   return t.replace(/(?:^|&)([^&=]*)=?([^&]*)/g, function(s, n, r) {
     n && (e[n] = r);
@@ -2610,11 +2635,11 @@ class $ extends _ {
    * @param {Object} opts - options
    */
   constructor(t, e) {
-    if (super(), this.binaryType = Je, this.writeBuffer = [], this._prevBufferLen = 0, this._pingInterval = -1, this._pingTimeout = -1, this._maxPayload = -1, this._pingTimeoutTime = 1 / 0, t && typeof t == "object" && (e = t, t = null), t) {
+    if (super(), this.binaryType = Qe, this.writeBuffer = [], this._prevBufferLen = 0, this._pingInterval = -1, this._pingTimeout = -1, this._maxPayload = -1, this._pingTimeoutTime = 1 / 0, t && typeof t == "object" && (e = t, t = null), t) {
       const s = Rt(t);
       e.hostname = s.host, e.secure = s.protocol === "https" || s.protocol === "wss", e.port = s.port, s.query && (e.query = s.query);
     } else e.host && (e.hostname = Rt(e.host).host);
-    wt(this, e), this.secure = e.secure != null ? e.secure : typeof location < "u" && location.protocol === "https:", e.hostname && !e.port && (e.port = this.secure ? "443" : "80"), this.hostname = e.hostname || (typeof location < "u" ? location.hostname : "localhost"), this.port = e.port || (typeof location < "u" && location.port ? location.port : this.secure ? "443" : "80"), this.transports = [], this._transportsByName = {}, e.transports.forEach((s) => {
+    gt(this, e), this.secure = e.secure != null ? e.secure : typeof location < "u" && location.protocol === "https:", e.hostname && !e.port && (e.port = this.secure ? "443" : "80"), this.hostname = e.hostname || (typeof location < "u" ? location.hostname : "localhost"), this.port = e.port || (typeof location < "u" && location.port ? location.port : this.secure ? "443" : "80"), this.transports = [], this._transportsByName = {}, e.transports.forEach((s) => {
       const n = s.prototype.name;
       this.transports.push(n), this._transportsByName[n] = s;
     }), this.opts = Object.assign({
@@ -2631,7 +2656,7 @@ class $ extends _ {
       },
       transportOptions: {},
       closeOnBeforeunload: !1
-    }, e), this.opts.path = this.opts.path.replace(/\/$/, "") + (this.opts.addTrailingSlash ? "/" : ""), typeof this.opts.query == "string" && (this.opts.query = rs(this.opts.query)), Ot && (this.opts.closeOnBeforeunload && (this._beforeunloadEventListener = () => {
+    }, e), this.opts.path = this.opts.path.replace(/\/$/, "") + (this.opts.addTrailingSlash ? "/" : ""), typeof this.opts.query == "string" && (this.opts.query = os(this.opts.query)), Ot && (this.opts.closeOnBeforeunload && (this._beforeunloadEventListener = () => {
       this.transport && (this.transport.removeAllListeners(), this.transport.close());
     }, addEventListener("beforeunload", this._beforeunloadEventListener, !1)), this.hostname !== "localhost" && (this._offlineEventListener = () => {
       this._onClose("transport close", {
@@ -2648,7 +2673,7 @@ class $ extends _ {
    */
   createTransport(t) {
     const e = Object.assign({}, this.opts.query);
-    e.EIO = de, e.transport = t, this.id && (e.sid = this.id);
+    e.EIO = fe, e.transport = t, this.id && (e.sid = this.id);
     const s = Object.assign({}, this.opts, {
       query: e,
       socket: this,
@@ -2766,7 +2791,7 @@ class $ extends _ {
     let e = 1;
     for (let s = 0; s < this.writeBuffer.length; s++) {
       const n = this.writeBuffer[s].data;
-      if (n && (e += ss(n)), s > 0 && e > this._maxPayload)
+      if (n && (e += is(n)), s > 0 && e > this._maxPayload)
         return this.writeBuffer.slice(0, s);
       e += 2;
     }
@@ -2786,7 +2811,7 @@ class $ extends _ {
     if (!this._pingTimeoutTime)
       return !0;
     const t = Date.now() > this._pingTimeoutTime;
-    return t && (this._pingTimeoutTime = 0, yt(() => {
+    return t && (this._pingTimeoutTime = 0, mt(() => {
       this._onClose("ping timeout");
     }, this.setTimeoutFn)), t;
   }
@@ -2872,8 +2897,8 @@ class $ extends _ {
     }
   }
 }
-$.protocol = de;
-class _s extends $ {
+$.protocol = fe;
+class Cs extends $ {
   constructor() {
     super(...arguments), this._upgrades = [];
   }
@@ -2901,8 +2926,8 @@ class _s extends $ {
               s || this.readyState !== "closed" && (c(), this.setTransport(e), e.send([{ type: "upgrade" }]), this.emitReserved("upgrade", e), e = null, this.upgrading = !1, this.flush());
             });
           } else {
-            const d = new Error("probe error");
-            d.transport = e.name, this.emitReserved("upgradeError", d);
+            const f = new Error("probe error");
+            f.transport = e.name, this.emitReserved("upgradeError", f);
           }
       }));
     };
@@ -2910,8 +2935,8 @@ class _s extends $ {
       s || (s = !0, c(), e.close(), e = null);
     }
     const o = (u) => {
-      const d = new Error("probe error: " + u);
-      d.transport = e.name, r(), this.emitReserved("upgradeError", d);
+      const f = new Error("probe error: " + u);
+      f.transport = e.name, r(), this.emitReserved("upgradeError", f);
     };
     function a() {
       o("transport closed");
@@ -2945,21 +2970,21 @@ class _s extends $ {
     return e;
   }
 }
-let Cs = class extends _s {
+let Ps = class extends Cs {
   constructor(t, e = {}) {
     const s = typeof t == "object" ? t : e;
-    (!s.transports || s.transports && typeof s.transports[0] == "string") && (s.transports = (s.transports || ["polling", "websocket", "webtransport"]).map((n) => gs[n]).filter((n) => !!n)), super(t, s);
+    (!s.transports || s.transports && typeof s.transports[0] == "string") && (s.transports = (s.transports || ["polling", "websocket", "webtransport"]).map((n) => ys[n]).filter((n) => !!n)), super(t, s);
   }
 };
-function Ps(i, t = "", e) {
+function Es(i, t = "", e) {
   let s = i;
   e = e || typeof location < "u" && location, i == null && (i = e.protocol + "//" + e.host), typeof i == "string" && (i.charAt(0) === "/" && (i.charAt(1) === "/" ? i = e.protocol + i : i = e.host + i), /^(https?|wss?):\/\//.test(i) || (typeof e < "u" ? i = e.protocol + "//" + i : i = "https://" + i), s = Rt(i)), s.port || (/^(http|ws)$/.test(s.protocol) ? s.port = "80" : /^(http|ws)s$/.test(s.protocol) && (s.port = "443")), s.path = s.path || "/";
   const r = s.host.indexOf(":") !== -1 ? "[" + s.host + "]" : s.host;
   return s.id = s.protocol + "://" + r + ":" + s.port + t, s.href = s.protocol + "://" + r + (e && e.port === s.port ? "" : ":" + s.port), s;
 }
-const Es = typeof ArrayBuffer == "function", xs = (i) => typeof ArrayBuffer.isView == "function" ? ArrayBuffer.isView(i) : i.buffer instanceof ArrayBuffer, we = Object.prototype.toString, Ts = typeof Blob == "function" || typeof Blob < "u" && we.call(Blob) === "[object BlobConstructor]", ks = typeof File == "function" || typeof File < "u" && we.call(File) === "[object FileConstructor]";
-function $t(i) {
-  return Es && (i instanceof ArrayBuffer || xs(i)) || Ts && i instanceof Blob || ks && i instanceof File;
+const xs = typeof ArrayBuffer == "function", Ts = (i) => typeof ArrayBuffer.isView == "function" ? ArrayBuffer.isView(i) : i.buffer instanceof ArrayBuffer, be = Object.prototype.toString, ks = typeof Blob == "function" || typeof Blob < "u" && be.call(Blob) === "[object BlobConstructor]", Ss = typeof File == "function" || typeof File < "u" && be.call(File) === "[object FileConstructor]";
+function jt(i) {
+  return xs && (i instanceof ArrayBuffer || Ts(i)) || ks && i instanceof Blob || Ss && i instanceof File;
 }
 function ht(i, t) {
   if (!i || typeof i != "object")
@@ -2970,7 +2995,7 @@ function ht(i, t) {
         return !0;
     return !1;
   }
-  if ($t(i))
+  if (jt(i))
     return !0;
   if (i.toJSON && typeof i.toJSON == "function" && arguments.length === 1)
     return ht(i.toJSON(), !0);
@@ -2979,14 +3004,14 @@ function ht(i, t) {
       return !0;
   return !1;
 }
-function Ss(i) {
+function As(i) {
   const t = [], e = i.data, s = i;
   return s.data = Mt(e, t), s.attachments = t.length, { packet: s, buffers: t };
 }
 function Mt(i, t) {
   if (!i)
     return i;
-  if ($t(i)) {
+  if (jt(i)) {
     const e = { _placeholder: !0, num: t.length };
     return t.push(i), e;
   } else if (Array.isArray(i)) {
@@ -3002,7 +3027,7 @@ function Mt(i, t) {
   }
   return i;
 }
-function As(i, t) {
+function Bs(i, t) {
   return i.data = It(i.data, t), delete i.attachments, i;
 }
 function It(i, t) {
@@ -3020,7 +3045,7 @@ function It(i, t) {
       Object.prototype.hasOwnProperty.call(i, e) && (i[e] = It(i[e], t));
   return i;
 }
-const Bs = [
+const Rs = [
   "connect",
   "connect_error",
   "disconnect",
@@ -3028,12 +3053,12 @@ const Bs = [
   "newListener",
   "removeListener"
   // used by the Node.js EventEmitter
-], Rs = 5;
+], Os = 5;
 var m;
 (function(i) {
   i[i.CONNECT = 0] = "CONNECT", i[i.DISCONNECT = 1] = "DISCONNECT", i[i.EVENT = 2] = "EVENT", i[i.ACK = 3] = "ACK", i[i.CONNECT_ERROR = 4] = "CONNECT_ERROR", i[i.BINARY_EVENT = 5] = "BINARY_EVENT", i[i.BINARY_ACK = 6] = "BINARY_ACK";
 })(m || (m = {}));
-class Os {
+class Ms {
   /**
    * Encoder constructor
    *
@@ -3069,11 +3094,11 @@ class Os {
    * a list of buffers.
    */
   encodeAsBinary(t) {
-    const e = Ss(t), s = this.encodeAsString(e.packet), n = e.buffers;
+    const e = As(t), s = this.encodeAsString(e.packet), n = e.buffers;
     return n.unshift(s), n;
   }
 }
-function se(i) {
+function ie(i) {
   return Object.prototype.toString.call(i) === "[object Object]";
 }
 class qt extends _ {
@@ -3097,8 +3122,8 @@ class qt extends _ {
         throw new Error("got plaintext data when reconstructing a packet");
       e = this.decodeString(t);
       const s = e.type === m.BINARY_EVENT;
-      s || e.type === m.BINARY_ACK ? (e.type = s ? m.EVENT : m.ACK, this.reconstructor = new Ms(e), e.attachments === 0 && super.emitReserved("decoded", e)) : super.emitReserved("decoded", e);
-    } else if ($t(t) || t.base64)
+      s || e.type === m.BINARY_ACK ? (e.type = s ? m.EVENT : m.ACK, this.reconstructor = new Is(e), e.attachments === 0 && super.emitReserved("decoded", e)) : super.emitReserved("decoded", e);
+    } else if (jt(t) || t.base64)
       if (this.reconstructor)
         e = this.reconstructor.takeBinaryData(t), e && (this.reconstructor = null, super.emitReserved("decoded", e));
       else
@@ -3168,14 +3193,14 @@ class qt extends _ {
   static isPayloadValid(t, e) {
     switch (t) {
       case m.CONNECT:
-        return se(e);
+        return ie(e);
       case m.DISCONNECT:
         return e === void 0;
       case m.CONNECT_ERROR:
-        return typeof e == "string" || se(e);
+        return typeof e == "string" || ie(e);
       case m.EVENT:
       case m.BINARY_EVENT:
-        return Array.isArray(e) && (typeof e[0] == "number" || typeof e[0] == "string" && Bs.indexOf(e[0]) === -1);
+        return Array.isArray(e) && (typeof e[0] == "number" || typeof e[0] == "string" && Rs.indexOf(e[0]) === -1);
       case m.ACK:
       case m.BINARY_ACK:
         return Array.isArray(e);
@@ -3188,7 +3213,7 @@ class qt extends _ {
     this.reconstructor && (this.reconstructor.finishedReconstruction(), this.reconstructor = null);
   }
 }
-class Ms {
+class Is {
   constructor(t) {
     this.packet = t, this.buffers = [], this.reconPack = t;
   }
@@ -3202,7 +3227,7 @@ class Ms {
    */
   takeBinaryData(t) {
     if (this.buffers.push(t), this.buffers.length === this.reconPack.attachments) {
-      const e = As(this.reconPack, this.buffers);
+      const e = Bs(this.reconPack, this.buffers);
       return this.finishedReconstruction(), e;
     }
     return null;
@@ -3214,21 +3239,21 @@ class Ms {
     this.reconPack = null, this.buffers = [];
   }
 }
-const Is = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Ns = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   Decoder: qt,
-  Encoder: Os,
+  Encoder: Ms,
   get PacketType() {
     return m;
   },
-  protocol: Rs
+  protocol: Os
 }, Symbol.toStringTag, { value: "Module" }));
 function O(i, t, e) {
   return i.on(t, e), function() {
     i.off(t, e);
   };
 }
-const Ns = Object.freeze({
+const Ws = Object.freeze({
   connect: 1,
   connect_error: 1,
   disconnect: 1,
@@ -3237,7 +3262,7 @@ const Ns = Object.freeze({
   newListener: 1,
   removeListener: 1
 });
-class be extends _ {
+class ve extends _ {
   /**
    * `Socket` constructor.
    */
@@ -3353,7 +3378,7 @@ class be extends _ {
    */
   emit(t, ...e) {
     var s, n, r;
-    if (Ns.hasOwnProperty(t))
+    if (Ws.hasOwnProperty(t))
       throw new Error('"' + t.toString() + '" is a reserved event name');
     if (e.unshift(t), this._opts.retries && !this.flags.fromQueue && !this.flags.volatile)
       return this._addToQueue(e), this;
@@ -3855,12 +3880,12 @@ X.prototype.setJitter = function(i) {
 class Nt extends _ {
   constructor(t, e) {
     var s;
-    super(), this.nsps = {}, this.subs = [], t && typeof t == "object" && (e = t, t = void 0), e = e || {}, e.path = e.path || "/socket.io", this.opts = e, wt(this, e), this.reconnection(e.reconnection !== !1), this.reconnectionAttempts(e.reconnectionAttempts || 1 / 0), this.reconnectionDelay(e.reconnectionDelay || 1e3), this.reconnectionDelayMax(e.reconnectionDelayMax || 5e3), this.randomizationFactor((s = e.randomizationFactor) !== null && s !== void 0 ? s : 0.5), this.backoff = new X({
+    super(), this.nsps = {}, this.subs = [], t && typeof t == "object" && (e = t, t = void 0), e = e || {}, e.path = e.path || "/socket.io", this.opts = e, gt(this, e), this.reconnection(e.reconnection !== !1), this.reconnectionAttempts(e.reconnectionAttempts || 1 / 0), this.reconnectionDelay(e.reconnectionDelay || 1e3), this.reconnectionDelayMax(e.reconnectionDelayMax || 5e3), this.randomizationFactor((s = e.randomizationFactor) !== null && s !== void 0 ? s : 0.5), this.backoff = new X({
       min: this.reconnectionDelay(),
       max: this.reconnectionDelayMax(),
       jitter: this.randomizationFactor()
     }), this.timeout(e.timeout == null ? 2e4 : e.timeout), this._readyState = "closed", this.uri = t;
-    const n = e.parser || Is;
+    const n = e.parser || Ns;
     this.encoder = new n.Encoder(), this.decoder = new n.Decoder(), this._autoConnect = e.autoConnect !== !1, this._autoConnect && this.open();
   }
   reconnection(t) {
@@ -3903,7 +3928,7 @@ class Nt extends _ {
   open(t) {
     if (~this._readyState.indexOf("open"))
       return this;
-    this.engine = new Cs(this.uri, this.opts);
+    this.engine = new Ps(this.uri, this.opts);
     const e = this.engine, s = this;
     this._readyState = "opening", this.skipReconnect = !1;
     const n = O(e, "open", function() {
@@ -3973,7 +3998,7 @@ class Nt extends _ {
    * @private
    */
   ondecoded(t) {
-    yt(() => {
+    mt(() => {
       this.emitReserved("packet", t);
     }, this.setTimeoutFn);
   }
@@ -3993,7 +4018,7 @@ class Nt extends _ {
    */
   socket(t, e) {
     let s = this.nsps[t];
-    return s ? this._autoConnect && !s.active && s.connect() : (s = new be(this, t, e), this.nsps[t] = s), s;
+    return s ? this._autoConnect && !s.active && s.connect() : (s = new ve(this, t, e), this.nsps[t] = s), s;
   }
   /**
    * Called upon a socket close.
@@ -4093,20 +4118,20 @@ class Nt extends _ {
 const Z = {};
 function lt(i, t) {
   typeof i == "object" && (t = i, i = void 0), t = t || {};
-  const e = Ps(i, t.path || "/socket.io"), s = e.source, n = e.id, r = e.path, o = Z[n] && r in Z[n].nsps, a = t.forceNew || t["force new connection"] || t.multiplex === !1 || o;
+  const e = Es(i, t.path || "/socket.io"), s = e.source, n = e.id, r = e.path, o = Z[n] && r in Z[n].nsps, a = t.forceNew || t["force new connection"] || t.multiplex === !1 || o;
   let h;
   return a ? h = new Nt(s, t) : (Z[n] || (Z[n] = new Nt(s, t)), h = Z[n]), e.query && !t.query && (t.query = e.queryKey), h.socket(e.path, t);
 }
 Object.assign(lt, {
   Manager: Nt,
-  Socket: be,
+  Socket: ve,
   io: lt,
   connect: lt
 });
-var Ws = Object.defineProperty, Ds = Object.getOwnPropertyDescriptor, M = (i, t, e, s) => {
-  for (var n = s > 1 ? void 0 : s ? Ds(t, e) : t, r = i.length - 1, o; r >= 0; r--)
+var Ds = Object.defineProperty, Ls = Object.getOwnPropertyDescriptor, M = (i, t, e, s) => {
+  for (var n = s > 1 ? void 0 : s ? Ls(t, e) : t, r = i.length - 1, o; r >= 0; r--)
     (o = i[r]) && (n = (s ? o(t, e, n) : o(n)) || n);
-  return s && n && Ws(t, e, n), n;
+  return s && n && Ds(t, e, n), n;
 };
 let k = class extends E {
   order = x.None;
@@ -4319,7 +4344,7 @@ M([
 k = M([
   Wt("cli")
 ], k);
-var Ls = function() {
+var Fs = function() {
   function i() {
     this.ansi_colors = [
       // Normal colors
@@ -4482,9 +4507,9 @@ var Ls = function() {
           c >= 0 && c <= 255 && (h ? this.fg = this.palette_256[c] : this.bg = this.palette_256[c]);
         }
         if (l === "2" && n.length > 2) {
-          var u = parseInt(n.shift(), 10), d = parseInt(n.shift(), 10), w = parseInt(n.shift(), 10);
-          if (u >= 0 && u <= 255 && d >= 0 && d <= 255 && w >= 0 && w <= 255) {
-            var R = { rgb: [u, d, w], class_name: "truecolor" };
+          var u = parseInt(n.shift(), 10), f = parseInt(n.shift(), 10), y = parseInt(n.shift(), 10);
+          if (u >= 0 && u <= 255 && f >= 0 && f <= 255 && y >= 0 && y <= 255) {
+            var R = { rgb: [u, f, y], class_name: "truecolor" };
             h ? this.fg = R : this.bg = R;
           }
         }
@@ -4496,12 +4521,12 @@ var Ls = function() {
     var e = t.raw[0], s = /^\s+|\s+\n|\s+#[\s\S]+?\n/gm, n = e.replace(s, "");
     return new RegExp(n, "m");
   }, i;
-}(), Gs = Object.defineProperty, Fs = Object.getOwnPropertyDescriptor, ve = (i, t, e, s) => {
-  for (var n = s > 1 ? void 0 : s ? Fs(t, e) : t, r = i.length - 1, o; r >= 0; r--)
+}(), Gs = Object.defineProperty, Us = Object.getOwnPropertyDescriptor, _e = (i, t, e, s) => {
+  for (var n = s > 1 ? void 0 : s ? Us(t, e) : t, r = i.length - 1, o; r >= 0; r--)
     (o = i[r]) && (n = (s ? o(t, e, n) : o(n)) || n);
   return s && n && Gs(t, e, n), n;
 };
-class Us extends Y {
+class $s extends Y {
   message;
   constructor(t) {
     super(), this.message = t;
@@ -4520,7 +4545,7 @@ let U = class extends E {
     super(), document.body.appendChild(this.consoleWrapper), this.consoleWrapper.innerHTML = this.getInnerHtml();
   }
   start() {
-    this.getPlugin(G).KeyDownEvent.subscribe(this, "keydown"), this.getPlugin(G).BlockedKeyDownEvent.subscribe(this, "keydown"), this.messageEnteredEvent.register(this.gameWorld);
+    this.getPlugin(F).KeyDownEvent.subscribe(this, "keydown"), this.getPlugin(F).BlockedKeyDownEvent.subscribe(this, "keydown"), this.messageEnteredEvent.register(this.gameWorld);
   }
   event(i, t) {
     const e = i.key;
@@ -4541,7 +4566,7 @@ let U = class extends E {
         } catch (n) {
           console.log("Error: ", n);
         }
-      this.getPlugin(G).block = this.isFocused();
+      this.getPlugin(F).block = this.isFocused();
     }
   }
   isFocused() {
@@ -4565,7 +4590,7 @@ let U = class extends E {
 `), t.status ? this.setStatus("#485b49") : this.setStatus("#813136");
     } else
       this.buffer += i + `\r
-`, this.setStatus("white"), this.messageEnteredEvent.emit(new Us(i));
+`, this.setStatus("white"), this.messageEnteredEvent.emit(new $s(i));
     this.history[0] = i, this.history.unshift(""), this.historyIndex = 0, this.updateConsole();
   }
   setStatus(i) {
@@ -4589,7 +4614,7 @@ let U = class extends E {
       const e = i.split(`
 `);
       for (let s = 0; s < e.length - 1; s++) {
-        const n = e[s], o = new Ls().ansi_to_html(n);
+        const n = e[s], o = new Fs().ansi_to_html(n);
         let a = document.createElement("span");
         a.innerHTML = o, t.appendChild(a);
         const h = document.createElement("hr");
@@ -4690,25 +4715,25 @@ let U = class extends E {
     return this.buffer = "", this.updateConsole(), new g(!0, "", void 0);
   }
 };
-ve([
+_e([
   b("clear")
 ], U.prototype, "clearConsole", 1);
-U = ve([
+U = _e([
   Wt("console")
 ], U);
-var $s = Object.defineProperty, qs = Object.getOwnPropertyDescriptor, js = (i, t, e, s) => {
+var js = Object.defineProperty, qs = Object.getOwnPropertyDescriptor, zs = (i, t, e, s) => {
   for (var n = qs(t, e), r = i.length - 1, o; r >= 0; r--)
     (o = i[r]) && (n = o(t, e, n) || n);
-  return n && $s(t, e, n), n;
+  return n && js(t, e, n), n;
 };
-class ft extends E {
+class dt extends E {
   order = x.Input;
   name = "ClientPlugin";
   socket;
   start() {
     this.getPlugin(U)?.messageEnteredEvent.subscribe(this, "chatMessageEvent"), this.socket = lt("http://localhost:8001", {
       transports: ["websocket"],
-      reconnection: !0,
+      reconnection: !1,
       reconnectionDelay: 100
     }), this.socket.on("connect", () => this.onConnection()), this.socket.on("disconnect", (t) => this.onDisconnection(t)), this.socket.on("chat_message", (t, e) => this.onChatMessage(t, e)), this.socket.on("synchronize_go", (t, e) => this.onSynchronize(t, e));
   }
@@ -4723,7 +4748,7 @@ class ft extends E {
     this.getPlugin(U).writeLine("connected!"), this.setServerName("unnamed");
   }
   onDisconnection(t) {
-    this.getPlugin(U).writeLine(`\x1B[31mDisconnected from server: ${t}\x1B[0m`);
+    this.getPlugin(U).writeLine(`disconnected! \x1B[31m${t}\x1B[0m`);
   }
   onChatMessage(t, e) {
     this.getPlugin(U).writeLine(`\x1B[32m${t}\x1B[0m: ${e}`);
@@ -4742,7 +4767,7 @@ class ft extends E {
       this.deepMerge(s, e);
     else {
       const n = z.playerGO();
-      this.deepMerge(n, e), this.gameWorld.spawn(n), n.getComponent(C).velocity = f.zero();
+      this.deepMerge(n, e), this.gameWorld.spawn(n), n.getComponent(C).velocity = d.zero();
     }
   }
   deepMerge(t, e) {
@@ -4751,13 +4776,13 @@ class ft extends E {
     return t;
   }
 }
-js([
+zs([
   b("setServerName", "<name: string>")
-], ft.prototype, "setServerName");
-var zs = Object.defineProperty, Vs = Object.getOwnPropertyDescriptor, bt = (i, t, e, s) => {
-  for (var n = Vs(t, e), r = i.length - 1, o; r >= 0; r--)
+], dt.prototype, "setServerName");
+var Vs = Object.defineProperty, Hs = Object.getOwnPropertyDescriptor, yt = (i, t, e, s) => {
+  for (var n = Hs(t, e), r = i.length - 1, o; r >= 0; r--)
     (o = i[r]) && (n = o(t, e, n) || n);
-  return n && zs(t, e, n), n;
+  return n && Vs(t, e, n), n;
 };
 class st extends E {
   order = x.Update;
@@ -4771,7 +4796,7 @@ class st extends E {
     return this.player.getComponent(v).color.clone();
   }
   start() {
-    this.respawn(), this.player.getComponent(v).color = this.getPlugin(tt)?.get("playerColor") ?? new p(53, 110, 58), this.getPlugin(G)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
+    this.respawn(), this.player.getComponent(v).color = this.getPlugin(tt)?.get("playerColor") ?? new p(53, 110, 58), this.getPlugin(F)?.KeyDownEvent.subscribe(this, "KeyDownEvent");
   }
   event(t, e) {
     if (e === "KeyDownEvent") {
@@ -4787,19 +4812,19 @@ class st extends E {
   // color: rgb = new rgb(53, 110, 58);
   // target: rgb = new rgb(53, 110, 58);
   synchronize() {
-    const t = this.getPlugin(ft), e = JSON.parse(JSON.stringify(this.player));
+    const t = this.getPlugin(dt), e = JSON.parse(JSON.stringify(this.player));
     delete e.gameWorld, t.synchronize(this.player.getId(), e);
   }
   update(t) {
-    let e = this.getPlugin(y);
+    let e = this.getPlugin(w);
     if (e.targetCameraPositon = this.player.getTransform().position.clone(), !this.player.enabled) return;
-    let s = this.getPlugin(j), n = this.getPlugin(G), r = this.player.getComponent(K);
+    let s = this.getPlugin(q), n = this.getPlugin(F), r = this.player.getComponent(K);
     if (!r)
       return;
     r.targetDirection = e.getWorldPosition(s.getMouseScreenPosition()).sub(this.player.getTransform().position), r.range = e.getWorldPosition(s.getMouseScreenPosition()).sub(this.player.getTransform().position.add(r.getGlobalOffset())).magnitude(), (n.isPressed("e") || s.isKeyDown(0)) && r.shoot();
-    const o = -25, a = n.isPressed("shift") ? 120 : 60, h = 50, l = this.player.getTransform().rotation, c = f.fromRad(l), u = 2.5;
-    let d = this.player.getComponent(C), w = d.velocity;
-    n.isPressed("w") ? (d.acceleration = c.toUnit().times(a), n.isPressed("s") && (d.acceleration = c.toUnit().times(-o))) : n.isPressed("s") ? d.acceleration = c.toUnit().times(o) : d.acceleration = f.zero(), w = w.sub(w.perpendicular(c)), w.magnitude() > h && w.setLength(h), n.isPressed("a") ? d.angularVelocity = u : n.isPressed("d") ? d.angularVelocity = -u : d.angularVelocity = 0;
+    const o = -25, a = n.isPressed("shift") ? 120 : 60, h = 50, l = this.player.getTransform().rotation, c = d.fromRad(l), u = 2.5;
+    let f = this.player.getComponent(C), y = f.velocity;
+    n.isPressed("w") ? (f.acceleration = c.toUnit().times(a), n.isPressed("s") && (f.acceleration = c.toUnit().times(-o))) : n.isPressed("s") ? f.acceleration = c.toUnit().times(o) : f.acceleration = d.zero(), y = y.sub(y.perpendicular(c)), y.magnitude() > h && y.setLength(h), n.isPressed("a") ? f.angularVelocity = u : n.isPressed("d") ? f.angularVelocity = -u : f.angularVelocity = 0;
   }
   cliGetName() {
     return "player";
@@ -4807,7 +4832,7 @@ class st extends E {
   setname(t) {
     this.playerName = t, this.player.name = t;
     try {
-      this.getPlugin(ft).setServerName(t);
+      this.getPlugin(dt).setServerName(t);
     } catch (e) {
       console.error("Error setting server name:", e);
     }
@@ -4828,41 +4853,34 @@ class st extends E {
     return new g(!0, `Player color is ${this.player.getComponent(v).color}`, this.player.getComponent(v).color);
   }
 }
-bt([
+yt([
   b("setname", "<name: string>")
 ], st.prototype, "setname");
-bt([
+yt([
   b("setcolor", "<color: string | rgb>")
 ], st.prototype, "setcolor");
-bt([
+yt([
   b("respawn")
 ], st.prototype, "respawn");
-bt([
+yt([
   b("getcolor", void 0, "rgb")
 ], st.prototype, "getcolor");
-class Hs extends E {
-  order = x.Update;
-  name = "StandaloneComponentPlugin";
-  update(t) {
-    this.gameWorld.getAllComponents().filter((e) => e instanceof mt).map((e) => e).forEach((e) => e.tick(t));
-  }
-}
 async function Ks(i) {
   const t = new Ge(
     new tt(),
-    new ft(),
+    new dt(),
     new k(),
-    new G(),
-    new j(i),
-    new ne(),
+    new F(),
+    new q(i),
+    new oe(),
     new st(),
-    new $e(),
-    new y(),
+    new je(),
+    new w(),
     new U(),
     new At(),
-    new ie(),
-    new Hs(),
-    new Ue(i.getContext("2d"))
+    new ne(),
+    new re(),
+    new $e(i.getContext("2d"))
   );
   async function e() {
     t.tick(), requestAnimationFrame(e), await new Promise((s) => setTimeout(s, 0));

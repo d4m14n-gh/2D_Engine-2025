@@ -21,7 +21,7 @@ export class CanonC extends StandaloneComponent {
     public direction: Vector = Vector.right();
     public targetDirection: Vector = Vector.right();
 
-    private shotDelta: number = 0;
+    private shotDelta: number = 1e9;
     // private lastShootTime: number = performance.now();
 
     constructor(length: number=4, width: number=2, private damage=10){
